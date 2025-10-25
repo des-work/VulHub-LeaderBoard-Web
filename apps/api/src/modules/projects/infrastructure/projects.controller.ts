@@ -55,8 +55,8 @@ export class ProjectsController {
   ) {
     const searchDto: ProjectSearchDto = {
       query,
-      category,
-      difficulty,
+      category: category as any,
+      difficulty: difficulty as any,
       isActive,
       isPublic,
     };

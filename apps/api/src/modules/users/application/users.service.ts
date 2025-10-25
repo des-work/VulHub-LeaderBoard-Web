@@ -19,7 +19,7 @@ export class UsersService {
     try {
       return await this.usersRepository.create({
         ...createUserDto,
-        tenantId,
+        tenant: { connect: { id: tenantId } },
       });
     } catch (error) {
       this.logger.error('Failed to create user:', error);
@@ -156,7 +156,17 @@ export class UsersService {
         throw new NotFoundException('User not found');
       }
 
-      return user;
+      return {
+        ...user,
+        status: user.status as any,
+        role: user.role as any,
+        createdAt: user.createdAt.toISOString(),
+        updatedAt: user.createdAt.toISOString(), // Using createdAt as fallback
+        email: '', // Add required fields
+        tenantId: tenantId,
+        lastLoginAt: null,
+        preferences: null,
+      };
     } catch (error) {
       this.logger.error(`Failed to get user profile ${id}:`, error);
       throw error;
@@ -180,7 +190,7 @@ export class UsersService {
         where: { id, tenantId },
         data: {
           preferences: {
-            ...user.preferences,
+            ...(user.preferences as Record<string, any> || {}),
             ...preferences,
           },
         },

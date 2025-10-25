@@ -40,7 +40,7 @@ export class BadgesService {
 
       return await this.badgesRepository.create({
         ...createBadgeDto,
-        tenantId,
+        tenant: { connect: { id: tenantId } },
       });
     } catch (error) {
       this.logger.error('Failed to create badge:', error);

@@ -42,17 +42,15 @@ export class SubmissionsService {
 
       // Upload evidence files
       const evidenceUrls: string[] = [];
-      if (createSubmissionDto.evidenceFiles) {
-        for (const file of createSubmissionDto.evidenceFiles) {
-          const url = await this.storageService.uploadFile(file);
-          evidenceUrls.push(url);
-        }
+      if (createSubmissionDto.evidenceUrls) {
+        evidenceUrls.push(...createSubmissionDto.evidenceUrls);
       }
 
       return await this.submissionsRepository.create({
         ...createSubmissionDto,
-        userId,
-        tenantId,
+        user: { connect: { id: userId } },
+        tenant: { connect: { id: tenantId } },
+        project: { connect: { id: createSubmissionDto.projectId } },
         evidenceUrls,
         status: 'PENDING',
       });
@@ -78,7 +76,7 @@ export class SubmissionsService {
       
       const where = {
         tenantId,
-        ...(status && { status }),
+        ...(status && { status: status as 'PENDING' | 'APPROVED' | 'REJECTED' }),
         ...(projectId && { projectId }),
         ...(userId && { userId }),
       };

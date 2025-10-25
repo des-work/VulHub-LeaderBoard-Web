@@ -29,7 +29,7 @@ export class ProjectsService {
 
       return await this.projectsRepository.create({
         ...createProjectDto,
-        tenantId,
+        tenant: { connect: { id: tenantId } },
       });
     } catch (error) {
       this.logger.error('Failed to create project:', error);

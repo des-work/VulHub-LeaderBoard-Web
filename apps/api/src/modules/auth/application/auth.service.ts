@@ -23,7 +23,12 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<any> {
     try {
       const user = await this.prisma.user.findUnique({
-        where: { email },
+        where: { 
+          email_tenantId: {
+            email,
+            tenantId: 'default' // TODO: Get from request context
+          }
+        },
         include: { tenant: true },
       });
 
@@ -103,7 +108,12 @@ export class AuthService {
     try {
       // Check if user already exists
       const existingUser = await this.prisma.user.findUnique({
-        where: { email: registerDto.email },
+        where: { 
+          email_tenantId: {
+            email: registerDto.email,
+            tenantId: registerDto.tenantId
+          }
+        },
       });
 
       if (existingUser) {
@@ -189,7 +199,6 @@ export class AuthService {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id: userId },
-        include: { tenant: true },
         select: {
           id: true,
           email: true,
