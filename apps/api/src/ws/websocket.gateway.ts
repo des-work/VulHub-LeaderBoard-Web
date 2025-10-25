@@ -1,5 +1,5 @@
-import { Injectable, Logger, UseGuards } from '@nestjs/common';
-import { WebSocketGateway as WSGateway, WebSocketServer, SubscribeMessage, MessageBody, ConnectedSocket } from '@nestjs/websockets';
+import { Injectable, Logger, UseGuards, OnModuleDestroy } from '@nestjs/common';
+import { WebSocketGateway as WSGateway, WebSocketServer, SubscribeMessage, MessageBody, ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -17,11 +17,14 @@ interface AuthenticatedSocket extends Socket {
   },
   namespace: '/',
 })
-export class WebSocketGateway {
+export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleDestroy {
   @WebSocketServer()
   server: Server;
 
   private readonly logger = new Logger(WebSocketGateway.name);
+  private connectionCount = 0;
+  private maxConnections = 1000; // Maximum concurrent connections
+  private connectionTimeouts = new Map<string, NodeJS.Timeout>();
 
   constructor(
     private jwtService: JwtService,
@@ -34,7 +37,24 @@ export class WebSocketGateway {
 
   async handleConnection(client: AuthenticatedSocket) {
     try {
-      this.logger.log(`Client connected: ${client.id}`);
+      // Check connection limit
+      if (this.connectionCount >= this.maxConnections) {
+        this.logger.warn(`Connection limit reached (${this.maxConnections}). Rejecting connection from ${client.id}`);
+        client.emit('error', { message: 'Server at capacity. Please try again later.' });
+        client.disconnect();
+        return;
+      }
+
+      this.connectionCount++;
+      this.logger.log(`Client connected: ${client.id} (${this.connectionCount}/${this.maxConnections})`);
+
+      // Set up connection timeout (30 minutes of inactivity)
+      const timeout = setTimeout(() => {
+        this.logger.log(`Connection timeout for client ${client.id}`);
+        client.disconnect();
+      }, 30 * 60 * 1000);
+      
+      this.connectionTimeouts.set(client.id, timeout);
 
       // Authenticate the client
       const token = client.handshake.auth?.token || client.handshake.headers?.authorization?.replace('Bearer ', '');
@@ -70,7 +90,31 @@ export class WebSocketGateway {
   }
 
   handleDisconnect(client: AuthenticatedSocket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
+    this.connectionCount = Math.max(0, this.connectionCount - 1);
+    
+    // Clear connection timeout
+    const timeout = this.connectionTimeouts.get(client.id);
+    if (timeout) {
+      clearTimeout(timeout);
+      this.connectionTimeouts.delete(client.id);
+    }
+    
+    this.logger.log(`Client disconnected: ${client.id} (${this.connectionCount}/${this.maxConnections})`);
+  }
+
+  onModuleDestroy() {
+    this.logger.log('WebSocket Gateway shutting down...');
+    
+    // Clear all timeouts
+    this.connectionTimeouts.forEach((timeout) => {
+      clearTimeout(timeout);
+    });
+    this.connectionTimeouts.clear();
+    
+    // Disconnect all clients
+    this.server.disconnectSockets();
+    
+    this.logger.log('WebSocket Gateway shutdown complete');
   }
 
   @SubscribeMessage('join:tenant')
@@ -101,7 +145,29 @@ export class WebSocketGateway {
 
   @SubscribeMessage('ping')
   handlePing(@ConnectedSocket() client: AuthenticatedSocket) {
+    // Reset connection timeout on activity
+    this.resetConnectionTimeout(client.id);
     client.emit('pong', { timestamp: new Date().toISOString() });
+  }
+
+  /**
+   * Reset connection timeout for a client
+   */
+  private resetConnectionTimeout(clientId: string) {
+    const existingTimeout = this.connectionTimeouts.get(clientId);
+    if (existingTimeout) {
+      clearTimeout(existingTimeout);
+    }
+    
+    const newTimeout = setTimeout(() => {
+      this.logger.log(`Connection timeout for client ${clientId}`);
+      const client = this.server.sockets.sockets.get(clientId);
+      if (client) {
+        client.disconnect();
+      }
+    }, 30 * 60 * 1000); // 30 minutes
+    
+    this.connectionTimeouts.set(clientId, newTimeout);
   }
 
   // Broadcast methods for real-time updates

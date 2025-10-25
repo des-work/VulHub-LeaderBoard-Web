@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { LeaderboardsRepository } from '../infrastructure/leaderboards.repository';
-import { RedisService } from '../../../adapters/redis/redis.service';
+import { CacheService } from '../../../common/services/cache.service';
 import { WebSocketGateway } from '../../../ws/websocket.gateway';
 
 export interface LeaderboardEntry {
@@ -32,7 +32,7 @@ export class LeaderboardsService {
 
   constructor(
     private leaderboardsRepository: LeaderboardsRepository,
-    private redisService: RedisService,
+    private cacheService: CacheService,
     private webSocketGateway: WebSocketGateway,
   ) {}
 
@@ -48,23 +48,13 @@ export class LeaderboardsService {
     try {
       this.logger.log(`Getting overall leaderboard for tenant ${tenantId}`);
 
-      // Try to get from cache first
+      // Use cache service with getOrSet pattern
       const cacheKey = `leaderboard:overall:${tenantId}:${timeRange || 'all'}`;
-      const cached = await this.redisService.get(cacheKey);
-      
-      if (cached) {
-        const data = JSON.parse(cached);
-        return this.paginateResults(data, page, limit);
-      }
-
-      // Calculate leaderboard from database
-      const leaderboard = await this.leaderboardsRepository.calculateOverallLeaderboard(
-        tenantId,
-        timeRange,
+      const leaderboard = await this.cacheService.getOrSet(
+        cacheKey,
+        () => this.leaderboardsRepository.calculateOverallLeaderboard(tenantId, timeRange),
+        { ttl: 300, prefix: 'leaderboard' } // 5 minutes cache
       );
-
-      // Cache for 5 minutes
-      await this.redisService.set(cacheKey, JSON.stringify(leaderboard), 300);
 
       return this.paginateResults(leaderboard, page, limit);
     } catch (error) {
@@ -86,20 +76,11 @@ export class LeaderboardsService {
       this.logger.log(`Getting project leaderboard for project ${projectId}`);
 
       const cacheKey = `leaderboard:project:${projectId}`;
-      const cached = await this.redisService.get(cacheKey);
-      
-      if (cached) {
-        const data = JSON.parse(cached);
-        return this.paginateResults(data, page, limit);
-      }
-
-      const leaderboard = await this.leaderboardsRepository.calculateProjectLeaderboard(
-        projectId,
-        tenantId,
+      const leaderboard = await this.cacheService.getOrSet(
+        cacheKey,
+        () => this.leaderboardsRepository.calculateProjectLeaderboard(projectId, tenantId),
+        { ttl: 120, prefix: 'leaderboard' } // 2 minutes cache
       );
-
-      // Cache for 2 minutes (project leaderboards change more frequently)
-      await this.redisService.set(cacheKey, JSON.stringify(leaderboard), 120);
 
       return this.paginateResults(leaderboard, page, limit);
     } catch (error) {
@@ -121,19 +102,11 @@ export class LeaderboardsService {
       this.logger.log(`Getting category leaderboard for category ${category}`);
 
       const cacheKey = `leaderboard:category:${category}:${tenantId}`;
-      const cached = await this.redisService.get(cacheKey);
-      
-      if (cached) {
-        const data = JSON.parse(cached);
-        return this.paginateResults(data, page, limit);
-      }
-
-      const leaderboard = await this.leaderboardsRepository.calculateCategoryLeaderboard(
-        category,
-        tenantId,
+      const leaderboard = await this.cacheService.getOrSet(
+        cacheKey,
+        () => this.leaderboardsRepository.calculateCategoryLeaderboard(category, tenantId),
+        { ttl: 300, prefix: 'leaderboard' } // 5 minutes cache
       );
-
-      await this.redisService.set(cacheKey, JSON.stringify(leaderboard), 300);
 
       return this.paginateResults(leaderboard, page, limit);
     } catch (error) {
@@ -148,16 +121,11 @@ export class LeaderboardsService {
   async getUserRank(userId: string, tenantId: string) {
     try {
       const cacheKey = `user:rank:${userId}:${tenantId}`;
-      const cached = await this.redisService.get(cacheKey);
-      
-      if (cached) {
-        return JSON.parse(cached);
-      }
-
-      const userRank = await this.leaderboardsRepository.getUserRank(userId, tenantId);
-      
-      // Cache for 1 minute
-      await this.redisService.set(cacheKey, JSON.stringify(userRank), 60);
+      const userRank = await this.cacheService.getOrSet(
+        cacheKey,
+        () => this.leaderboardsRepository.getUserRank(userId, tenantId),
+        { ttl: 60, prefix: 'user' } // 1 minute cache
+      );
 
       return userRank;
     } catch (error) {
@@ -172,16 +140,11 @@ export class LeaderboardsService {
   async getLeaderboardStats(tenantId: string): Promise<LeaderboardStats> {
     try {
       const cacheKey = `leaderboard:stats:${tenantId}`;
-      const cached = await this.redisService.get(cacheKey);
-      
-      if (cached) {
-        return JSON.parse(cached);
-      }
-
-      const stats = await this.leaderboardsRepository.getLeaderboardStats(tenantId);
-      
-      // Cache for 5 minutes
-      await this.redisService.set(cacheKey, JSON.stringify(stats), 300);
+      const stats = await this.cacheService.getOrSet(
+        cacheKey,
+        () => this.leaderboardsRepository.getLeaderboardStats(tenantId),
+        { ttl: 300, prefix: 'leaderboard' } // 5 minutes cache
+      );
 
       return stats;
     } catch (error) {
@@ -216,16 +179,11 @@ export class LeaderboardsService {
   async getTopPerformers(tenantId: string, limit: number = 10) {
     try {
       const cacheKey = `leaderboard:top:${tenantId}:${limit}`;
-      const cached = await this.redisService.get(cacheKey);
-      
-      if (cached) {
-        return JSON.parse(cached);
-      }
-
-      const topPerformers = await this.leaderboardsRepository.getTopPerformers(tenantId, limit);
-      
-      // Cache for 2 minutes
-      await this.redisService.set(cacheKey, JSON.stringify(topPerformers), 120);
+      const topPerformers = await this.cacheService.getOrSet(
+        cacheKey,
+        () => this.leaderboardsRepository.getTopPerformers(tenantId, limit),
+        { ttl: 120, prefix: 'leaderboard' } // 2 minutes cache
+      );
 
       return topPerformers;
     } catch (error) {
@@ -282,9 +240,8 @@ export class LeaderboardsService {
       ];
 
       for (const pattern of patterns) {
-        // Note: In a real implementation, you'd use Redis SCAN to find and delete keys by pattern
-        // For now, we'll clear specific cache keys
-        await this.redisService.del(pattern);
+        await this.cacheService.delPattern(pattern, { prefix: 'leaderboard' });
+        await this.cacheService.delPattern(pattern, { prefix: 'user' });
       }
     } catch (error) {
       this.logger.error('Failed to clear leaderboard caches:', error);
