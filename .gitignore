@@ -1,0 +1,43 @@
+# Node / PNPM
+node_modules/
+.pnpm-store/
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+.next/
+out/
+coverage/
+.storybook-out/
+
+# Logs & OS
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+.DS_Store
+Thumbs.db
+
+# Env & secrets
+.env
+.env*.local
+*.pem
+*.key
+
+# Tooling
+.vercel/
+.netlify/
+.vscode/
+.idea/
+
+# Testing
+playwright-report/
+test-results/
+.jest-cache/
+.jest/
+
+# Prisma & DB
+prisma/migrations/.DS_Store
+*.db
+*.sqlite
