@@ -1,0 +1,227 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tenant model for multi-tenancy
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  domain    String   @unique
+  settings  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users        User[]
+  projects     Project[]
+  submissions  Submission[]
+  leaderboards Leaderboard[]
+  badges       Badge[]
+  userBadges   UserBadge[]
+
+  @@map("tenants")
+}
+
+// User model
+model User {
+  id          String    @id @default(uuid())
+  email       String    @unique
+  firstName   String
+  lastName    String
+  role        UserRole  @default(STUDENT)
+  status      UserStatus @default(ACTIVE)
+  tenantId    String
+  avatarUrl   String?
+  preferences Json      @default("{}")
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastLoginAt DateTime?
+
+  // Relations
+  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  submissions Submission[]
+  userBadges  UserBadge[]
+
+  @@map("users")
+}
+
+// Project model
+model Project {
+  id           String            @id @default(uuid())
+  name         String
+  description  String
+  category     ProjectCategory
+  difficulty   ProjectDifficulty
+  maxScore     Int               @default(100)
+  vulhubId     String
+  instructions String
+  requirements String[]
+  tags         String[]
+  isActive     Boolean           @default(true)
+  isPublic     Boolean           @default(true)
+  tenantId     String
+  metadata     Json?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  // Relations
+  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  submissions Submission[]
+
+  @@map("projects")
+}
+
+// Submission model
+model Submission {
+  id         String            @id @default(uuid())
+  userId     String
+  projectId  String
+  tenantId   String
+  status     SubmissionStatus  @default(PENDING)
+  score      Int?
+  evidence   Json              @default("{}")
+  feedback   Json?
+  metadata   Json?
+  submittedAt DateTime         @default(now())
+  reviewedAt DateTime?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("submissions")
+}
+
+// Leaderboard model
+model Leaderboard {
+  id               String   @id @default(uuid())
+  type             LeaderboardType
+  projectId        String?
+  category         String?
+  periodStart      DateTime?
+  periodEnd        DateTime?
+  entries          Json     @default("[]")
+  totalParticipants Int     @default(0)
+  tenantId         String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("leaderboards")
+}
+
+// Badge model
+model Badge {
+  id          String      @id @default(uuid())
+  name        String
+  description String
+  icon        String
+  type        BadgeType
+  rarity      BadgeRarity
+  criteria    Json?
+  points      Int         @default(0)
+  isActive    Boolean     @default(true)
+  tenantId    String
+  metadata    Json?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  tenant     Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userBadges UserBadge[]
+
+  @@map("badges")
+}
+
+// UserBadge junction model
+model UserBadge {
+  id        String   @id @default(uuid())
+  userId    String
+  badgeId   String
+  earnedAt  DateTime @default(now())
+  metadata  Json?
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+// Enums
+enum UserRole {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING
+}
+
+enum ProjectCategory {
+  WEB_APPLICATION
+  NETWORK_SECURITY
+  CRYPTOGRAPHY
+  REVERSE_ENGINEERING
+  FORENSICS
+  MALWARE_ANALYSIS
+  SOCIAL_ENGINEERING
+  INCIDENT_RESPONSE
+}
+
+enum ProjectDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  NEEDS_REVIEW
+}
+
+enum LeaderboardType {
+  OVERALL
+  PROJECT
+  CATEGORY
+  WEEKLY
+  MONTHLY
+}
+
+enum BadgeType {
+  ACHIEVEMENT
+  MILESTONE
+  SPECIAL
+  SEASONAL
+}
+
+enum BadgeRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+}

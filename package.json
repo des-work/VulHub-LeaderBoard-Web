@@ -1,0 +1,40 @@
+{
+  "name": "vulhub-leaderboard",
+  "version": "1.0.0",
+  "description": "A modular, secure, and gamified platform for cybersecurity students to practice, compete, and grow",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean",
+    "dev:stack": "docker-compose -f infra/docker-compose.dev.yml up -d",
+    "dev:stack:down": "docker-compose -f infra/docker-compose.dev.yml down",
+    "db:migrate": "cd apps/api && pnpm prisma migrate dev",
+    "db:generate": "cd apps/api && pnpm prisma generate",
+    "db:seed": "cd apps/api && pnpm prisma db seed",
+    "db:studio": "cd apps/api && pnpm prisma studio",
+    "storybook": "cd packages/ui && pnpm storybook",
+    "gen:module": "node scripts/generate-module.js",
+    "gen:feature": "node scripts/generate-feature.js"
+  },
+  "devDependencies": {
+    "@turbo/gen": "^1.10.12",
+    "turbo": "^1.10.12",
+    "typescript": "^5.2.2",
+    "@types/node": "^20.8.0",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.3"
+  },
+  "packageManager": "pnpm@8.10.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
