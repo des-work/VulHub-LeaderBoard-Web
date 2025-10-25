@@ -22,10 +22,11 @@ model Tenant {
   // Relations
   users        User[]
   projects     Project[]
-  submissions  Submission[]
-  badges       Badge[]
-  userBadges   UserBadge[]
-  leaderboards Leaderboard[]
+        submissions  Submission[]
+        badges       Badge[]
+        userBadges   UserBadge[]
+        leaderboards Leaderboard[]
+        events       EventStore[]
 
   @@map("tenants")
 }
@@ -150,6 +151,28 @@ model Leaderboard {
 
   @@unique([userId, tenantId])
   @@map("leaderboards")
+}
+
+model EventStore {
+  id           String   @id @default(cuid())
+  eventId      String   @unique
+  eventType    String
+  aggregateId  String
+  aggregateType String
+  eventData    Json
+  occurredOn   DateTime
+  version      Int
+  tenantId     String
+  createdAt    DateTime @default(now())
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([aggregateId])
+  @@index([eventType])
+  @@index([tenantId])
+  @@index([occurredOn])
+  @@map("event_store")
 }
 
 enum UserStatus {
