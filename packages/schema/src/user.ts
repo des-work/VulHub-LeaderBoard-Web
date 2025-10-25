@@ -48,3 +48,6 @@ export type CreateUserDto = z.infer<typeof CreateUserSchema>;
 export type UpdateUserDto = z.infer<typeof UpdateUserSchema>;
 export type UserResponse = z.infer<typeof UserResponseSchema>;
 export type UserStats = z.infer<typeof UserStatsSchema>;
+
+// DTO exports for API compatibility
+export type UserProfile = UserResponse;

@@ -56,7 +56,7 @@ export default function LeaderboardPage() {
   
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [stats, setStats] = useState<LeaderboardStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [timeRange, setTimeRange] = useState<TimeRange>('all');
   const [leaderboardType, setLeaderboardType] = useState<LeaderboardType>('overall');
   const [searchQuery, setSearchQuery] = useState('');
@@ -76,7 +76,7 @@ export default function LeaderboardPage() {
 
   const loadLeaderboard = async () => {
     try {
-      setIsLoading(true);
+      setIsLoadingData(true);
       
       // Simulate API call - replace with actual API call
       const mockLeaderboard: LeaderboardEntry[] = [
@@ -150,7 +150,7 @@ export default function LeaderboardPage() {
     } catch (error) {
       console.error('Failed to load leaderboard:', error);
     } finally {
-      setIsLoading(false);
+      setIsLoadingData(false);
     }
   };
 
@@ -174,7 +174,7 @@ export default function LeaderboardPage() {
     entry.lastName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (isLoading && !leaderboard.length) {
+  if (isLoadingData && !leaderboard.length) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -198,9 +198,9 @@ export default function LeaderboardPage() {
               onClick={loadLeaderboard}
               variant="outline"
               size="sm"
-              disabled={isLoading}
+              disabled={isLoadingData}
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingData ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
           </div>
@@ -301,7 +301,7 @@ export default function LeaderboardPage() {
                   <Input
                     placeholder="Search by name..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                     className="pl-10"
                   />
                 </div>

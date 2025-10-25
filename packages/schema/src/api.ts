@@ -70,3 +70,8 @@ export type RefreshTokenRequest = z.infer<typeof RefreshTokenSchema>;
 export type AuthResponse = z.infer<typeof AuthResponseSchema>;
 export type HealthCheck = z.infer<typeof HealthCheckSchema>;
 export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
+
+// DTO exports for API compatibility
+export type LoginDto = LoginCredentials;
+export type RegisterDto = RegisterCredentials;
+export type RefreshTokenDto = RefreshTokenRequest;

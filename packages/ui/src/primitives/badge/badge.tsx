@@ -7,45 +7,29 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'border-transparent bg-primary-600 text-white hover:bg-primary-700',
-        secondary: 'border-transparent bg-secondary-100 text-secondary-900 hover:bg-secondary-200',
-        destructive: 'border-transparent bg-error-600 text-white hover:bg-error-700',
-        success: 'border-transparent bg-success-600 text-white hover:bg-success-700',
-        warning: 'border-transparent bg-warning-600 text-white hover:bg-warning-700',
-        outline: 'text-foreground border-border',
-      },
-      size: {
-        default: 'px-2.5 py-0.5 text-xs',
-        sm: 'px-2 py-0.5 text-xs',
-        lg: 'px-3 py-1 text-sm',
+        default:
+          'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
+        secondary:
+          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        destructive:
+          'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
+        outline: 'text-foreground',
       },
     },
     defaultVariants: {
       variant: 'default',
-      size: 'default',
     },
   }
 );
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {
-  asChild?: boolean;
-}
+    VariantProps<typeof badgeVariants> {}
 
-const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? 'div' : 'div';
-    
-    return (
-      <Comp
-        ref={ref}
-        className={cn(badgeVariants({ variant, size, className }))}
-        {...props}
-      />
-    );
-  }
-);
-Badge.displayName = 'Badge';
+function Badge({ className, variant, ...props }: BadgeProps) {
+  return (
+    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+  );
+}
 
 export { Badge, badgeVariants };

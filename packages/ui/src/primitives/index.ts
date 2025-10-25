@@ -13,3 +13,9 @@ export {
   CardContent,
 } from './card/card';
 export type { CardProps } from './card/card';
+
+export { Badge, badgeVariants } from './badge/badge';
+export type { BadgeProps } from './badge/badge';
+
+export { Avatar } from './avatar/avatar';
+export type { AvatarProps } from './avatar/avatar';

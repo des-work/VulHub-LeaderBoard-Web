@@ -14,6 +14,7 @@ export default function RegisterPage() {
   const [formData, setFormData] = useState<RegisterCredentials>({
     email: '',
     password: '',
+    confirmPassword: '',
     firstName: '',
     lastName: '',
     tenantId: '',
@@ -57,7 +58,7 @@ export default function RegisterPage() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value,
