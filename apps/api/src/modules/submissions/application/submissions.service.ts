@@ -3,16 +3,21 @@ import { SubmissionsRepository } from '../infrastructure/submissions.repository'
 import { StorageService } from '../../../adapters/storage/storage.service';
 import { EmailService } from '../../../adapters/email/email.service';
 import { CreateSubmissionDto, UpdateSubmissionDto, SubmissionReviewDto } from '@vulhub/schema';
+import { BaseService } from '../../../common/services/base.service';
+import { ErrorHandlerService } from '../../../common/errors/error-handler.service';
+import { HandleErrors } from '../../../common/decorators/handle-errors.decorator';
+import { SubmissionNotFoundError, ValidationError, InvalidSubmissionStatusError } from '../../../common/errors/domain-error.base';
 
 @Injectable()
-export class SubmissionsService {
-  private readonly logger = new Logger(SubmissionsService.name);
-
+export class SubmissionsService extends BaseService {
   constructor(
     private submissionsRepository: SubmissionsRepository,
     private storageService: StorageService,
     private emailService: EmailService,
-  ) {}
+    errorHandler: ErrorHandlerService,
+  ) {
+    super(submissionsRepository, errorHandler);
+  }
 
   /**
    * Create a new submission
@@ -195,43 +200,70 @@ export class SubmissionsService {
   /**
    * Review submission (instructor/admin only)
    */
+  @HandleErrors('SubmissionsService.review')
   async review(id: string, reviewDto: SubmissionReviewDto, reviewerId: string, tenantId: string) {
-    try {
-      const submission = await this.submissionsRepository.findUnique({
-        where: { id, tenantId },
-        include: {
-          user: true,
-          project: true,
-        },
-      });
-
-      if (!submission) {
-        throw new NotFoundException('Submission not found');
+    this.validateInput({ id, reviewDto, reviewerId, tenantId }, (data) => {
+      if (!data.id || data.id.trim().length === 0) {
+        throw new ValidationError('id', 'Submission ID is required');
       }
-
-      if (submission.status !== 'PENDING') {
-        throw new BadRequestException('Submission is not pending review');
+      if (!data.reviewerId || data.reviewerId.trim().length === 0) {
+        throw new ValidationError('reviewerId', 'Reviewer ID is required');
       }
+      if (!data.reviewDto.status) {
+        throw new ValidationError('status', 'Review status is required');
+      }
+      if (data.reviewDto.score !== null && (data.reviewDto.score < 0 || data.reviewDto.score > 100)) {
+        throw new ValidationError('score', 'Score must be between 0 and 100');
+      }
+    });
 
-      const updatedSubmission = await this.submissionsRepository.update({
-        where: { id, tenantId },
-        data: {
+    return this.handleOperation(
+      async () => {
+        this.logOperationStart('review', { id, reviewerId, tenantId, status: reviewDto.status });
+        
+        const submission = await this.submissionsRepository.findUnique({
+          where: { id, tenantId },
+          include: {
+            user: true,
+            project: true,
+          },
+        });
+
+        if (!submission) {
+          throw new SubmissionNotFoundError(id);
+        }
+
+        if (submission.status !== 'PENDING') {
+          throw new InvalidSubmissionStatusError(submission.status, reviewDto.status);
+        }
+
+        const updatedSubmission = await this.submissionsRepository.update({
+          where: { id, tenantId },
+          data: {
+            status: reviewDto.status,
+            score: reviewDto.score,
+            feedback: reviewDto.feedback,
+            reviewedAt: new Date(),
+            reviewedBy: reviewerId,
+          },
+        });
+
+        // Simplified notification - just log for now
+        this.logger.log(`Submission ${id} reviewed as ${reviewDto.status}`);
+
+        this.logOperationSuccess('review', { 
+          id, 
+          reviewerId, 
+          tenantId, 
           status: reviewDto.status,
-          score: reviewDto.score,
-          feedback: reviewDto.feedback,
-          reviewedAt: new Date(),
-          reviewedBy: reviewerId,
-        },
-      });
-
-      // Simplified notification - just log for now
-      this.logger.log(`Submission ${id} reviewed as ${reviewDto.status}`);
-
-      return updatedSubmission;
-    } catch (error) {
-      this.logger.error(`Failed to review submission ${id}:`, error);
-      throw error;
-    }
+          score: reviewDto.score 
+        });
+        
+        return updatedSubmission;
+      },
+      'SubmissionsService.review',
+      { id, reviewerId, tenantId, status: reviewDto.status }
+    );
   }
 
   /**
