@@ -7,32 +7,45 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  UsePipes,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from '../application/auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { TenantGuard } from '../../../common/guards/tenant.guard';
+import { RateLimitGuard } from '../../../common/guards/rate-limit.guard';
+import { Tenant } from '../../../common/decorators/tenant.decorator';
+import { ValidationPipe } from '../../../common/pipes/validation.pipe';
+import { SanitizeInterceptor } from '../../../common/interceptors/sanitize.interceptor';
 import { LoginDto, RegisterDto, RefreshTokenDto } from '@vulhub/schema';
 
 @ApiTags('auth')
 @Controller('auth')
+@UseInterceptors(SanitizeInterceptor)
+@UsePipes(ValidationPipe)
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @UseGuards(TenantGuard, RateLimitGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'User login' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  @ApiResponse({ status: 429, description: 'Too many requests' })
+  async login(@Body() loginDto: LoginDto, @Tenant() tenantId: string) {
+    return this.authService.login(loginDto, tenantId);
   }
 
   @Post('register')
+  @UseGuards(RateLimitGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'User registration' })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 409, description: 'User already exists' })
+  @ApiResponse({ status: 429, description: 'Too many requests' })
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
@@ -64,6 +77,7 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Logged out successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async logout(@Request() req) {
-    return this.authService.logout(req.user.id);
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    return this.authService.logout(req.user.id, token);
   }
 }

@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../../adapters/database/prisma.service';
 import { UsersService } from '../../users/application/users.service';
+import { TokenBlacklistService } from '../../../common/services/token-blacklist.service';
 import { LoginDto, RegisterDto } from '@vulhub/schema';
 import * as bcrypt from 'bcryptjs';
 
@@ -15,18 +16,19 @@ export class AuthService {
     private jwtService: JwtService,
     private usersService: UsersService,
     private configService: ConfigService,
+    private tokenBlacklistService: TokenBlacklistService,
   ) {}
 
   /**
    * Validate user credentials
    */
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string, tenantId: string): Promise<any> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { 
           email_tenantId: {
             email,
-            tenantId: 'default' // TODO: Get from request context
+            tenantId
           }
         },
         include: { tenant: true },
@@ -62,9 +64,9 @@ export class AuthService {
   /**
    * Login user and generate tokens
    */
-  async login(loginDto: LoginDto) {
+  async login(loginDto: LoginDto, tenantId: string) {
     try {
-      const user = await this.validateUser(loginDto.email, loginDto.password);
+      const user = await this.validateUser(loginDto.email, loginDto.password, tenantId);
       
       const payload = {
         sub: user.id,
@@ -235,11 +237,19 @@ export class AuthService {
   /**
    * Logout user (invalidate tokens)
    */
-  async logout(userId: string) {
+  async logout(userId: string, token?: string) {
     try {
-      // In a real application, you would add the token to a blacklist
-      // For now, we'll just log the logout
-      this.logger.log(`User ${userId} logged out`);
+      if (token) {
+        // Blacklist the specific token
+        const expiresIn = this.tokenBlacklistService.getTokenExpiration(token);
+        await this.tokenBlacklistService.blacklistToken(token, userId, expiresIn);
+        this.logger.log(`Token blacklisted for user ${userId}`);
+      } else {
+        // Blacklist all tokens for the user (logout from all devices)
+        await this.tokenBlacklistService.blacklistAllUserTokens(userId);
+        this.logger.log(`All tokens blacklisted for user ${userId}`);
+      }
+      
       return { message: 'Logged out successfully' };
     } catch (error) {
       this.logger.error('Logout failed:', error);

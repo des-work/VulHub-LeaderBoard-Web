@@ -3,12 +3,14 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../../adapters/database/prisma.service';
+import { TokenBlacklistService } from '../../../common/services/token-blacklist.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private configService: ConfigService,
     private prisma: PrismaService,
+    private tokenBlacklistService: TokenBlacklistService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -17,8 +19,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
+  async validate(payload: any, request: any) {
     try {
+      // Check if token is blacklisted
+      const authHeader = request.headers.authorization;
+      if (authHeader) {
+        const token = this.tokenBlacklistService.extractTokenFromHeader(authHeader);
+        if (token && await this.tokenBlacklistService.isTokenBlacklisted(token)) {
+          throw new UnauthorizedException('Token has been revoked');
+        }
+      }
+
       const user = await this.prisma.user.findUnique({
         where: { id: payload.sub },
         include: { tenant: true },
