@@ -3,7 +3,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'STUDENT' | 'INSTRUCTOR | 'ADMIN';
+  role: 'STUDENT' | 'INSTRUCTOR' | 'ADMIN';
   tenantId: string;
   avatarUrl?: string;
   preferences?: Record<string, any>;

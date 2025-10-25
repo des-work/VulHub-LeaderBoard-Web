@@ -1,61 +1,79 @@
 import { z } from 'zod';
 
-// Base schemas
-export const IdSchema = z.string().uuid();
-export const EmailSchema = z.string().email();
-export const UrlSchema = z.string().url();
-export const TimestampSchema = z.date();
-
-// Pagination schemas
+// Common validation schemas
 export const PaginationSchema = z.object({
-  page: z.number().int().positive().default(1),
-  limit: z.number().int().positive().max(100).default(20),
-  cursor: z.string().optional()
+  page: z.number().int().min(1).default(1),
+  limit: z.number().int().min(1).max(100).default(20),
 });
 
-export const CursorPaginationSchema = z.object({
-  cursor: z.string().optional(),
-  limit: z.number().int().positive().max(100).default(20)
+export const SearchSchema = z.object({
+  query: z.string().optional(),
+  sortBy: z.string().optional(),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });
 
-// Response schemas
-export const SuccessResponseSchema = z.object({
-  success: z.literal(true),
-  data: z.any(),
-  meta: z.object({
-    timestamp: TimestampSchema,
-    requestId: z.string().uuid()
-  }).optional()
+export const DateRangeSchema = z.object({
+  startDate: z.string().datetime().optional(),
+  endDate: z.string().datetime().optional(),
 });
 
-export const ErrorResponseSchema = z.object({
-  success: z.literal(false),
-  error: z.object({
-    code: z.string(),
-    message: z.string(),
-    details: z.any().optional()
-  }),
-  meta: z.object({
-    timestamp: TimestampSchema,
-    requestId: z.string().uuid()
-  })
-});
+export const TimeRangeSchema = z.enum(['week', 'month', 'all']).default('all');
 
-// Tenant schema
-export const TenantSchema = z.object({
-  id: IdSchema,
-  name: z.string().min(1).max(100),
-  domain: z.string().min(1).max(100),
-  settings: z.record(z.any()).optional()
-});
+// Common response types
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
 
-// Types
-export type Id = z.infer<typeof IdSchema>;
-export type Email = z.infer<typeof EmailSchema>;
-export type Url = z.infer<typeof UrlSchema>;
-export type Timestamp = z.infer<typeof TimestampSchema>;
-export type Pagination = z.infer<typeof PaginationSchema>;
-export type CursorPagination = z.infer<typeof CursorPaginationSchema>;
-export type SuccessResponse<T = any> = z.infer<typeof SuccessResponseSchema> & { data: T };
-export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
-export type Tenant = z.infer<typeof TenantSchema>;
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  error?: string;
+}
+
+// Common enums
+export enum UserStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  SUSPENDED = 'SUSPENDED',
+}
+
+export enum UserRole {
+  STUDENT = 'STUDENT',
+  INSTRUCTOR = 'INSTRUCTOR',
+  ADMIN = 'ADMIN',
+}
+
+export enum SubmissionStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+export enum ProjectDifficulty {
+  BEGINNER = 'BEGINNER',
+  INTERMEDIATE = 'INTERMEDIATE',
+  ADVANCED = 'ADVANCED',
+  EXPERT = 'EXPERT',
+}
+
+export enum ProjectCategory {
+  WEB_APPLICATION = 'WEB_APPLICATION',
+  NETWORK = 'NETWORK',
+  CRYPTOGRAPHY = 'CRYPTOGRAPHY',
+  FORENSICS = 'FORENSICS',
+  REVERSE_ENGINEERING = 'REVERSE_ENGINEERING',
+  BINARY_EXPLOITATION = 'BINARY_EXPLOITATION',
+  MOBILE = 'MOBILE',
+  IOT = 'IOT',
+  CLOUD = 'CLOUD',
+  SOCIAL_ENGINEERING = 'SOCIAL_ENGINEERING',
+}

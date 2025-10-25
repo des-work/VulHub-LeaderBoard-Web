@@ -1,71 +1,63 @@
 import { z } from 'zod';
-import { IdSchema, TimestampSchema } from './common';
+import { SubmissionStatus } from './common';
 
-// Submission status enum
-export const SubmissionStatusSchema = z.enum(['PENDING', 'APPROVED', 'REJECTED', 'NEEDS_REVIEW']);
-
-// Submission schema
-export const SubmissionSchema = z.object({
-  id: IdSchema,
-  userId: IdSchema,
-  projectId: IdSchema,
-  tenantId: IdSchema,
-  status: SubmissionStatusSchema,
-  score: z.number().int().min(0).max(100).optional(),
-  evidence: z.object({
-    screenshots: z.array(z.string().url()).default([]),
-    notes: z.string().max(1000).optional(),
-    files: z.array(z.object({
-      url: z.string().url(),
-      name: z.string(),
-      size: z.number().int().positive(),
-      type: z.string()
-    })).default([])
-  }).default({}),
-  feedback: z.object({
-    instructorId: IdSchema.optional(),
-    comments: z.string().max(1000).optional(),
-    rubric: z.record(z.number().int().min(0).max(100)).optional()
-  }).optional(),
-  metadata: z.record(z.any()).optional(),
-  submittedAt: TimestampSchema,
-  reviewedAt: TimestampSchema.optional(),
-  createdAt: TimestampSchema,
-  updatedAt: TimestampSchema
+// Submission schemas
+export const CreateSubmissionSchema = z.object({
+  projectId: z.string().cuid(),
+  evidenceUrls: z.array(z.string().url()).default([]),
+  notes: z.string().max(1000).optional(),
 });
 
-// Submission creation schema
-export const CreateSubmissionSchema = SubmissionSchema.omit({
-  id: true,
-  status: true,
-  score: true,
-  feedback: true,
-  reviewedAt: true,
-  createdAt: true,
-  updatedAt: true
-});
-
-// Submission update schema
 export const UpdateSubmissionSchema = z.object({
-  status: SubmissionStatusSchema.optional(),
+  evidenceUrls: z.array(z.string().url()).optional(),
+  notes: z.string().max(1000).optional(),
+});
+
+export const SubmissionReviewSchema = z.object({
+  status: z.nativeEnum(SubmissionStatus),
   score: z.number().int().min(0).max(100).optional(),
-  evidence: SubmissionSchema.shape.evidence.optional(),
-  feedback: SubmissionSchema.shape.feedback.optional()
+  feedback: z.string().max(1000).optional(),
 });
 
-// Submission review schema
-export const ReviewSubmissionSchema = z.object({
-  status: SubmissionStatusSchema,
-  score: z.number().int().min(0).max(100),
-  feedback: z.object({
-    comments: z.string().max(1000).optional(),
-    rubric: z.record(z.number().int().min(0).max(100)).optional()
-  }).optional()
+export const SubmissionResponseSchema = z.object({
+  id: z.string().cuid(),
+  projectId: z.string().cuid(),
+  userId: z.string().cuid(),
+  tenantId: z.string().cuid(),
+  status: z.nativeEnum(SubmissionStatus),
+  score: z.number().int().nullable(),
+  feedback: z.string().nullable(),
+  evidenceUrls: z.array(z.string()),
+  submittedAt: z.string().datetime(),
+  reviewedAt: z.string().datetime().nullable(),
+  reviewedBy: z.string().cuid().nullable(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  user: z.object({
+    id: z.string().cuid(),
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string().email(),
+  }).optional(),
+  project: z.object({
+    id: z.string().cuid(),
+    name: z.string(),
+    category: z.string(),
+    difficulty: z.string(),
+  }).optional(),
 });
 
-// Types
-export type SubmissionStatus = z.infer<typeof SubmissionStatusSchema>;
-export type Submission = z.infer<typeof SubmissionSchema>;
-export type CreateSubmission = z.infer<typeof CreateSubmissionSchema>;
-export type UpdateSubmission = z.infer<typeof UpdateSubmissionSchema>;
-export type ReviewSubmission = z.infer<typeof ReviewSubmissionSchema>;
+export const SubmissionStatsSchema = z.object({
+  total: z.number().int().min(0),
+  pending: z.number().int().min(0),
+  approved: z.number().int().min(0),
+  rejected: z.number().int().min(0),
+  approvalRate: z.number().min(0).max(100),
+});
+
+// Type exports
+export type CreateSubmissionDto = z.infer<typeof CreateSubmissionSchema>;
+export type UpdateSubmissionDto = z.infer<typeof UpdateSubmissionSchema>;
+export type SubmissionReviewDto = z.infer<typeof SubmissionReviewSchema>;
+export type SubmissionResponse = z.infer<typeof SubmissionResponseSchema>;
+export type SubmissionStats = z.infer<typeof SubmissionStatsSchema>;

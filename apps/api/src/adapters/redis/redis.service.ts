@@ -21,7 +21,6 @@ export class RedisService implements OnModuleDestroy {
       password: config.password,
       db: config.db || 0,
       keyPrefix: config.keyPrefix || 'vulhub:',
-      retryDelayOnFailover: 100,
       maxRetriesPerRequest: 3,
       lazyConnect: true,
     });

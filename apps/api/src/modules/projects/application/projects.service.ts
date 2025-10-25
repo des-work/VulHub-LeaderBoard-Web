@@ -49,15 +49,10 @@ export class ProjectsService {
     try {
       const skip = (page - 1) * limit;
       
+      // Simplified search - just basic filtering
       const where = {
         tenantId,
-        ...(searchDto.query && {
-          OR: [
-            { name: { contains: searchDto.query, mode: 'insensitive' } },
-            { description: { contains: searchDto.query, mode: 'insensitive' } },
-            { tags: { has: searchDto.query } },
-          ],
-        }),
+        ...(searchDto.query && { name: { contains: searchDto.query } }),
         ...(searchDto.category && { category: searchDto.category }),
         ...(searchDto.difficulty && { difficulty: searchDto.difficulty }),
         ...(searchDto.isActive !== undefined && { isActive: searchDto.isActive }),

@@ -7,7 +7,7 @@ import { AuthController } from './infrastructure/auth.controller';
 import { AuthService } from './application/auth.service';
 import { JwtStrategy } from './infrastructure/jwt.strategy';
 import { LocalStrategy } from './infrastructure/local.strategy';
-import { OidcStrategy } from './infrastructure/oidc.strategy';
+// Simplified - using JWT only for now
 import { UsersModule } from '../users/users.module';
 
 @Module({
@@ -26,7 +26,7 @@ import { UsersModule } from '../users/users.module';
     UsersModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, LocalStrategy, OidcStrategy],
+  providers: [AuthService, JwtStrategy, LocalStrategy], // Simplified - removed OIDC
   exports: [AuthService],
 })
 export class AuthModule {}

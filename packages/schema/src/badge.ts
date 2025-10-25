@@ -1,66 +1,88 @@
 import { z } from 'zod';
-import { IdSchema, TimestampSchema } from './common';
+import { ProjectDifficulty, ProjectCategory } from './common';
 
-// Badge type enum
-export const BadgeTypeSchema = z.enum(['ACHIEVEMENT', 'MILESTONE', 'SPECIAL', 'SEASONAL']);
+// Badge schemas
+export const BadgeCriteriaSchema = z.object({
+  type: z.enum(['submission_count', 'score_threshold', 'project_completion', 'streak', 'category_mastery']),
+  value: z.number().int().min(1),
+  projectId: z.string().cuid().optional(),
+  category: z.nativeEnum(ProjectCategory).optional(),
+  timeRange: z.enum(['week', 'month', 'all']).optional(),
+});
 
-// Badge rarity enum
-export const BadgeRaritySchema = z.enum(['COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY']);
-
-// Badge schema
-export const BadgeSchema = z.object({
-  id: IdSchema,
+export const CreateBadgeSchema = z.object({
   name: z.string().min(1).max(100),
-  description: z.string().min(1).max(500),
-  icon: z.string().url(),
-  type: BadgeTypeSchema,
-  rarity: BadgeRaritySchema,
-  criteria: z.object({
-    submissions: z.number().int().min(0).optional(),
-    score: z.number().int().min(0).max(100).optional(),
-    streak: z.number().int().min(0).optional(),
-    projects: z.array(IdSchema).optional(),
-    categories: z.array(z.string()).optional()
-  }).optional(),
-  points: z.number().int().min(0).default(0),
+  description: z.string().max(500).optional(),
+  icon: z.string().optional(),
+  category: z.nativeEnum(ProjectCategory).optional(),
+  difficulty: z.nativeEnum(ProjectDifficulty).optional(),
+  criteria: BadgeCriteriaSchema,
   isActive: z.boolean().default(true),
-  tenantId: IdSchema,
-  metadata: z.record(z.any()).optional(),
-  createdAt: TimestampSchema,
-  updatedAt: TimestampSchema
 });
 
-// Badge creation schema
-export const CreateBadgeSchema = BadgeSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true
+export const UpdateBadgeSchema = z.object({
+  name: z.string().min(1).max(100).optional(),
+  description: z.string().max(500).optional(),
+  icon: z.string().optional(),
+  category: z.nativeEnum(ProjectCategory).optional(),
+  difficulty: z.nativeEnum(ProjectDifficulty).optional(),
+  criteria: BadgeCriteriaSchema.optional(),
+  isActive: z.boolean().optional(),
 });
 
-// Badge update schema
-export const UpdateBadgeSchema = CreateBadgeSchema.partial();
-
-// User badge schema
-export const UserBadgeSchema = z.object({
-  id: IdSchema,
-  userId: IdSchema,
-  badgeId: IdSchema,
-  earnedAt: TimestampSchema,
-  metadata: z.record(z.any()).optional()
-});
-
-// Badge assignment schema
 export const AssignBadgeSchema = z.object({
-  userId: IdSchema,
-  badgeId: IdSchema,
-  metadata: z.record(z.any()).optional()
+  userId: z.string().cuid(),
+  badgeId: z.string().cuid(),
 });
 
-// Types
-export type BadgeType = z.infer<typeof BadgeTypeSchema>;
-export type BadgeRarity = z.infer<typeof BadgeRaritySchema>;
-export type Badge = z.infer<typeof BadgeSchema>;
-export type CreateBadge = z.infer<typeof CreateBadgeSchema>;
-export type UpdateBadge = z.infer<typeof UpdateBadgeSchema>;
-export type UserBadge = z.infer<typeof UserBadgeSchema>;
-export type AssignBadge = z.infer<typeof AssignBadgeSchema>;
+export const BadgeResponseSchema = z.object({
+  id: z.string().cuid(),
+  name: z.string(),
+  description: z.string().nullable(),
+  icon: z.string().nullable(),
+  category: z.nativeEnum(ProjectCategory).nullable(),
+  difficulty: z.nativeEnum(ProjectDifficulty).nullable(),
+  criteria: z.record(z.any()),
+  isActive: z.boolean(),
+  tenantId: z.string().cuid(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  _count: z.object({
+    userBadges: z.number().int(),
+  }).optional(),
+});
+
+export const UserBadgeResponseSchema = z.object({
+  id: z.string().cuid(),
+  userId: z.string().cuid(),
+  badgeId: z.string().cuid(),
+  tenantId: z.string().cuid(),
+  earnedAt: z.string().datetime(),
+  badge: BadgeResponseSchema,
+});
+
+export const BadgeProgressSchema = z.object({
+  badgeId: z.string().cuid(),
+  userId: z.string().cuid(),
+  currentValue: z.number().int().min(0),
+  targetValue: z.number().int().min(1),
+  progress: z.number().min(0).max(100),
+  isEarned: z.boolean(),
+});
+
+export const BadgeStatsSchema = z.object({
+  totalBadges: z.number().int().min(0),
+  totalAwards: z.number().int().min(0),
+  averageAwardsPerBadge: z.number().min(0),
+  mostEarnedBadge: BadgeResponseSchema.nullable(),
+});
+
+// Type exports
+export type BadgeCriteria = z.infer<typeof BadgeCriteriaSchema>;
+export type CreateBadgeDto = z.infer<typeof CreateBadgeSchema>;
+export type UpdateBadgeDto = z.infer<typeof UpdateBadgeSchema>;
+export type AssignBadgeDto = z.infer<typeof AssignBadgeSchema>;
+export type BadgeResponse = z.infer<typeof BadgeResponseSchema>;
+export type UserBadgeResponse = z.infer<typeof UserBadgeResponseSchema>;
+export type BadgeProgress = z.infer<typeof BadgeProgressSchema>;
+export type BadgeStats = z.infer<typeof BadgeStatsSchema>;

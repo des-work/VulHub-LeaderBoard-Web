@@ -221,9 +221,9 @@ export class BadgesService {
       }
 
       const userBadge = await this.badgesRepository.assignBadge({
-        userId: assignBadgeDto.userId,
-        badgeId: assignBadgeDto.badgeId,
-        tenantId,
+        user: { connect: { id: assignBadgeDto.userId } },
+        badge: { connect: { id: assignBadgeDto.badgeId } },
+        tenant: { connect: { id: tenantId } },
         earnedAt: new Date(),
       });
 
@@ -263,7 +263,7 @@ export class BadgesService {
           tenantId,
         );
 
-        if (progress.isEarned && !progress.isAssigned) {
+        if (progress.isEarned) {
           await this.assignBadge(
             { userId, badgeId: badge.id },
             tenantId,

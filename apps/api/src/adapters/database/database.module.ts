@@ -10,12 +10,11 @@ import { TenantService } from './tenant.service';
     TenantService,
     {
       provide: 'DATABASE_CONNECTION',
-      useFactory: async (configService: ConfigService) => {
+      useFactory: async () => {
         const prismaService = new PrismaService();
         await prismaService.$connect();
         return prismaService;
       },
-      inject: [ConfigService],
     },
   ],
   exports: [PrismaService, TenantService, 'DATABASE_CONNECTION'],

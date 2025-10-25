@@ -1,76 +1,72 @@
 import { z } from 'zod';
-import { PaginationSchema, CursorPaginationSchema, SuccessResponseSchema, ErrorResponseSchema } from './common';
 
-// API version schema
-export const ApiVersionSchema = z.enum(['v1']);
+// Authentication schemas
+export const LoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+});
 
-// Health check schema
+export const RegisterSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8).max(100),
+  firstName: z.string().min(1).max(50),
+  lastName: z.string().min(1).max(50),
+  tenantId: z.string().cuid(),
+});
+
+export const RefreshTokenSchema = z.object({
+  refreshToken: z.string().min(1),
+});
+
+export const AuthResponseSchema = z.object({
+  accessToken: z.string(),
+  refreshToken: z.string(),
+  user: z.object({
+    id: z.string().cuid(),
+    email: z.string().email(),
+    firstName: z.string(),
+    lastName: z.string(),
+    avatarUrl: z.string().url().nullable(),
+    role: z.string(),
+    tenantId: z.string().cuid(),
+  }),
+});
+
+// Health check schemas
 export const HealthCheckSchema = z.object({
-  status: z.enum(['healthy', 'degraded', 'unhealthy']),
-  timestamp: z.date(),
-  services: z.record(z.object({
-    status: z.enum(['up', 'down']),
-    responseTime: z.number().optional(),
-    lastCheck: z.date().optional()
-  })),
+  status: z.enum(['ok', 'error']),
+  timestamp: z.string().datetime(),
+  uptime: z.number().min(0),
+  environment: z.string(),
   version: z.string(),
-  environment: z.string()
+  services: z.object({
+    database: z.object({
+      status: z.enum(['up', 'down']),
+      responseTime: z.number().min(0),
+    }),
+    redis: z.object({
+      status: z.enum(['up', 'down']),
+      responseTime: z.number().min(0),
+    }),
+  }),
 });
 
-// Paginated response schema
-export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
-  z.object({
-    data: z.array(dataSchema),
-    pagination: z.object({
-      page: z.number().int().positive(),
-      limit: z.number().int().positive(),
-      total: z.number().int().min(0),
-      totalPages: z.number().int().min(0),
-      hasNext: z.boolean(),
-      hasPrev: z.boolean()
-    })
-  });
-
-// Cursor paginated response schema
-export const CursorPaginatedResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) =>
-  z.object({
-    data: z.array(dataSchema),
-    pagination: z.object({
-      cursor: z.string().optional(),
-      limit: z.number().int().positive(),
-      hasNext: z.boolean()
-    })
-  });
-
-// Search query schema
-export const SearchQuerySchema = z.object({
-  q: z.string().min(1).max(100),
-  filters: z.record(z.any()).optional(),
-  sort: z.string().optional(),
-  order: z.enum(['asc', 'desc']).default('desc')
+// Error response schemas
+export const ErrorResponseSchema = z.object({
+  success: z.literal(false),
+  statusCode: z.number().int().min(100).max(599),
+  timestamp: z.string().datetime(),
+  path: z.string(),
+  method: z.string(),
+  error: z.string(),
+  message: z.union([z.string(), z.array(z.string())]),
+  stack: z.string().optional(),
 });
 
-// File upload schema
-export const FileUploadSchema = z.object({
-  file: z.instanceof(File),
-  type: z.enum(['image', 'document', 'video']),
-  maxSize: z.number().int().positive().optional(),
-  allowedTypes: z.array(z.string()).optional()
-});
-
-// WebSocket message schema
-export const WebSocketMessageSchema = z.object({
-  type: z.string(),
-  payload: z.any(),
-  timestamp: z.date(),
-  id: z.string().uuid()
-});
-
-// Types
-export type ApiVersion = z.infer<typeof ApiVersionSchema>;
+// Type exports
+export type LoginCredentials = z.infer<typeof LoginSchema>;
+export type RegisterCredentials = z.infer<typeof RegisterSchema>;
+export type RefreshTokenRequest = z.infer<typeof RefreshTokenSchema>;
+export type AuthResponse = z.infer<typeof AuthResponseSchema>;
 export type HealthCheck = z.infer<typeof HealthCheckSchema>;
-export type PaginatedResponse<T> = z.infer<ReturnType<typeof PaginatedResponseSchema<T>>>;
-export type CursorPaginatedResponse<T> = z.infer<ReturnType<typeof CursorPaginatedResponseSchema<T>>>;
-export type SearchQuery = z.infer<typeof SearchQuerySchema>;
-export type FileUpload = z.infer<typeof FileUploadSchema>;
-export type WebSocketMessage = z.infer<typeof WebSocketMessageSchema>;
+export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;

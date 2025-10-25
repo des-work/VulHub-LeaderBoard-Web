@@ -1,4 +1,4 @@
-import { format, formatDistance, formatRelative, isAfter, isBefore, parseISO } from 'date-fns';
+import { format, formatDistance, formatRelative as formatRelativeFn, isAfter, isBefore, parseISO } from 'date-fns';
 
 /**
  * Format a date to a readable string
@@ -21,7 +21,7 @@ export function formatRelativeTime(date: Date | string): string {
  */
 export function formatRelative(date: Date | string): string {
   const dateObj = typeof date === 'string' ? parseISO(date) : date;
-  return formatRelative(dateObj, new Date());
+  return formatRelativeFn(dateObj, new Date());
 }
 
 /**

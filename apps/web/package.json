@@ -35,8 +35,6 @@
     "typescript": "^5.0.0",
     "eslint": "^8.0.0",
     "eslint-config-next": "^14.0.0",
-    "@vulhub/config/eslint": "workspace:*",
-    "@vulhub/config/typescript": "workspace:*",
-    "@vulhub/config/tailwind": "workspace:*"
+    "@vulhub/config": "workspace:*"
   }
 }

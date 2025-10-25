@@ -30,7 +30,7 @@ export class LeaderboardsRepository {
         MAX(s."createdAt") as "lastSubmissionAt"
       FROM "User" u
       LEFT JOIN "Submission" s ON u.id = s."userId" AND s."tenantId" = ${tenantId}
-        ${dateFilter ? Prisma.sql`AND s."createdAt" >= ${dateFilter}` : Prisma.empty}
+        ${dateFilter ? `AND s."createdAt" >= '${dateFilter.toISOString()}'` : ''}
       LEFT JOIN "Badge" b ON u.id = b."userId" AND b."tenantId" = ${tenantId}
       WHERE u."tenantId" = ${tenantId} AND u.status = 'ACTIVE'
       GROUP BY u.id, u."firstName", u."lastName", u.email, u."avatarUrl"

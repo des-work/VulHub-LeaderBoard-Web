@@ -8,42 +8,28 @@ const cardVariants = cva(
     variants: {
       variant: {
         default: 'border-border',
-        outlined: 'border-2 border-border',
-        elevated: 'shadow-md border-border',
-        flat: 'border-0 shadow-none',
-      },
-      padding: {
-        none: 'p-0',
-        sm: 'p-4',
-        default: 'p-6',
-        lg: 'p-8',
+        elevated: 'shadow-md',
+        outlined: 'border-2',
       },
     },
     defaultVariants: {
       variant: 'default',
-      padding: 'default',
     },
   }
 );
 
 export interface CardProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof cardVariants> {
-  asChild?: boolean;
-}
+    VariantProps<typeof cardVariants> {}
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant, padding, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? 'div' : 'div';
-    
-    return (
-      <Comp
-        ref={ref}
-        className={cn(cardVariants({ variant, padding, className }))}
-        {...props}
-      />
-    );
-  }
+  ({ className, variant, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(cardVariants({ variant }), className)}
+      {...props}
+    />
+  )
 );
 Card.displayName = 'Card';
 
@@ -106,12 +92,4 @@ const CardFooter = React.forwardRef<
 ));
 CardFooter.displayName = 'CardFooter';
 
-export {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  cardVariants,
-};
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };

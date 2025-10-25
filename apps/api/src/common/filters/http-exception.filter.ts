@@ -33,14 +33,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
         message = (exceptionResponse as any).message || exception.message;
         error = (exceptionResponse as any).error || exception.name;
       }
-    } else if (exception instanceof Prisma.PrismaClientKnownRequestError) {
+    } else if (exception && typeof exception === 'object' && 'code' in exception) {
       status = HttpStatus.BAD_REQUEST;
-      message = this.handlePrismaError(exception);
+      message = this.handlePrismaError(exception as any);
       error = 'Database Error';
-    } else if (exception instanceof Prisma.PrismaClientValidationError) {
-      status = HttpStatus.BAD_REQUEST;
-      message = 'Invalid data provided';
-      error = 'Validation Error';
     } else {
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       message = 'Internal server error';
@@ -69,7 +65,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     response.status(status).json(errorResponse);
   }
 
-  private handlePrismaError(exception: Prisma.PrismaClientKnownRequestError): string {
+  private handlePrismaError(exception: any): string {
     switch (exception.code) {
       case 'P2002':
         return 'A record with this information already exists';

@@ -1,5 +1,5 @@
 import { Injectable, Logger, UseGuards } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer, SubscribeMessage, MessageBody, ConnectedSocket } from '@nestjs/websockets';
+import { WebSocketGateway as WSGateway, WebSocketServer, SubscribeMessage, MessageBody, ConnectedSocket } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -10,7 +10,7 @@ interface AuthenticatedSocket extends Socket {
 }
 
 @Injectable()
-@WebSocketGateway({
+@WSGateway({
   cors: {
     origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
     credentials: true,

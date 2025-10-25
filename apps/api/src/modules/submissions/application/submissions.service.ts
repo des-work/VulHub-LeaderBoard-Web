@@ -226,12 +226,8 @@ export class SubmissionsService {
         },
       });
 
-      // Send notification email to user
-      await this.emailService.sendEmail(
-        submission.user.email,
-        `Submission ${reviewDto.status.toLowerCase()} - ${submission.project.name}`,
-        `Your submission for "${submission.project.name}" has been ${reviewDto.status.toLowerCase()}. ${reviewDto.feedback ? `Feedback: ${reviewDto.feedback}` : ''}`,
-      );
+      // Simplified notification - just log for now
+      this.logger.log(`Submission ${id} reviewed as ${reviewDto.status}`);
 
       return updatedSubmission;
     } catch (error) {

@@ -1,64 +1,86 @@
 import { z } from 'zod';
-import { IdSchema, TimestampSchema } from './common';
+import { TimeRangeSchema } from './common';
 
-// Leaderboard type enum
-export const LeaderboardTypeSchema = z.enum(['OVERALL', 'PROJECT', 'CATEGORY', 'WEEKLY', 'MONTHLY']);
-
-// Leaderboard entry schema
+// Leaderboard schemas
 export const LeaderboardEntrySchema = z.object({
-  rank: z.number().int().positive(),
-  userId: IdSchema,
+  userId: z.string().cuid(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string().email(),
+  avatarUrl: z.string().url().nullable(),
+  totalScore: z.number().min(0),
+  totalSubmissions: z.number().int().min(0),
+  approvedSubmissions: z.number().int().min(0),
+  averageScore: z.number().min(0),
+  rank: z.number().int().min(1),
+  badges: z.number().int().min(0),
+  lastSubmissionAt: z.string().datetime().nullable(),
+});
+
+export const LeaderboardStatsSchema = z.object({
+  totalUsers: z.number().int().min(0),
+  totalSubmissions: z.number().int().min(0),
+  averageScore: z.number().min(0),
+  topScore: z.number().min(0),
+  lastUpdated: z.string().datetime(),
+});
+
+export const LeaderboardResponseSchema = z.object({
+  data: z.array(LeaderboardEntrySchema),
+  pagination: z.object({
+    page: z.number().int().min(1),
+    limit: z.number().int().min(1),
+    total: z.number().int().min(0),
+    totalPages: z.number().int().min(0),
+    hasNext: z.boolean(),
+    hasPrev: z.boolean(),
+  }),
+});
+
+export const UserRankSchema = z.object({
+  totalScore: z.number().min(0),
+  totalSubmissions: z.number().int().min(0),
+  approvedSubmissions: z.number().int().min(0),
+  averageScore: z.number().min(0),
+  rank: z.number().int().min(1),
+});
+
+export const TopPerformerSchema = z.object({
+  userId: z.string().cuid(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string().email(),
+  avatarUrl: z.string().url().nullable(),
+  totalScore: z.number().min(0),
+  totalSubmissions: z.number().int().min(0),
+  approvedSubmissions: z.number().int().min(0),
+  rank: z.number().int().min(1),
+});
+
+export const RecentActivitySchema = z.object({
+  id: z.string().cuid(),
+  userId: z.string().cuid(),
+  projectId: z.string().cuid(),
   score: z.number().int().min(0),
-  submissions: z.number().int().min(0),
-  averageScore: z.number().min(0).max(100),
-  badges: z.array(IdSchema).default([]),
-  streak: z.number().int().min(0).default(0),
-  lastSubmissionAt: TimestampSchema.optional(),
-  metadata: z.record(z.any()).optional()
+  reviewedAt: z.string().datetime(),
+  user: z.object({
+    id: z.string().cuid(),
+    firstName: z.string(),
+    lastName: z.string(),
+    avatarUrl: z.string().url().nullable(),
+  }),
+  project: z.object({
+    id: z.string().cuid(),
+    name: z.string(),
+    category: z.string(),
+    difficulty: z.string(),
+  }),
 });
 
-// Leaderboard schema
-export const LeaderboardSchema = z.object({
-  id: IdSchema,
-  type: LeaderboardTypeSchema,
-  projectId: IdSchema.optional(),
-  category: z.string().optional(),
-  period: z.object({
-    start: TimestampSchema,
-    end: TimestampSchema
-  }).optional(),
-  entries: z.array(LeaderboardEntrySchema),
-  totalParticipants: z.number().int().min(0),
-  tenantId: IdSchema,
-  createdAt: TimestampSchema,
-  updatedAt: TimestampSchema
-});
-
-// Leaderboard creation schema
-export const CreateLeaderboardSchema = LeaderboardSchema.omit({
-  id: true,
-  entries: true,
-  totalParticipants: true,
-  createdAt: true,
-  updatedAt: true
-});
-
-// Leaderboard query schema
-export const LeaderboardQuerySchema = z.object({
-  type: LeaderboardTypeSchema,
-  projectId: IdSchema.optional(),
-  category: z.string().optional(),
-  period: z.object({
-    start: TimestampSchema,
-    end: TimestampSchema
-  }).optional(),
-  limit: z.number().int().positive().max(100).default(20),
-  offset: z.number().int().min(0).default(0)
-});
-
-// Types
-export type LeaderboardType = z.infer<typeof LeaderboardTypeSchema>;
+// Type exports
 export type LeaderboardEntry = z.infer<typeof LeaderboardEntrySchema>;
-export type Leaderboard = z.infer<typeof LeaderboardSchema>;
-export type CreateLeaderboard = z.infer<typeof CreateLeaderboardSchema>;
-export type LeaderboardQuery = z.infer<typeof LeaderboardQuerySchema>;
+export type LeaderboardStats = z.infer<typeof LeaderboardStatsSchema>;
+export type LeaderboardResponse = z.infer<typeof LeaderboardResponseSchema>;
+export type UserRank = z.infer<typeof UserRankSchema>;
+export type TopPerformer = z.infer<typeof TopPerformerSchema>;
+export type RecentActivity = z.infer<typeof RecentActivitySchema>;

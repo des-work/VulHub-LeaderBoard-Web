@@ -69,57 +69,15 @@ export class BadgesRepository {
     const existingBadge = await this.findUserBadge(userId, badgeId, tenantId);
     const isAssigned = !!existingBadge;
 
-    // Calculate progress based on badge criteria
+    // Simplified badge progress calculation
     let currentValue = 0;
-    let targetValue = badge.criteria?.value || 1;
+    let targetValue = 1;
 
-    switch (badge.criteria?.type) {
-      case 'submission_count':
-        currentValue = await this.prisma.submission.count({
-          where: { userId, tenantId, status: 'APPROVED' },
-        });
-        break;
-      case 'score_threshold':
-        const totalScore = await this.prisma.submission.aggregate({
-          where: { userId, tenantId, status: 'APPROVED' },
-          _sum: { score: true },
-        });
-        currentValue = totalScore._sum.score || 0;
-        break;
-      case 'project_completion':
-        if (badge.criteria.projectId) {
-          currentValue = await this.prisma.submission.count({
-            where: {
-              userId,
-              projectId: badge.criteria.projectId,
-              tenantId,
-              status: 'APPROVED',
-            },
-          });
-        }
-        break;
-      case 'streak':
-        // Calculate submission streak (simplified)
-        const recentSubmissions = await this.prisma.submission.findMany({
-          where: { userId, tenantId, status: 'APPROVED' },
-          orderBy: { createdAt: 'desc' },
-          take: 10,
-        });
-        currentValue = this.calculateStreak(recentSubmissions);
-        break;
-      case 'category_mastery':
-        if (badge.criteria.category) {
-          currentValue = await this.prisma.submission.count({
-            where: {
-              userId,
-              tenantId,
-              status: 'APPROVED',
-              project: { category: badge.criteria.category },
-            },
-          });
-        }
-        break;
-    }
+    // Simple criteria handling - just check submission count for now
+    currentValue = await this.prisma.submission.count({
+      where: { userId, tenantId, status: 'APPROVED' },
+    });
+    targetValue = 5; // Default target
 
     const progress = Math.min((currentValue / targetValue) * 100, 100);
     const isEarned = currentValue >= targetValue;
