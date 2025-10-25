@@ -27,6 +27,7 @@ model Tenant {
         userBadges   UserBadge[]
         leaderboards Leaderboard[]
         events       EventStore[]
+        auditLogs    AuditLog[]
 
   @@map("tenants")
 }
@@ -48,9 +49,10 @@ model User {
 
   // Relations
   tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  submissions Submission[]
-  userBadges  UserBadge[]
-  leaderboards Leaderboard[]
+        submissions Submission[]
+        userBadges  UserBadge[]
+        leaderboards Leaderboard[]
+        auditLogs   AuditLog[]
 
   @@unique([email, tenantId])
   @@map("users")
@@ -173,6 +175,33 @@ model EventStore {
   @@index([tenantId])
   @@index([occurredOn])
   @@map("event_store")
+}
+
+model AuditLog {
+  id           String    @id @default(cuid())
+  userId       String?
+  tenantId     String
+  action       String
+  resource     String
+  resourceId   String?
+  details      Json?
+  ipAddress    String?
+  userAgent    String?
+  timestamp    DateTime  @default(now())
+  success      Boolean   @default(true)
+  errorMessage String?
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([tenantId])
+  @@index([action])
+  @@index([resource])
+  @@index([timestamp])
+  @@index([success])
+  @@map("audit_logs")
 }
 
 enum UserStatus {
