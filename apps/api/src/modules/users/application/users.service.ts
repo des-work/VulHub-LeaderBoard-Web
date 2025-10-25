@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../adapters/database/prisma.service';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { CreateUserDto, UpdateUserDto, UserProfile } from '@vulhub/schema';
