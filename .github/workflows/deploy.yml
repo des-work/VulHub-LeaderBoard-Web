@@ -1,0 +1,74 @@
+name: Deploy to Heroku (Buildpacks)
+on:
+  push:
+    branches: [ "main" ]   # change if your default branch is different
+  workflow_dispatch:       # lets you run it manually, too
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Setup Node.js for build process
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      # Set Heroku config vars (environment variables)
+      - name: Set Heroku config vars
+        run: |
+          echo -e "machine api.heroku.com\n  login $HEROKU_EMAIL\n  password $HEROKU_API_KEY\nmachine git.heroku.com\n  login $HEROKU_EMAIL\n  password $HEROKU_API_KEY" > ~/.netrc
+          chmod 600 ~/.netrc
+          curl https://cli-assets.heroku.com/install.sh | sh
+          heroku config:set JWT_SECRET="$(openssl rand -base64 32)" -a $HEROKU_APP_NAME
+          heroku config:set REFRESH_TOKEN_SECRET="$(openssl rand -base64 32)" -a $HEROKU_APP_NAME
+          heroku config:set NODE_ENV="production" -a $HEROKU_APP_NAME
+          heroku config:set CORS_ORIGIN="https://$HEROKU_APP_NAME.herokuapp.com" -a $HEROKU_APP_NAME
+          heroku config:set API_PORT="3001" -a $HEROKU_APP_NAME
+        env:
+          HEROKU_API_KEY:  ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+          HEROKU_EMAIL:    ${{ secrets.HEROKU_EMAIL }}
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v4.1.9
+        with:
+          heroku_api_key:  ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email:    ${{ secrets.HEROKU_EMAIL }}
+          # If your repo default branch is "master", set:
+          # branch: master
+          # If you have a Procfile in a subdirectory, set:
+          # appdir: path/to/subdir
+
+      # Run database migrations after deployment
+      - name: Run database migrations
+        run: |
+          echo -e "machine api.heroku.com\n  login $HEROKU_EMAIL\n  password $HEROKU_API_KEY\nmachine git.heroku.com\n  login $HEROKU_EMAIL\n  password $HEROKU_API_KEY" > ~/.netrc
+          chmod 600 ~/.netrc
+          curl https://cli-assets.heroku.com/install.sh | sh
+          heroku run "pnpm --filter @vulhub/api prisma migrate deploy" -a $HEROKU_APP_NAME
+        env:
+          HEROKU_API_KEY:  ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+          HEROKU_EMAIL:    ${{ secrets.HEROKU_EMAIL }}
+
+      # Show Heroku logs for debugging
+      - name: Show Heroku logs
+        if: always()
+        run: |
+          echo -e "machine api.heroku.com\n  login $HEROKU_EMAIL\n  password $HEROKU_API_KEY\nmachine git.heroku.com\n  login $HEROKU_EMAIL\n  password $HEROKU_API_KEY" > ~/.netrc
+          chmod 600 ~/.netrc
+          curl https://cli-assets.heroku.com/install.sh | sh
+          heroku logs -n 200 -a $HEROKU_APP_NAME
+        env:
+          HEROKU_API_KEY:  ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+          HEROKU_EMAIL:    ${{ secrets.HEROKU_EMAIL }}

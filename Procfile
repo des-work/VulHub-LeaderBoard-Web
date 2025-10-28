@@ -1,2 +1,1 @@
-# Simplified Heroku configuration
-web: cd apps/api && npm run start:prod
+web: pnpm --filter @vulhub/web start

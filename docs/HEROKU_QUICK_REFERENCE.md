@@ -1,114 +1,93 @@
-# ⚡ **Heroku Quick Reference - VulHub Leaderboard**
+# ⚡ **GitHub Actions Heroku Quick Reference - VulHub Leaderboard**
 
 **Date**: January 27, 2025  
-**Status**: ✅ **PRODUCTION READY** - Essential Heroku commands  
+**Status**: ✅ **PRODUCTION READY** - Essential GitHub Actions deployment commands  
 **Priority**: **HIGH** - Quick deployment reference
 
 ---
 
-## 🚀 **Essential Commands**
+## 🚀 **Essential Setup Steps**
 
-### **1. Initial Setup**
-```bash
-# Create Heroku app
-heroku create vulhub-leaderboard-web
+### **1. Get Information from Professor**
+- **Heroku App Name**: `vulhub-leaderboard-web`
+- **Heroku API Key**: Secret key for deployment
+- **Professor's Heroku Email**: Their Heroku account email
 
-# Add database and Redis
-heroku addons:create heroku-postgresql:mini -a vulhub-leaderboard-web
-heroku addons:create heroku-redis:mini -a vulhub-leaderboard-web
-```
+### **2. Add GitHub Secrets**
+Go to GitHub → Settings → Secrets and variables → Actions → New repository secret
 
-### **2. Environment Variables**
-```bash
-# Essential environment variables
-heroku config:set JWT_SECRET="$(openssl rand -base64 32)" -a vulhub-leaderboard-web
-heroku config:set REFRESH_TOKEN_SECRET="$(openssl rand -base64 32)" -a vulhub-leaderboard-web
-heroku config:set NODE_ENV="production" -a vulhub-leaderboard-web
-heroku config:set CORS_ORIGIN="https://vulhub-leaderboard-web.herokuapp.com" -a vulhub-leaderboard-web
-```
+| Secret Name | Value |
+|-------------|-------|
+| `HEROKU_API_KEY` | `your-professor-api-key` |
+| `HEROKU_APP_NAME` | `vulhub-leaderboard-web` |
+| `HEROKU_EMAIL` | `professor@email.com` |
 
 ### **3. Deploy**
 ```bash
-# Deploy to Heroku
-git push heroku main
-
-# Run database migrations
-heroku run "pnpm --filter @vulhub/api prisma migrate deploy" -a vulhub-leaderboard-web
+# Commit and push to trigger deployment
+git add .
+git commit -m "Deploy to Heroku"
+git push origin main
 ```
 
-### **4. Verify Deployment**
+### **4. Monitor Deployment**
+- Go to GitHub → Actions tab
+- Watch "Deploy to Heroku (Buildpacks)" workflow
+- Wait for completion
+
+---
+
+## 🔍 **Verification Commands**
+
+### **Check Deployment Status**
 ```bash
-# Check app status
-heroku ps -a vulhub-leaderboard-web
+# Check if app is running
+curl https://vulhub-leaderboard-web.herokuapp.com
 
-# View logs
-heroku logs --tail -a vulhub-leaderboard-web
-
-# Test health endpoint
+# Check API health
 curl https://vulhub-leaderboard-web.herokuapp.com/api/health
 ```
 
----
-
-## 🔧 **Troubleshooting Commands**
-
-### **Check Status**
-```bash
-# App status
-heroku ps -a vulhub-leaderboard-web
-
-# Environment variables
-heroku config -a vulhub-leaderboard-web
-
-# Database info
-heroku pg:info -a vulhub-leaderboard-web
-
-# Redis info
-heroku redis:info -a vulhub-leaderboard-web
-```
-
-### **Debug Issues**
-```bash
-# View logs
-heroku logs --tail -a vulhub-leaderboard-web
-
-# Connect to database
-heroku pg:psql -a vulhub-leaderboard-web
-
-# Connect to Redis
-heroku redis:cli -a vulhub-leaderboard-web
-
-# Run commands in Heroku
-heroku run "pnpm --filter @vulhub/api prisma db push" -a vulhub-leaderboard-web
-```
+### **Check GitHub Actions**
+- Go to GitHub → Actions tab
+- Click on latest "Deploy to Heroku" run
+- Review all steps for success
 
 ---
 
-## 📋 **One-Line Deployment**
+## 🚨 **Troubleshooting**
+
+### **Common Issues**
+- **"App not found"** → Check `HEROKU_APP_NAME` secret
+- **Build failed** → Check GitHub Actions build logs
+- **Database error** → Professor needs to add PostgreSQL addon
+- **404 error** → Check Procfile and start script
+
+### **Check Logs**
+- GitHub Actions → Latest run → "Show Heroku logs" step
+- Look for error messages and stack traces
+
+---
+
+## 📋 **Success Checklist**
+
+- [ ] GitHub secrets added (3 secrets)
+- [ ] Code pushed to main branch
+- [ ] GitHub Actions workflow completed successfully
+- [ ] App loads at `https://vulhub-leaderboard-web.herokuapp.com`
+- [ ] API health endpoint returns 200
+- [ ] Database migrations completed
+- [ ] No critical errors in logs
+
+---
+
+## 🎯 **One-Line Deployment**
 
 ```bash
 # Complete deployment in one command
-heroku create vulhub-leaderboard-web && \
-heroku addons:create heroku-postgresql:mini -a vulhub-leaderboard-web && \
-heroku addons:create heroku-redis:mini -a vulhub-leaderboard-web && \
-heroku config:set JWT_SECRET="$(openssl rand -base64 32)" REFRESH_TOKEN_SECRET="$(openssl rand -base64 32)" NODE_ENV="production" CORS_ORIGIN="https://vulhub-leaderboard-web.herokuapp.com" -a vulhub-leaderboard-web && \
-git push heroku main && \
-heroku run "pnpm --filter @vulhub/api prisma migrate deploy" -a vulhub-leaderboard-web
+git add . && git commit -m "Deploy to Heroku" && git push origin main
 ```
 
 ---
 
-## 🎯 **Success Checklist**
-
-- [ ] App created: `heroku apps`
-- [ ] Database added: `heroku pg:info -a vulhub-leaderboard-web`
-- [ ] Redis added: `heroku redis:info -a vulhub-leaderboard-web`
-- [ ] Environment set: `heroku config -a vulhub-leaderboard-web`
-- [ ] Code deployed: `git push heroku main`
-- [ ] Migrations run: `heroku run "pnpm --filter @vulhub/api prisma migrate deploy"`
-- [ ] App running: `heroku ps -a vulhub-leaderboard-web`
-- [ ] Health check: `curl https://vulhub-leaderboard-web.herokuapp.com/api/health`
-
----
-
-*Quick Reference completed on January 27, 2025. Use these commands for fast Heroku deployment.*
+*Quick Reference completed on January 27, 2025. Use these steps for fast GitHub Actions Heroku deployment.*

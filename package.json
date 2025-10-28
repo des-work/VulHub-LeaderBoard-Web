@@ -10,6 +10,8 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
+    "start": "pnpm --filter @vulhub/web start",
+    "heroku-postbuild": "pnpm install && pnpm build",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
