@@ -25,3 +25,10 @@ services:
       # In dev, the Next.js server needs to talk to the API container directly
       # This is an internal, server-side environment variable.
       - API_URL_INTERNAL=http://api:4000/api/v1
+
+  worker:
+    command: pnpm --filter @vulhub/worker dev
+    volumes:
+      - ./apps/worker:/usr/src/app/apps/worker
+      - ./packages:/usr/src/app/packages
+      - /usr/src/app/node_modules

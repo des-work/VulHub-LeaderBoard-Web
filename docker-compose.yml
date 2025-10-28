@@ -97,6 +97,26 @@ services:
       timeout: 10s
       retries: 3
 
+  # Worker Service
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    container_name: vulhub-worker
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://vulhub:${POSTGRES_PASSWORD:-vulhub123}@postgres:5432/vulhub
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - vulhub-network
+
 volumes:
   postgres_data:
     driver: local
