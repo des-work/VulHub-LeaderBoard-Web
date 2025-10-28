@@ -1,7 +1,7 @@
 {
   "name": "vulhub-leaderboard",
   "version": "1.0.0",
-  "description": "A modular, secure, and gamified platform for cybersecurity students to practice, compete, and grow",
+  "description": "A modular, secure, and gamified platform for cybersecurity students to practice, compete, and grow - Enterprise-Grade Production Ready",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -16,16 +16,32 @@
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
-    "dev:stack": "docker-compose -f infra/docker-compose.dev.yml up -d",
-    "dev:stack:down": "docker-compose -f infra/docker-compose.dev.yml down",
+    "dev:stack": "docker-compose -f docker-compose.dev.yml up -d",
+    "dev:stack:down": "docker-compose -f docker-compose.dev.yml down",
     "db:migrate": "cd apps/api && pnpm prisma migrate dev",
     "db:generate": "cd apps/api && pnpm prisma generate",
     "db:seed": "cd apps/api && pnpm prisma db seed",
     "db:studio": "cd apps/api && pnpm prisma studio",
     "storybook": "cd packages/ui && pnpm storybook",
     "gen:module": "node scripts/generate-module.js",
-    "gen:feature": "node scripts/generate-feature.js"
+    "gen:feature": "node scripts/generate-feature.js",
+    "setup": "pnpm install && pnpm dev:stack && pnpm db:migrate && pnpm db:seed",
+    "production": "pnpm build && pnpm start"
   },
+  "keywords": [
+    "cybersecurity",
+    "education",
+    "leaderboard",
+    "vulhub",
+    "nextjs",
+    "nestjs",
+    "typescript",
+    "postgresql",
+    "redis",
+    "websocket",
+    "enterprise",
+    "production-ready"
+  ],
   "devDependencies": {
     "@turbo/gen": "^1.10.12",
     "turbo": "^1.10.12",
@@ -38,5 +54,15 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/des-work/VulHub-LeaderBoard-Web.git"
+  },
+  "author": "CSUSB Cybersecurity Program",
+  "license": "MIT",
+  "homepage": "https://github.com/des-work/VulHub-LeaderBoard-Web#readme",
+  "bugs": {
+    "url": "https://github.com/des-work/VulHub-LeaderBoard-Web/issues"
   }
 }
