@@ -8,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "turbo run dev",
+    "dev:clean": "powershell -ExecutionPolicy Bypass -File scripts/dev-start.ps1",
     "build": "turbo run build",
     "start": "pnpm --filter @vulhub/web start",
     "heroku-postbuild": "pnpm install && pnpm build",

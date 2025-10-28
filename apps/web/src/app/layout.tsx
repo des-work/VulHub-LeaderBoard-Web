@@ -4,6 +4,7 @@ import { ThemeProvider } from '@vulhub/ui';
 import { QueryProvider } from '@/lib/providers/query-provider';
 import { AuthProvider } from '@/lib/providers/auth-provider';
 import './globals.css';
+import './loading.css';
 
 const inter = Inter({ subsets: ['latin'] });
 

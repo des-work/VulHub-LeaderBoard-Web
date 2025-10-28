@@ -24,8 +24,8 @@ import { BadgesModule } from './modules/badges/badges.module';
 // Common modules
 import { HealthModule } from './common/health/health.module';
 import { WebSocketModule } from './ws/websocket.module';
-import { FlexibilityModule } from './common/modules/flexibility.module';
-import { EnterpriseModule } from './common/modules/enterprise.module';
+// import { FlexibilityModule } from './common/modules/flexibility.module';
+// // import { EnterpriseModule } from './common/modules/enterprise.module';
 
 // Configuration
 import { configuration } from './config/configuration';
@@ -90,8 +90,8 @@ import { validationSchema } from './config/validation';
     // Common modules
     HealthModule,
     WebSocketModule,
-    FlexibilityModule,
-    EnterpriseModule,
+    // FlexibilityModule,
+    // EnterpriseModule,
   ],
 })
 export class AppModule {}
