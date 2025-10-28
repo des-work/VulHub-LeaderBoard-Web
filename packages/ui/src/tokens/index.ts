@@ -1,4 +1,11 @@
-// Simplified tokens export - no complex generation
+// Comprehensive design tokens system
+export * from './design-tokens';
+export * from './color-system';
+export * from './typography-system';
+export * from './spacing-system';
+export * from './shadow-system';
+
+// Legacy tokens for backward compatibility
 export const tokens = {
   colors: {
     primary: '#3b82f6',
