@@ -1,42 +1,38 @@
-# apps/worker/Dockerfile
-
-# ---- Base Stage ----
+# ===== Base Stage =====
+# Sets up Node.js, pnpm, and a non-root user for security.
 FROM node:18-alpine AS base
-WORKDIR /usr/src/app
-RUN npm install -g pnpm
-
-# ---- Dependencies Stage ----
-FROM base AS deps
-WORKDIR /usr/src/app
-COPY ../../package.json ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ./
-COPY package.json ./apps/worker/
-RUN pnpm fetch
-
-# ---- Builder Stage ----
-FROM base AS builder
-WORKDIR /usr/src/app
-
-COPY --from=deps /usr/src/app/package.json ./
-COPY --from=deps /usr/src/app/pnpm-workspace.yaml ./
-COPY --from=deps /usr/src/app/apps/worker/package.json ./apps/worker/
-
-COPY ../../. .
-
-RUN pnpm install --frozen-lockfile --offline
-
-# Build the worker application
-RUN pnpm --filter @vulhub/worker build
-
-# Prune dev dependencies
-RUN pnpm deploy --filter @vulhub/worker ./deploy
-
-# ---- Production Stage ----
-FROM base AS production
-WORKDIR /usr/src/app
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+WORKDIR /app
+
+# ===== Dependencies Stage =====
+# Installs production dependencies, leveraging Docker cache.
+FROM base AS deps
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm fetch
+RUN pnpm install -r --prod --filter=@vulhub/worker
+
+# ===== Builder Stage =====
+# Builds the TypeScript source code into JavaScript.
+FROM base AS builder
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN pnpm --filter=@vulhub/worker build
+
+# ===== Production Stage =====
+# Creates the final, lightweight image with only what's needed to run.
+FROM base AS production
+
+ENV NODE_ENV=production
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=builder /app/apps/worker/dist ./dist
+COPY --from=builder /app/package.json ./
+
 USER appuser
 
-COPY --from=builder /usr/src/app/deploy .
-
-CMD ["node", "dist/main"]
+CMD ["node", "dist/main.js"]
