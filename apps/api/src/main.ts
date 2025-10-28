@@ -90,6 +90,15 @@ async function bootstrap() {
       status: 'ok',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
+      message: 'API is running successfully!',
+    });
+  });
+
+  // Simple test endpoint
+  app.use('/test', (req, res) => {
+    res.json({
+      message: 'API test endpoint is working!',
+      timestamp: new Date().toISOString(),
     });
   });
 

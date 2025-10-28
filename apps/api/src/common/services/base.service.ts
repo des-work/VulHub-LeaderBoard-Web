@@ -29,7 +29,6 @@ export abstract class BaseService {
     } catch (error) {
       const errorReport = this.errorHandler.handleError(error, {
         operation: context,
-        context: this.constructor.name,
         resource: this.constructor.name,
         metadata: {
           ...metadata,
@@ -75,7 +74,6 @@ export abstract class BaseService {
           // Final attempt failed
           const errorReport = this.errorHandler.handleError(error, {
             operation: context,
-            context: this.constructor.name,
             resource: this.constructor.name,
             metadata: {
               ...metadata,
@@ -141,7 +139,6 @@ export abstract class BaseService {
           
           this.errorHandler.handleError(timeoutError, {
             operation: context,
-            context: this.constructor.name,
             resource: this.constructor.name,
             metadata: {
               ...metadata,

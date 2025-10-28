@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DomainEvent, DomainEventPublisher, DomainEventSubscriber } from './domain-event.interface';
-import { EventStore } from './event-store.service';
+import { EventStoreService } from './event-store.service';
 
 @Injectable()
 export class DomainEventPublisherService implements DomainEventPublisher {
   private readonly logger = new Logger(DomainEventPublisherService.name);
   private subscribers: Map<string, DomainEventSubscriber[]> = new Map();
 
-  constructor(private eventStore: EventStore) {}
+  constructor(private eventStore: EventStoreService) {}
 
   /**
    * Register an event subscriber

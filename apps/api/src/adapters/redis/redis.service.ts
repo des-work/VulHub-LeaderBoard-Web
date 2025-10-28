@@ -75,6 +75,18 @@ export class RedisService implements OnModuleDestroy {
   }
 
   /**
+   * Set value with expiration
+   */
+  async setex(key: string, ttl: number, value: string): Promise<'OK'> {
+    try {
+      return await this.client.setex(key, ttl, value);
+    } catch (error) {
+      this.logger.error(`Failed to setex key ${key}:`, error);
+      throw error;
+    }
+  }
+
+  /**
    * Delete key
    */
   async del(key: string): Promise<number> {
@@ -82,6 +94,18 @@ export class RedisService implements OnModuleDestroy {
       return await this.client.del(key);
     } catch (error) {
       this.logger.error(`Failed to delete key ${key}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete multiple keys
+   */
+  async delMultiple(...keys: string[]): Promise<number> {
+    try {
+      return await this.client.del(...keys);
+    } catch (error) {
+      this.logger.error(`Failed to delete keys:`, error);
       throw error;
     }
   }
@@ -332,5 +356,41 @@ export class RedisService implements OnModuleDestroy {
    */
   getClient(): Redis {
     return this.client;
+  }
+
+  /**
+   * Get keys matching pattern
+   */
+  async keys(pattern: string): Promise<string[]> {
+    try {
+      return await this.client.keys(pattern);
+    } catch (error) {
+      this.logger.error(`Failed to get keys for pattern ${pattern}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get Redis info
+   */
+  async info(section?: string): Promise<string> {
+    try {
+      return await this.client.info(section);
+    } catch (error) {
+      this.logger.error(`Failed to get Redis info:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Ping Redis server
+   */
+  async ping(): Promise<string> {
+    try {
+      return await this.client.ping();
+    } catch (error) {
+      this.logger.error(`Failed to ping Redis:`, error);
+      throw error;
+    }
   }
 }

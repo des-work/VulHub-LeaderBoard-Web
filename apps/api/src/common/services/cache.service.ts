@@ -90,7 +90,7 @@ export class CacheService {
         return 0;
       }
 
-      await this.redisService.del(...keys);
+      await this.redisService.delMultiple(...keys);
       return keys.length;
     } catch (error) {
       this.logger.error(`Cache delete pattern error for ${pattern}:`, error);
@@ -105,7 +105,7 @@ export class CacheService {
     try {
       const fullKey = this.buildKey(key, options.prefix);
       const result = await this.redisService.exists(fullKey);
-      return result === 1;
+      return result;
     } catch (error) {
       this.logger.error(`Cache exists error for key ${key}:`, error);
       return false;
@@ -150,7 +150,7 @@ export class CacheService {
       const keys = await this.redisService.keys(fullPattern);
       
       if (keys.length > 0) {
-        await this.redisService.del(...keys);
+        await this.redisService.delMultiple(...keys);
         this.logger.log(`Invalidated ${keys.length} cache keys matching pattern: ${pattern}`);
       }
     } catch (error) {

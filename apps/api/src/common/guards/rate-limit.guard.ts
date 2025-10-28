@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, TooManyRequestsException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
 import { RedisService } from '../../adapters/redis/redis.service';
 
 @Injectable()
@@ -23,11 +23,11 @@ export class RateLimitGuard implements CanActivate {
     
     const count = parseInt(current);
     if (count >= limits.max) {
-      throw new TooManyRequestsException({
+      throw new HttpException({
         message: 'Too many requests',
         retryAfter: limits.window,
         statusCode: 429,
-      });
+      }, HttpStatus.TOO_MANY_REQUESTS);
     }
     
     await this.redisService.incr(key);

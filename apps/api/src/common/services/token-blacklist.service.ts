@@ -58,7 +58,7 @@ export class TokenBlacklistService {
       }
       
       if (userTokens.length > 0) {
-        await this.redisService.del(...userTokens);
+        await this.redisService.delMultiple(...userTokens);
         this.logger.log(`Blacklisted ${userTokens.length} tokens for user ${userId}`);
       }
     } catch (error) {
