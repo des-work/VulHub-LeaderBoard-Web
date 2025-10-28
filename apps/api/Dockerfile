@@ -1,57 +1,47 @@
-# apps/api/Dockerfile
-
-# ---- Base Stage ----
-# Use a specific Node.js version for reproducibility.
+# ===== Base Stage =====
+# Sets up Node.js, pnpm, and a non-root user for security.
 FROM node:18-alpine AS base
-WORKDIR /usr/src/app
-
-# Install pnpm globally
-RUN npm install -g pnpm
-
-# ---- Dependencies Stage ----
-# This stage is dedicated to installing dependencies to leverage Docker layer caching.
-FROM base AS deps
-WORKDIR /usr/src/app
-
-# Copy only dependency-related files from the monorepo root.
-COPY ../../package.json ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ./
-COPY package.json ./apps/api/
-
-# Fetch all dependencies for the entire monorepo.
-# The --frozen-lockfile flag ensures we use the exact versions from the lockfile.
-RUN pnpm fetch
-
-# ---- Builder Stage ----
-# This stage builds the actual application code.
-FROM base AS builder
-WORKDIR /usr/src/app
-
-# Copy dependency manifests and the API's package.json again.
-COPY --from=deps /usr/src/app/package.json ./
-COPY --from=deps /usr/src/app/pnpm-workspace.yaml ./
-COPY --from=deps /usr/src/app/apps/api/package.json ./apps/api/
-
-# Copy all source code from the monorepo.
-COPY ../../. .
-
-# Install dependencies using the fetched cache.
-RUN pnpm install --frozen-lockfile --offline
-
-# Build the API application. The --filter flag is essential for monorepos.
-RUN pnpm --filter @vulhub/api build
-
-# Prune dev dependencies to reduce the size of the final node_modules.
-RUN pnpm deploy --filter @vulhub/api ./deploy
-
-# ---- Production Stage ----
-# This is the final, small, and secure image.
-FROM base AS production
-WORKDIR /usr/src/app
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+WORKDIR /app
+
+# ===== Dependencies Stage =====
+# Installs production dependencies, leveraging Docker cache.
+FROM base AS deps
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm fetch
+RUN pnpm install -r --prod --filter=@vulhub/api
+
+# ===== Builder Stage =====
+# Builds the TypeScript source code into JavaScript.
+FROM base AS builder
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN pnpm --filter=@vulhub/api build
+
+# ===== Production Stage =====
+# Creates the final, lightweight image with only what's needed to run.
+FROM base AS production
+
+ENV NODE_ENV=production
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=builder /app/apps/api/dist ./dist
+COPY --from=builder /app/package.json ./
+
+# Use the non-root user
 USER appuser
 
-COPY --from=builder /usr/src/app/deploy .
-
+# Expose the port the API will run on
 EXPOSE 4000
-CMD ["node", "dist/main"]
+
+# Healthcheck to ensure the API is running correctly
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD wget -q --spider http://localhost:4000/health || exit 1
+
+# Command to start the application
+CMD ["node", "dist/main.js"]

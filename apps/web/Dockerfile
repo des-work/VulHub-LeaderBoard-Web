@@ -1,47 +1,47 @@
-# apps/web/Dockerfile
-
-# ---- Base Stage ----
+# ===== Base Stage =====
+# Sets up Node.js, pnpm, and a non-root user for security.
 FROM node:18-alpine AS base
-WORKDIR /usr/src/app
-RUN npm install -g pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-# ---- Dependencies Stage ----
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+WORKDIR /app
+
+# ===== Dependencies Stage =====
+# Installs production dependencies, leveraging Docker cache.
 FROM base AS deps
-WORKDIR /usr/src/app
-COPY ../../package.json ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ./
-COPY package.json ./apps/web/
+COPY package.json pnpm-lock.yaml ./
 RUN pnpm fetch
+RUN pnpm install -r --prod --filter=@vulhub/web
 
-# ---- Builder Stage ----
+# ===== Builder Stage =====
+# Builds the Next.js application for production.
 FROM base AS builder
-WORKDIR /usr/src/app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN pnpm --filter=@vulhub/web build
 
-COPY --from=deps /usr/src/app/package.json ./
-COPY --from=deps /usr/src/app/pnpm-workspace.yaml ./
-COPY --from=deps /usr/src/app/apps/web/package.json ./apps/web/
-
-COPY ../../. .
-
-RUN pnpm install --frozen-lockfile --offline
-RUN pnpm --filter @vulhub/web build
-
-# ---- Production Stage ----
+# ===== Production Stage =====
+# Creates the final, lightweight image with only what's needed to run.
 FROM base AS production
-WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+COPY --from=builder /app/apps/web/.next/standalone ./
+COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder /app/apps/web/public ./apps/web/public
+
+# Use the non-root user
 USER appuser
 
-# Copy the standalone output from the builder stage.
-# Next.js's standalone output bundles everything needed to run the app.
-COPY --from=builder /usr/src/app/apps/web/.next/standalone ./
-COPY --from=builder /usr/src/app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder /usr/src/app/apps/web/public ./apps/web/public
-
+# Expose the port the web app will run on
 EXPOSE 3000
 
-ENV PORT=3000
+# Healthcheck to ensure the web app is running correctly
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD wget -q --spider http://localhost:3000 || exit 1
 
+# Command to start the application
 CMD ["node", "apps/web/server.js"]
