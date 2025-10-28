@@ -12,7 +12,7 @@ A comprehensive, accessible, and themeable UI component library for the VulHub L
 
 ## 🧱 Package Structure
 
-```
+```bash
 src/
 ├── tokens/           # Design tokens and CSS variable generation
 ├── primitives/       # Basic UI components (Button, Input, Card, etc.  )
@@ -21,6 +21,16 @@ src/
 ├── providers/       # Context providers (Theme, etc.)
 ├── lib/             # Utility functions
 └── styles/          # Global styles and themes
+```
+
+## 🏰 Advanced Composition: Layout Systems
+
+Beyond primitives, the `web` application composes these into powerful, app-specific layout patterns.
+
+```bash
+apps/web/components/patterns/
+├── DashboardGrid.tsx  # A responsive, draggable grid for user-customizable dashboards.
+└── Widget.tsx         # A themed Card with a drag handle, designed to live in the DashboardGrid.
 ```
 
 ## 🚀 Quick Start
