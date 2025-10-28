@@ -20,7 +20,9 @@
     "db:generate": "pnpm prisma generate",
     "db:seed": "pnpm prisma db seed",
     "db:studio": "pnpm prisma studio",
-    "storybook": "cd packages/ui && pnpm storybook",
+    "prod:stack": "docker compose --env-file infra/.env -f infra/docker-compose.production.yml up --build -d",
+    "prod:stack:down": "docker compose --env-file infra/.env -f infra/docker-compose.production.yml down -v",
+    "storybook": "pnpm --filter @vulhub/ui storybook",
     "gen:module": "node scripts/generate-module.js",
     "gen:feature": "node scripts/generate-feature.js"
   },
