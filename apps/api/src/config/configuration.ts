@@ -8,7 +8,7 @@ export const configuration = registerAs('app', () => ({
 
   // Database
   database: {
-    url: process.env.DATABASE_URL,
+    url: process.env.DATABASE_URL || 'postgresql://vulhub:vulhub123@localhost:5432/vulhub_dev',
     maxConnections: parseInt(process.env.DATABASE_MAX_CONNECTIONS || '10', 10),
     connectionTimeout: parseInt(process.env.DATABASE_CONNECTION_TIMEOUT || '30000', 10),
   },
@@ -24,9 +24,9 @@ export const configuration = registerAs('app', () => ({
 
   // JWT
   jwt: {
-    secret: process.env.JWT_SECRET,
+    secret: process.env.JWT_SECRET || 'dev-jwt-secret-key-change-in-production',
     expiresIn: process.env.JWT_EXPIRES_IN || '15m',
-    refreshSecret: process.env.JWT_REFRESH_SECRET,
+    refreshSecret: process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret-key-change-in-production',
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
 

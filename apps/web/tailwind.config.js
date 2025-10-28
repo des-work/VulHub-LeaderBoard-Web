@@ -13,10 +13,4 @@ module.exports = createConfig({
       // Custom theme extensions can go here
     },
   },
-  // Ensure proper CSS generation
-  corePlugins: {
-    preflight: true,
-  },
-  // Add important to ensure styles override
-  important: true,
 });

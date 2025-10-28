@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import { EventEmitterModule } from '@nestjs/event-emitter';
@@ -62,12 +62,15 @@ import { validationSchema } from './config/validation';
     ScheduleModule.forRoot(),
 
     // Queue system
-    BullModule.forRoot({
-      redis: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT || '6379'),
-        password: process.env.REDIS_PASSWORD,
-      },
+    BullModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('app.redis.host', 'localhost'),
+          port: configService.get('app.redis.port', 6379),
+          password: configService.get('app.redis.password'),
+        },
+      }),
+      inject: [ConfigService],
     }),
 
     // Health checks

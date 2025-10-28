@@ -10,12 +10,17 @@
   "scripts": {
     "dev:clean": "powershell -ExecutionPolicy Bypass -File scripts/dev-start.ps1",
     "build": "turbo run build",
+    "build:docker": "bash scripts/build.sh",
+    "build:docker:win": "scripts\\build.bat",
     "start": "pnpm --filter @vulhub/web start",
+    "start:api": "pnpm --filter @vulhub/api start",
+    "start:web": "pnpm --filter @vulhub/web start",
     "heroku-postbuild": "pnpm install && pnpm build",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
+    "dev": "turbo run dev",
     "dev:stack": "docker-compose -f docker-compose.dev.yml up -d",
     "dev:stack:down": "docker-compose -f docker-compose.dev.yml down",
     "db:migrate": "cd apps/api && pnpm prisma migrate dev",
@@ -26,7 +31,11 @@
     "gen:module": "node scripts/generate-module.js",
     "gen:feature": "node scripts/generate-feature.js",
     "setup": "pnpm install && pnpm dev:stack && pnpm db:migrate && pnpm db:seed",
-    "production": "pnpm build && pnpm start"
+    "production": "pnpm build && pnpm start",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
   },
   "keywords": [
     "cybersecurity",

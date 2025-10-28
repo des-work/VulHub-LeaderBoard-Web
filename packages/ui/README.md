@@ -15,7 +15,7 @@ A comprehensive, accessible, and themeable UI component library for the VulHub L
 ```
 src/
 ├── tokens/           # Design tokens and CSS variable generation
-├── primitives/       # Basic UI components (Button, Input, Card, etc. )
+├── primitives/       # Basic UI components (Button, Input, Card, etc.  )
 ├── components/       # Complex components and accessibility helpers
 ├── hooks/           # React hooks for UI interactions
 ├── providers/       # Context providers (Theme, etc.)

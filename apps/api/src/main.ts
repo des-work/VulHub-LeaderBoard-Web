@@ -32,7 +32,7 @@ async function bootstrap() {
 
   // CORS
   app.enableCors({
-    origin: configService.get('CORS_ORIGIN', 'http://localhost:3000'),
+    origin: configService.get('app.corsOrigin', 'http://localhost:3000'),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID'],
@@ -102,7 +102,7 @@ async function bootstrap() {
     });
   });
 
-  const port = configService.get('PORT', 4000);
+  const port = configService.get('app.port', 4000);
   await app.listen(port);
 
   logger.log(`🚀 Application is running on: http://localhost:${port}`);
