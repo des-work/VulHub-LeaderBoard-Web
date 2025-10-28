@@ -38,14 +38,14 @@ This guide covers how to containerize and deploy the VulHub Leaderboard applicat
 
 1. **Build and deploy with Docker Compose:**
    ```bash
-   # Build all services
-   docker-compose build
-   
-   # Start all services
-   docker-compose up -d
+   # First, ensure you have an infra/.env file with your production secrets.
+   cp infra/.env.example infra/.env
+
+   # Build and start all services from the project root
+   pnpm prod:stack
    
    # View logs
-   docker-compose logs -f
+   pnpm prod:stack:down && pnpm prod:stack && docker compose -f infra/docker-compose.production.yml logs -f
    ```
 
 2. **Access the application:**
@@ -60,6 +60,7 @@ The application consists of several services:
 
 - **Web App** (`@vulhub/web`): Next.js frontend application
 - **API** (`@vulhub/api`): NestJS backend API
+- **Worker** (`@vulhub/worker`): Background job processor
 - **PostgreSQL**: Primary database
 - **Redis**: Caching and session storage
 
@@ -71,15 +72,13 @@ VulHub-LeaderBoard-Web/
 │   ├── web/          # Next.js frontend
 │   └── api/          # NestJS backend
 ├── packages/
-│   ├── ui/           # Shared UI components
-│   ├── schema/       # Shared schemas and types
-│   ├── utils/        # Shared utilities
-│   └── config/       # Shared configuration
-├── docker-compose.yml
-├── Dockerfile
+│   └── ...           # Shared packages
+├── infra/
+│   ├── docker-compose.dev.yml
+│   ├── docker-compose.production.yml
+│   └── .env.example
 └── scripts/
-    ├── build.sh      # Build script (Linux/Mac)
-    └── build.bat     # Build script (Windows)
+    └── ...
 ```
 
 ## 🔧 Configuration

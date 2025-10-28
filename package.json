@@ -16,7 +16,7 @@
     "clean": "turbo run clean",
     "dev:stack": "docker compose -f infra/docker-compose.dev.yml up -d --build",
     "dev:stack:down": "docker compose -f infra/docker-compose.dev.yml down -v",
-    "db:migrate": "docker compose -f infra/docker-compose.dev.yml exec postgres psql -U vulhub -d vulhub_dev -c 'CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";' && pnpm prisma migrate dev",
+    "db:migrate": "docker compose -f infra/docker-compose.production.yml run --rm api pnpm prisma migrate deploy",
     "db:generate": "pnpm prisma generate",
     "db:seed": "pnpm prisma db seed",
     "db:studio": "pnpm prisma studio",

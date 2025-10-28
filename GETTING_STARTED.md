@@ -48,8 +48,8 @@ chmod +x scripts/setup.sh
 
 3. **Set up environment variables**
    ```bash
-   cp infra/env.example .env
-   # Review and update .env file with your configuration
+   cp infra/.env.example infra/.env
+   # Review and update infra/.env file with your production secrets
    ```
 
 4. **Start infrastructure services**
