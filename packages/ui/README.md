@@ -29,7 +29,7 @@ Beyond primitives, the `web` application composes these into powerful, app-speci
 
 ```bash
 apps/web/components/patterns/
-├── DashboardGrid.tsx  # A responsive, draggable grid for user-customizable dashboards.
+├── DashboardLayout.tsx  # A responsive CSS Grid for dashboard layouts.
 └── Widget.tsx         # A themed Card with a drag handle, designed to live in the DashboardGrid.
 ```
 
