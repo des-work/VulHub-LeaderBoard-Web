@@ -45,8 +45,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: api-production
+      dockerfile: apps/api/Dockerfile
     container_name: vulhub-api
     environment:
       NODE_ENV: production
@@ -54,7 +53,7 @@ services:
       DATABASE_URL: postgresql://vulhub:${POSTGRES_PASSWORD:-vulhub123}@postgres:5432/vulhub
       JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-here}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-your-super-secret-refresh-key-here}
-      REDIS_HOST: redis
+      REDIS_HOST: redis # Use service name for container-to-container communication
       REDIS_PORT: 6379
       CORS_ORIGIN: http://localhost:3000
     ports:
@@ -77,13 +76,13 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: web-production
+      dockerfile: apps/web/Dockerfile
     container_name: vulhub-web
     environment:
       NODE_ENV: production
       PORT: 3000
-      NEXT_PUBLIC_API_URL: http://localhost:4000/api
+      # The browser uses this, so localhost is correct if you access from your host machine.
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
     ports:
       - "3000:3000"
     depends_on:

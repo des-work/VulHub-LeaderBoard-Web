@@ -1,56 +1,29 @@
 {
   "name": "vulhub-leaderboard",
   "version": "1.0.0",
-  "description": "A modular, secure, and gamified platform for cybersecurity students to practice, compete, and grow - Enterprise-Grade Production Ready",
+  "description": "A modular, secure, and gamified platform for cybersecurity students to practice, compete, and grow",
   "private": true,
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "dev:clean": "powershell -ExecutionPolicy Bypass -File scripts/dev-start.ps1",
+    "dev": "turbo run dev",
     "build": "turbo run build",
-    "build:docker": "bash scripts/build.sh",
-    "build:docker:win": "scripts\\build.bat",
-    "start": "pnpm --filter @vulhub/web start",
-    "start:api": "pnpm --filter @vulhub/api start",
-    "start:web": "pnpm --filter @vulhub/web start",
-    "heroku-postbuild": "pnpm install && pnpm build",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
-    "dev": "turbo run dev",
-    "dev:stack": "docker-compose -f docker-compose.dev.yml up -d",
-    "dev:stack:down": "docker-compose -f docker-compose.dev.yml down",
-    "db:migrate": "cd apps/api && pnpm prisma migrate dev",
-    "db:generate": "cd apps/api && pnpm prisma generate",
+    "dev:stack": "docker compose up -d --build",
+    "dev:stack:down": "docker compose down -v",
+    "db:migrate": "docker compose exec api pnpm prisma migrate dev",
+    "db:generate": "docker compose exec api pnpm prisma generate",
     "db:seed": "cd apps/api && pnpm prisma db seed",
-    "db:studio": "cd apps/api && pnpm prisma studio",
+    "db:studio": "docker compose exec api pnpm prisma studio",
     "storybook": "cd packages/ui && pnpm storybook",
     "gen:module": "node scripts/generate-module.js",
-    "gen:feature": "node scripts/generate-feature.js",
-    "setup": "pnpm install && pnpm dev:stack && pnpm db:migrate && pnpm db:seed",
-    "production": "pnpm build && pnpm start",
-    "docker:build": "docker-compose build",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "docker:logs": "docker-compose logs -f"
+    "gen:feature": "node scripts/generate-feature.js"
   },
-  "keywords": [
-    "cybersecurity",
-    "education",
-    "leaderboard",
-    "vulhub",
-    "nextjs",
-    "nestjs",
-    "typescript",
-    "postgresql",
-    "redis",
-    "websocket",
-    "enterprise",
-    "production-ready"
-  ],
   "devDependencies": {
     "@turbo/gen": "^1.10.12",
     "turbo": "^1.10.12",
@@ -63,15 +36,5 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/des-work/VulHub-LeaderBoard-Web.git"
-  },
-  "author": "CSUSB Cybersecurity Program",
-  "license": "MIT",
-  "homepage": "https://github.com/des-work/VulHub-LeaderBoard-Web#readme",
-  "bugs": {
-    "url": "https://github.com/des-work/VulHub-LeaderBoard-Web/issues"
   }
 }

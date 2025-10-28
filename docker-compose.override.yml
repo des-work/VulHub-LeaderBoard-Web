@@ -1,0 +1,27 @@
+version: '3.8'
+
+# This file provides development-specific overrides for docker-compose.yml
+# It enables hot-reloading by mounting source code into the containers.
+
+services:
+  api:
+    # Override the production command to run in dev mode
+    command: pnpm --filter @vulhub/api dev
+    volumes:
+      # Mount source code for hot-reloading
+      - ./apps/api:/usr/src/app/apps/api
+      - ./packages:/usr/src/app/packages
+      - ./prisma:/usr/src/app/prisma
+      # Prevent node_modules from being overwritten by the host
+      - /usr/src/app/node_modules
+
+  web:
+    command: pnpm --filter @vulhub/web dev
+    volumes:
+      - ./apps/web:/usr/src/app/apps/web
+      - ./packages:/usr/src/app/packages
+      - /usr/src/app/node_modules
+    environment:
+      # In dev, the Next.js server needs to talk to the API container directly
+      # This is an internal, server-side environment variable.
+      - API_URL_INTERNAL=http://api:4000/api/v1

@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   transpilePackages: ['@vulhub/ui', '@vulhub/schema', '@vulhub/utils'],
   images: {
     domains: ['localhost'],
