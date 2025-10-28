@@ -126,6 +126,27 @@ services:
           memory: 128M
           cpus: '0.1'
 
+  # Worker Service
+  worker:
+    build:
+      context: ..
+      dockerfile: apps/worker/Dockerfile
+    container_name: vulhub-worker
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://vulhub:${POSTGRES_PASSWORD}@postgres:5432/vulhub
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - vulhub-network
+
   # Nginx Reverse Proxy
   nginx:
     image: nginx:alpine
