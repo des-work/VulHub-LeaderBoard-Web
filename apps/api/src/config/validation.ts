@@ -1,134 +1,26 @@
-import { plainToClass, Transform } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsString, validateSync } from 'class-validator';
+import Joi from 'joi';
 
-enum Environment {
-  Development = 'development',
-  Production = 'production',
-  Test = 'test',
-}
-
-class EnvironmentVariables {
-  @IsEnum(Environment)
-  NODE_ENV: Environment;
-
-  @IsNumber()
-  @Transform(({ value }) => parseInt(value, 10))
-  PORT: number;
-
-  @IsString()
-  DATABASE_URL: string;
-
-  @IsString()
-  JWT_SECRET: string;
-
-  @IsString()
-  JWT_REFRESH_SECRET: string;
-
-  @IsOptional()
-  @IsString()
-  REDIS_HOST?: string;
-
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => parseInt(value, 10))
-  REDIS_PORT?: number;
-
-  @IsOptional()
-  @IsString()
-  REDIS_PASSWORD?: string;
-
-  @IsOptional()
-  @IsString()
-  OIDC_ISSUER?: string;
-
-  @IsOptional()
-  @IsString()
-  OIDC_CLIENT_ID?: string;
-
-  @IsOptional()
-  @IsString()
-  OIDC_CLIENT_SECRET?: string;
-
-  @IsOptional()
-  @IsString()
-  SMTP_HOST?: string;
-
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => parseInt(value, 10))
-  SMTP_PORT?: number;
-
-  @IsOptional()
-  @IsString()
-  SMTP_USER?: string;
-
-  @IsOptional()
-  @IsString()
-  SMTP_PASS?: string;
-
-  @IsOptional()
-  @IsString()
-  MINIO_ENDPOINT?: string;
-
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => parseInt(value, 10))
-  MINIO_PORT?: number;
-
-  @IsOptional()
-  @IsString()
-  MINIO_ACCESS_KEY?: string;
-
-  @IsOptional()
-  @IsString()
-  MINIO_SECRET_KEY?: string;
-}
-
-export function validate(config: Record<string, unknown>) {
-  const validatedConfig = plainToClass(EnvironmentVariables, config, {
-    enableImplicitConversion: true,
-  });
-
-  const errors = validateSync(validatedConfig, {
-    skipMissingProperties: false,
-  });
-
-  if (errors.length > 0) {
-    throw new Error(errors.toString());
-  }
-
-  return validatedConfig;
-}
-
-export const validationSchema = {
-  NODE_ENV: {
-    type: 'string',
-    enum: ['development', 'production', 'test'],
-    default: 'development',
-  },
-  PORT: {
-    type: 'number',
-    default: 4000,
-  },
-  DATABASE_URL: {
-    type: 'string',
-  },
-  JWT_SECRET: {
-    type: 'string',
-  },
-  JWT_REFRESH_SECRET: {
-    type: 'string',
-  },
-  REDIS_HOST: {
-    type: 'string',
-    default: 'localhost',
-  },
-  REDIS_PORT: {
-    type: 'number',
-    default: 6379,
-  },
-  CORS_ORIGIN: {
-    type: 'string',
-    default: 'http://localhost:3000',
-  },
-};
+export const validationSchema = Joi.object({
+  NODE_ENV: Joi.string()
+    .valid('development', 'production', 'test')
+    .default('development'),
+  PORT: Joi.number().default(4000),
+  DATABASE_URL: Joi.string().required(),
+  JWT_SECRET: Joi.string().required(),
+  JWT_REFRESH_SECRET: Joi.string().required(),
+  REDIS_HOST: Joi.string().default('localhost'),
+  REDIS_PORT: Joi.number().default(6379),
+  REDIS_PASSWORD: Joi.string().optional(),
+  CORS_ORIGIN: Joi.string().default('http://localhost:3000'),
+  OIDC_ISSUER: Joi.string().optional(),
+  OIDC_CLIENT_ID: Joi.string().optional(),
+  OIDC_CLIENT_SECRET: Joi.string().optional(),
+  SMTP_HOST: Joi.string().optional(),
+  SMTP_PORT: Joi.number().optional(),
+  SMTP_USER: Joi.string().optional(),
+  SMTP_PASS: Joi.string().optional(),
+  MINIO_ENDPOINT: Joi.string().optional(),
+  MINIO_PORT: Joi.number().optional(),
+  MINIO_ACCESS_KEY: Joi.string().optional(),
+  MINIO_SECRET_KEY: Joi.string().optional(),
+});

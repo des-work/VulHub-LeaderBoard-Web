@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Global, Module, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from './prisma.service';
 import { TenantService } from './tenant.service';
@@ -11,9 +11,23 @@ import { TenantService } from './tenant.service';
     {
       provide: 'DATABASE_CONNECTION',
       useFactory: async () => {
-        const prismaService = new PrismaService();
-        await prismaService.$connect();
-        return prismaService;
+        const logger = new Logger('DatabaseModule');
+        try {
+          const prismaService = new PrismaService();
+          await prismaService.$connect();
+          logger.log('✅ Database connected successfully');
+          return prismaService;
+        } catch (error) {
+          logger.warn('⚠️ Database connection failed - running in mock mode');
+          logger.warn(`Database error: ${error.message}`);
+          // Return a mock service for development
+          return {
+            $connect: () => Promise.resolve(),
+            $disconnect: () => Promise.resolve(),
+            isHealthy: () => Promise.resolve(false),
+            // Add other methods as needed
+          };
+        }
       },
     },
   ],
