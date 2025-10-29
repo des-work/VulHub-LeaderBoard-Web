@@ -23,7 +23,11 @@ export const validationSchema = Joi.object({
   REDIS_HOST: Joi.string().default('localhost'),
   REDIS_PORT: Joi.number().default(6379),
   REDIS_PASSWORD: Joi.string().optional(),
-  CORS_ORIGIN: Joi.string().default('http://localhost:3000'),
+  CORS_ORIGIN: Joi.string().when('NODE_ENV', {
+    is: 'production',
+    then: Joi.required(),
+    otherwise: Joi.optional().default('http://localhost:3000')
+  }),
   OIDC_ISSUER: Joi.string().optional(),
   OIDC_CLIENT_ID: Joi.string().optional(),
   OIDC_CLIENT_SECRET: Joi.string().optional(),

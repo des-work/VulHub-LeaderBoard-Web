@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { DesignProvider, DesignApplication } from '@vulhub/ui';
+import { ClientDesignProvider } from '@/lib/providers/design-provider';
 import { QueryProvider } from '@/lib/providers/query-provider';
 import { AuthProvider } from '@/lib/providers/auth-provider';
 import './globals.css';
@@ -24,15 +24,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <DesignProvider>
-          <DesignApplication>
-            <QueryProvider>
-              <AuthProvider>
-                {children}
-              </AuthProvider>
-            </QueryProvider>
-          </DesignApplication>
-        </DesignProvider>
+        <ClientDesignProvider>
+          <QueryProvider>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </QueryProvider>
+        </ClientDesignProvider>
       </body>
     </html>
   );

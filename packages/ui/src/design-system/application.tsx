@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useDesign } from './index';
+import { useDesign } from './context';
 
 // Hook to apply design configuration to the DOM
 export const useDesignApplication = () => {

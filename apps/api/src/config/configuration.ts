@@ -4,11 +4,11 @@ export const configuration = registerAs('app', () => ({
   // Application
   port: parseInt(process.env.PORT || '4000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  corsOrigin: process.env.CORS_ORIGIN || (process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:3000'),
 
   // Database
   database: {
-    url: process.env.DATABASE_URL || 'postgresql://vulhub:vulhub123@localhost:5432/vulhub_dev',
+    url: process.env.DATABASE_URL || (process.env.NODE_ENV === 'production' ? undefined : 'postgresql://vulhub:vulhub123@localhost:5432/vulhub_dev'),
     maxConnections: parseInt(process.env.DATABASE_MAX_CONNECTIONS || '10', 10),
     connectionTimeout: parseInt(process.env.DATABASE_CONNECTION_TIMEOUT || '30000', 10),
   },
@@ -24,9 +24,9 @@ export const configuration = registerAs('app', () => ({
 
   // JWT
   jwt: {
-    secret: process.env.JWT_SECRET || 'dev-jwt-secret-key-change-in-production',
+    secret: process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? undefined : 'dev-jwt-secret-key-change-in-production'),
     expiresIn: process.env.JWT_EXPIRES_IN || '15m',
-    refreshSecret: process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret-key-change-in-production',
+    refreshSecret: process.env.JWT_REFRESH_SECRET || (process.env.NODE_ENV === 'production' ? undefined : 'dev-refresh-secret-key-change-in-production'),
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
 

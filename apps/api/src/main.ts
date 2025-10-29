@@ -31,8 +31,12 @@ async function bootstrap() {
   app.use(compression());
 
   // CORS
+  const corsOrigin = configService.get('app.corsOrigin');
+  if (!corsOrigin) {
+    throw new Error('CORS_ORIGIN environment variable is required');
+  }
   app.enableCors({
-    origin: configService.get('app.corsOrigin', 'http://localhost:3000'),
+    origin: corsOrigin.split(',').map(origin => origin.trim()),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID'],
@@ -103,11 +107,13 @@ async function bootstrap() {
   });
 
   const port = configService.get('app.port', 4000);
-  await app.listen(port);
+  const host = process.env.HOST || '0.0.0.0';
+  await app.listen(port, host);
 
-  logger.log(`🚀 Application is running on: http://localhost:${port}`);
-  logger.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
-  logger.log(`🏥 Health Check: http://localhost:${port}/health`);
+  const displayHost = host === '0.0.0.0' ? 'localhost' : host;
+  logger.log(`🚀 Application is running on: http://${displayHost}:${port}`);
+  logger.log(`📚 API Documentation: http://${displayHost}:${port}/api/docs`);
+  logger.log(`🏥 Health Check: http://${displayHost}:${port}/health`);
 }
 
 bootstrap().catch((error) => {

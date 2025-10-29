@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useDesign } from '../design-system';
+import { useDesign } from './context';
 
 // Unified Icon System
 interface UnifiedIconProps {
