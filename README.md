@@ -193,20 +193,42 @@ Error budgets and SLO monitoring.
 
 Synthetic health checks & degraded-mode fallback.
 
-🧑‍💻 Development Setup
+## 🧑‍💻 Development Setup
+
+### 🐳 **Docker Setup (Recommended)**
+
+**Quick Start:**
+```bash
+git clone https://github.com/your-username/VulHub-LeaderBoard-Web.git
+cd VulHub-LeaderBoard-Web
+cp env.example .env
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+**Access URLs:**
+- **Website**: http://localhost:4010
+- **API**: http://localhost:4000/api/v1/health
+- **Database**: localhost:5433
+- **Redis**: localhost:6380
+
+**📚 Detailed Guides:**
+- [🐳 Docker Testing Guide](docs/DOCKER_TESTING_GUIDE.md) - Complete setup instructions
+- [⚡ Docker Quick Start](docs/DOCKER_QUICK_START.md) - Quick reference commands
+
+### 🛠 **Local Development Setup**
+
+```bash
 # Clone and run
 git clone https://github.com/des-work/VulHub-LeaderBoard-Web.git
 cd VulHub-LeaderBoard-Web
 pnpm install
 pnpm dev:stack      # start local infra
 pnpm -r dev         # run all apps in dev
+```
 
-
-Verify:
-
-Web → http://localhost:3000
-
-API → http://localhost:4000/api/health
+**Verify:**
+- Web → http://localhost:3000
+- API → http://localhost:4000/api/health
 
 🧰 Scripts & Commands
 Command	Description
