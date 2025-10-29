@@ -1,1 +1,1 @@
-export { ThemeProvider, useTheme } from './theme-provider';
+// Providers are now handled by the unified design system

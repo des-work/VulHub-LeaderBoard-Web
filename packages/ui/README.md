@@ -51,21 +51,23 @@ pnpm storybook
 ### Basic Usage
 
 ```tsx
-import { Button, Input, Card, ThemeProvider } from '@vulhub/ui';
+import { Button, Input, Card, DesignProvider, DesignApplication } from '@vulhub/ui';
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="light">
-      <Card> 
-        <CardHeader>
-          <CardTitle>Welcome</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Input label="Email" placeholder="Enter your email" />
-          <Button>Submit</Button>
-        </CardContent>
-      </Card>
-    </ThemeProvider>
+    <DesignProvider>
+      <DesignApplication>
+        <Card> 
+          <CardHeader>
+            <CardTitle>Welcome</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Input label="Email" placeholder="Enter your email" />
+            <Button>Submit</Button>
+          </CardContent>
+        </Card>
+      </DesignApplication>
+    </DesignProvider>
   );
 }
 ```

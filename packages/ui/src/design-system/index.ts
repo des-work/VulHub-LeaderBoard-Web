@@ -1,3 +1,10 @@
+'use client';
+
+/**
+ * Unified Design System Configuration
+ * Dynamic design customization and management
+ */
+
 import React from 'react';
 
 // Unified Design System Configuration
@@ -120,11 +127,9 @@ export const DesignProvider: React.FC<{
     setConfig(defaultDesignConfig);
   }, []);
 
-  return (
-    <DesignContext.Provider value={{ config, updateConfig, resetConfig }}>
-      {children}
-    </DesignContext.Provider>
-  );
+  return React.createElement(DesignContext.Provider, {
+    value: { config, updateConfig, resetConfig }
+  }, children);
 };
 
 export const useDesign = () => {

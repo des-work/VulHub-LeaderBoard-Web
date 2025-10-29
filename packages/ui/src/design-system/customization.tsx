@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useDesign, DesignConfig } from './index';
 import { Card, CardContent, CardHeader, CardTitle } from '../primitives';

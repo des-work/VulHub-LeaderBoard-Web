@@ -16,8 +16,7 @@ export { Enhanced } from './enhanced';
 // Unified Design System
 export * from './design-system';
 
-// Providers
-export * from './providers';
+// Providers are now handled by the unified design system
 
 // Re-export common types
 export type { ClassValue } from 'clsx';
