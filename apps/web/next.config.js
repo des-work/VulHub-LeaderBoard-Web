@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  // output: 'standalone', // Disabled due to Windows symlink issues
   transpilePackages: ['@vulhub/ui', '@vulhub/schema', '@vulhub/utils'],
   images: {
     domains: ['localhost'],

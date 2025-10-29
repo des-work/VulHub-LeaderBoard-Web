@@ -45,7 +45,7 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
     let errorDetails: any;
 
     try {
-      const errorData = await response.json();
+      const errorData = await response.json() as any;
       errorMessage = errorData.message || errorMessage;
       errorCode = errorData.code;
       errorDetails = errorData.details;
@@ -56,7 +56,7 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
     throw createApiError(errorMessage, response.status, errorCode, errorDetails);
   }
 
-  return response.json();
+  return response.json() as Promise<T>;
 }
 
 /**

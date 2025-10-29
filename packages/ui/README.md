@@ -56,7 +56,7 @@ import { Button, Input, Card, ThemeProvider } from '@vulhub/ui';
 function App() {
   return (
     <ThemeProvider defaultTheme="light">
-      <Card>
+      <Card> 
         <CardHeader>
           <CardTitle>Welcome</CardTitle>
         </CardHeader>

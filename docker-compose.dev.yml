@@ -1,0 +1,115 @@
+version: '3.8'
+
+# Development environment with hot-reloading
+services:
+  # PostgreSQL Database for Development
+  postgres-dev:
+    image: postgres:15-alpine
+    container_name: vulhub-postgres-dev
+    environment:
+      POSTGRES_DB: vulhub_dev
+      POSTGRES_USER: vulhub
+      POSTGRES_PASSWORD: vulhub123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5433:5432"  # Different port to avoid conflicts
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vulhub -d vulhub_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vulhub-dev-network
+
+  # Redis Cache for Development
+  redis-dev:
+    image: redis:7-alpine
+    container_name: vulhub-redis-dev
+    ports:
+      - "6380:6379"  # Different port to avoid conflicts
+    volumes:
+      - redis_dev_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vulhub-dev-network
+
+  # API Service for Development
+  api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    container_name: vulhub-api-dev
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://vulhub:vulhub123@postgres-dev:5432/vulhub_dev
+      - REDIS_URL=redis://redis-dev:6379
+      - JWT_SECRET=dev-jwt-secret-key-change-in-production
+      - JWT_REFRESH_SECRET=dev-refresh-secret-key-change-in-production
+      - PORT=4000
+    ports:
+      - "4000:4000"
+    volumes:
+      # Mount source code for hot-reloading
+      - ./apps/api:/usr/src/app/apps/api
+      - ./packages:/usr/src/app/packages
+      - ./prisma:/usr/src/app/prisma
+      # Prevent node_modules from being overwritten
+      - /usr/src/app/node_modules
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
+      redis-dev:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - vulhub-dev-network
+    working_dir: /usr/src/app
+    command: ["pnpm", "dev"]
+
+  # Web Application for Development
+  web-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    container_name: vulhub-web-dev
+    environment:
+      - NODE_ENV=development
+      - API_URL=http://api-dev:4000/api/v1
+      - NEXT_PUBLIC_API_URL=http://localhost:4000/api/v1
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source code for hot-reloading
+      - ./apps/web:/usr/src/app/apps/web
+      - ./packages:/usr/src/app/packages
+      # Prevent node_modules from being overwritten
+      - /usr/src/app/node_modules
+    depends_on:
+      api-dev:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - vulhub-dev-network
+    working_dir: /usr/src/app
+    command: ["pnpm", "dev"]
+
+volumes:
+  postgres_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+
+networks:
+  vulhub-dev-network:
+    driver: bridge

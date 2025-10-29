@@ -1,0 +1,134 @@
+version: '3.8'
+
+# Production environment configuration
+services:
+  # PostgreSQL Database for Production
+  postgres-prod:
+    image: postgres:15-alpine
+    container_name: vulhub-postgres-prod
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-vulhub}
+      POSTGRES_USER: ${POSTGRES_USER:-vulhub}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vulhub} -d ${POSTGRES_DB:-vulhub}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vulhub-prod-network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
+  # Redis Cache for Production
+  redis-prod:
+    image: redis:7-alpine
+    container_name: vulhub-redis-prod
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_prod_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vulhub-prod-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # API Service for Production
+  api-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api-production
+    container_name: vulhub-api-prod
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-vulhub}:${POSTGRES_PASSWORD}@postgres-prod:5432/${POSTGRES_DB:-vulhub}
+      - REDIS_URL=redis://redis-prod:6379
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - PORT=4000
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres-prod:
+        condition: service_healthy
+      redis-prod:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - vulhub-prod-network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:4000/api/v1/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Web Application for Production
+  web-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web-production
+    container_name: vulhub-web-prod
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://api-prod:4000/api/v1
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:4000/api/v1}
+    ports:
+      - "3000:3000"
+    depends_on:
+      api-prod:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - vulhub-prod-network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_prod_data:
+    driver: local
+  redis_prod_data:
+    driver: local
+
+networks:
+  vulhub-prod-network:
+    driver: bridge
