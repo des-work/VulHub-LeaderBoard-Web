@@ -8,7 +8,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Theme types
-export type Theme = 'light' | 'dark' | 'cyber' | 'ocean';
+export type Theme = 'light' | 'dark' | 'cyber' | 'ocean' | 'medieval' | 'hacker90s' | 'matrix';
 
 // Theme context
 interface ThemeContextType {
@@ -111,6 +111,9 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ className }) => {
     { value: 'dark', label: 'Dark', description: 'Easy on the eyes' },
     { value: 'cyber', label: 'Cyber', description: 'Neon and futuristic' },
     { value: 'ocean', label: 'Ocean', description: 'Calm and serene' },
+    { value: 'medieval', label: 'Medieval', description: 'Castle and knights' },
+    { value: 'matrix', label: 'Matrix', description: 'Green code rain' },
+    { value: 'hacker90s', label: '90s Hacker', description: 'Retro terminal vibes' },
   ];
 
   return React.createElement('div', { className }, [

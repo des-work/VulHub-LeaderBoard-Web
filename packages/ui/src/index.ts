@@ -14,6 +14,11 @@ export { Themes } from './themes';
 export { Responsive } from './responsive';
 export { Enhanced } from './enhanced';
 
+// Theme-specific components
+export * from './components/medieval';
+export * from './components/cyberpunk';
+export { ThemeShowcase } from './components/ThemeShowcase';
+
 // Providers
 export * from './providers';
 

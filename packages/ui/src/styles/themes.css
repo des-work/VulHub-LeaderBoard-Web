@@ -90,6 +90,161 @@
   --color-error-foreground: 15 23 42;
 }
 
+/* Medieval Theme */
+[data-theme="medieval"] {
+  --color-background: 139 69 19; /* Dark brown */
+  --color-foreground: 255 215 0; /* Gold */
+  --color-card: 160 82 45; /* Saddle brown */
+  --color-card-foreground: 255 215 0; /* Gold */
+  --color-popover: 160 82 45; /* Saddle brown */
+  --color-popover-foreground: 255 215 0; /* Gold */
+  --color-primary: 255 215 0; /* Gold */
+  --color-primary-foreground: 139 69 19; /* Dark brown */
+  --color-secondary: 101 67 33; /* Darker brown */
+  --color-secondary-foreground: 255 215 0; /* Gold */
+  --color-muted: 101 67 33; /* Darker brown */
+  --color-muted-foreground: 218 165 32; /* Goldenrod */
+  --color-accent: 184 134 11; /* Dark goldenrod */
+  --color-accent-foreground: 255 215 0; /* Gold */
+  --color-destructive: 220 20 60; /* Crimson */
+  --color-destructive-foreground: 255 215 0; /* Gold */
+  --color-border: 160 82 45; /* Saddle brown */
+  --color-input: 160 82 45; /* Saddle brown */
+  --color-ring: 255 215 0; /* Gold */
+  
+  /* Semantic colors for medieval theme */
+  --color-success: 50 205 50; /* Lime green */
+  --color-success-foreground: 255 215 0; /* Gold */
+  --color-warning: 255 165 0; /* Orange */
+  --color-warning-foreground: 139 69 19; /* Dark brown */
+  --color-error: 220 20 60; /* Crimson */
+  --color-error-foreground: 255 215 0; /* Gold */
+}
+
+/* Ocean Theme */
+[data-theme="ocean"] {
+  --color-background: 6 78 59; /* Dark teal */
+  --color-foreground: 240 253 250; /* Light mint */
+  --color-card: 13 148 136; /* Teal */
+  --color-card-foreground: 240 253 250; /* Light mint */
+  --color-popover: 13 148 136; /* Teal */
+  --color-popover-foreground: 240 253 250; /* Light mint */
+  --color-primary: 20 184 166; /* Emerald */
+  --color-primary-foreground: 6 78 59; /* Dark teal */
+  --color-secondary: 15 118 110; /* Darker teal */
+  --color-secondary-foreground: 240 253 250; /* Light mint */
+  --color-muted: 15 118 110; /* Darker teal */
+  --color-muted-foreground: 153 246 228; /* Light cyan */
+  --color-accent: 45 212 191; /* Cyan */
+  --color-accent-foreground: 6 78 59; /* Dark teal */
+  --color-destructive: 239 68 68; /* Red */
+  --color-destructive-foreground: 240 253 250; /* Light mint */
+  --color-border: 15 118 110; /* Darker teal */
+  --color-input: 13 148 136; /* Teal */
+  --color-ring: 20 184 166; /* Emerald */
+  
+  /* Semantic colors for ocean theme */
+  --color-success: 34 197 94; /* Green */
+  --color-success-foreground: 6 78 59; /* Dark teal */
+  --color-warning: 245 158 11; /* Amber */
+  --color-warning-foreground: 6 78 59; /* Dark teal */
+  --color-error: 239 68 68; /* Red */
+  --color-error-foreground: 240 253 250; /* Light mint */
+}
+
+/* Cyber Theme */
+[data-theme="cyber"] {
+  --color-background: 15 23 42; /* Dark slate */
+  --color-foreground: 236 72 153; /* Hot pink */
+  --color-card: 30 41 59; /* Slate */
+  --color-card-foreground: 236 72 153; /* Hot pink */
+  --color-popover: 30 41 59; /* Slate */
+  --color-popover-foreground: 236 72 153; /* Hot pink */
+  --color-primary: 236 72 153; /* Hot pink */
+  --color-primary-foreground: 15 23 42; /* Dark slate */
+  --color-secondary: 51 65 85; /* Slate gray */
+  --color-secondary-foreground: 236 72 153; /* Hot pink */
+  --color-muted: 51 65 85; /* Slate gray */
+  --color-muted-foreground: 147 197 253; /* Light blue */
+  --color-accent: 59 130 246; /* Blue */
+  --color-accent-foreground: 15 23 42; /* Dark slate */
+  --color-destructive: 239 68 68; /* Red */
+  --color-destructive-foreground: 236 72 153; /* Hot pink */
+  --color-border: 51 65 85; /* Slate gray */
+  --color-input: 30 41 59; /* Slate */
+  --color-ring: 236 72 153; /* Hot pink */
+  
+  /* Semantic colors for cyber theme */
+  --color-success: 34 197 94; /* Green */
+  --color-success-foreground: 15 23 42; /* Dark slate */
+  --color-warning: 245 158 11; /* Amber */
+  --color-warning-foreground: 15 23 42; /* Dark slate */
+  --color-error: 239 68 68; /* Red */
+  --color-error-foreground: 236 72 153; /* Hot pink */
+}
+
+/* Matrix Theme */
+[data-theme="matrix"] {
+  --color-background: 0 0 0; /* Pure black */
+  --color-foreground: 0 255 0; /* Matrix green */
+  --color-card: 0 20 0; /* Very dark green */
+  --color-card-foreground: 0 255 0; /* Matrix green */
+  --color-popover: 0 20 0; /* Very dark green */
+  --color-popover-foreground: 0 255 0; /* Matrix green */
+  --color-primary: 0 255 0; /* Matrix green */
+  --color-primary-foreground: 0 0 0; /* Pure black */
+  --color-secondary: 0 40 0; /* Dark green */
+  --color-secondary-foreground: 0 255 0; /* Matrix green */
+  --color-muted: 0 40 0; /* Dark green */
+  --color-muted-foreground: 0 200 0; /* Dimmed green */
+  --color-accent: 0 255 100; /* Bright cyan-green */
+  --color-accent-foreground: 0 0 0; /* Pure black */
+  --color-destructive: 255 0 0; /* Red */
+  --color-destructive-foreground: 0 255 0; /* Matrix green */
+  --color-border: 0 60 0; /* Medium green */
+  --color-input: 0 20 0; /* Very dark green */
+  --color-ring: 0 255 0; /* Matrix green */
+  
+  /* Semantic colors for matrix theme */
+  --color-success: 0 255 0; /* Matrix green */
+  --color-success-foreground: 0 0 0; /* Pure black */
+  --color-warning: 255 255 0; /* Yellow */
+  --color-warning-foreground: 0 0 0; /* Pure black */
+  --color-error: 255 0 0; /* Red */
+  --color-error-foreground: 0 255 0; /* Matrix green */
+}
+
+/* 90s Hacker Theme */
+[data-theme="hacker90s"] {
+  --color-background: 10 15 26; /* Very dark blue */
+  --color-foreground: 51 255 153; /* Bright green */
+  --color-card: 17 24 40; /* Dark surface */
+  --color-card-foreground: 51 255 153; /* Bright green */
+  --color-popover: 17 24 40; /* Dark surface */
+  --color-popover-foreground: 51 255 153; /* Bright green */
+  --color-primary: 51 255 153; /* Bright green */
+  --color-primary-foreground: 10 15 26; /* Very dark blue */
+  --color-secondary: 55 65 81; /* Gray */
+  --color-secondary-foreground: 229 231 235; /* Light gray */
+  --color-muted: 55 65 81; /* Gray */
+  --color-muted-foreground: 107 114 128; /* Medium gray */
+  --color-accent: 240 0 255; /* Magenta */
+  --color-accent-foreground: 51 255 153; /* Bright green */
+  --color-destructive: 239 68 68; /* Red */
+  --color-destructive-foreground: 51 255 153; /* Bright green */
+  --color-border: 55 65 81; /* Gray */
+  --color-input: 17 24 40; /* Dark surface */
+  --color-ring: 51 255 153; /* Bright green */
+  
+  /* Semantic colors for hacker theme */
+  --color-success: 51 255 153; /* Bright green */
+  --color-success-foreground: 10 15 26; /* Very dark blue */
+  --color-warning: 255 191 36; /* Yellow */
+  --color-warning-foreground: 10 15 26; /* Very dark blue */
+  --color-error: 239 68 68; /* Red */
+  --color-error-foreground: 51 255 153; /* Bright green */
+}
+
 /* System theme (follows OS preference) */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
@@ -129,6 +284,104 @@
     --duration-normal: 0ms;
     --duration-slow: 0ms;
   }
+}
+
+/* Theme-specific effects and animations */
+
+/* Matrix Theme Effects */
+[data-theme="matrix"] {
+  /* Matrix rain effect */
+  background-image: 
+    linear-gradient(90deg, transparent 98%, rgba(0, 255, 0, 0.03) 100%),
+    linear-gradient(0deg, transparent 98%, rgba(0, 255, 0, 0.03) 100%);
+  background-size: 50px 50px;
+  animation: matrix-rain 20s linear infinite;
+}
+
+@keyframes matrix-rain {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 50px 50px, 50px 50px; }
+}
+
+[data-theme="matrix"] * {
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+[data-theme="matrix"] button:hover,
+[data-theme="matrix"] .card:hover {
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Cyber Theme Effects */
+[data-theme="cyber"] * {
+  text-shadow: 0 0 10px rgba(236, 72, 153, 0.3);
+}
+
+[data-theme="cyber"] button:hover,
+[data-theme="cyber"] .card:hover {
+  box-shadow: 0 0 25px rgba(236, 72, 153, 0.4);
+  transition: box-shadow 0.3s ease;
+}
+
+[data-theme="cyber"] .card {
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.6));
+}
+
+/* Medieval Theme Effects */
+[data-theme="medieval"] .card {
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  background: linear-gradient(135deg, rgba(160, 82, 45, 0.9), rgba(139, 69, 19, 0.8));
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="medieval"] button {
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(184, 134, 11, 0.2));
+}
+
+[data-theme="medieval"] button:hover {
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Ocean Theme Effects */
+[data-theme="ocean"] .card {
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.8), rgba(6, 78, 59, 0.9));
+  border: 1px solid rgba(20, 184, 166, 0.3);
+}
+
+[data-theme="ocean"] button:hover {
+  box-shadow: 0 0 20px rgba(20, 184, 166, 0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+/* 90s Hacker Theme Effects */
+[data-theme="hacker90s"] {
+  font-family: 'Courier New', monospace;
+}
+
+[data-theme="hacker90s"] * {
+  text-shadow: 0 0 8px rgba(51, 255, 153, 0.4);
+}
+
+[data-theme="hacker90s"] .card {
+  border: 1px solid rgba(51, 255, 153, 0.3);
+  background: linear-gradient(135deg, rgba(17, 24, 40, 0.9), rgba(10, 15, 26, 0.8));
+  box-shadow: 0 0 15px rgba(51, 255, 153, 0.2);
+}
+
+[data-theme="hacker90s"] button:hover {
+  box-shadow: 0 0 20px rgba(51, 255, 153, 0.5);
+  transition: box-shadow 0.3s ease;
+}
+
+[data-theme="hacker90s"] input,
+[data-theme="hacker90s"] textarea {
+  border: 1px solid rgba(51, 255, 153, 0.5);
+  background: rgba(10, 15, 26, 0.8);
+  color: rgb(51, 255, 153);
 }
 
 /* High contrast support */

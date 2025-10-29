@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { ThemeProvider } from '@vulhub/ui';
+import { Themes } from '@vulhub/ui';
 import { QueryProvider } from '@/lib/providers/query-provider';
 import { AuthProvider } from '@/lib/providers/auth-provider';
 import './globals.css';
@@ -24,18 +24,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+        <Themes.Provider
+          defaultTheme="light"
+          storageKey="vulhub-theme"
         >
           <QueryProvider>
             <AuthProvider>
               {children}
             </AuthProvider>
           </QueryProvider>
-        </ThemeProvider>
+        </Themes.Provider>
       </body>
     </html>
   );
