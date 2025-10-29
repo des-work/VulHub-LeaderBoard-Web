@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@vulh
 import { Button } from '@vulhub/ui';
 import { Badge } from '@vulhub/ui';
 import { Avatar } from '@vulhub/ui';
+import { UnifiedIcon, Terminology, VisualEffect, CustomizationPanel } from '@vulhub/ui';
 import { 
   Trophy, 
   Target, 
@@ -21,7 +22,6 @@ import {
   Zap,
   Settings
 } from 'lucide-react';
-import { Themes } from '@vulhub/ui';
 
 interface DashboardStats {
   totalSubmissions: number;
@@ -135,15 +135,12 @@ export default function DashboardPage() {
               <div className="relative group">
                 <Button variant="outline" size="sm" className="flex items-center space-x-2">
                   <Settings className="h-4 w-4" />
-                  <span>Themes</span>
+                  <span>Customize</span>
                 </Button>
-                <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <Themes.Selector />
+                <div className="absolute right-0 top-full mt-2 w-96 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 max-h-96 overflow-y-auto">
+                  <CustomizationPanel />
                 </div>
               </div>
-              <Button variant="outline" size="sm" asChild>
-                <a href="/themes">Theme Showcase</a>
-              </Button>
               <Avatar className="h-8 w-8">
                 {user?.avatarUrl ? (
                   <img src={user.avatarUrl} alt={user.firstName} />

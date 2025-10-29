@@ -10,14 +10,11 @@ export * from './primitives';
 // Advanced systems
 export * from './animations';
 export { Images } from './images';
-export { Themes } from './themes';
 export { Responsive } from './responsive';
 export { Enhanced } from './enhanced';
 
-// Theme-specific components
-export * from './components/medieval';
-export * from './components/cyberpunk';
-export { ThemeShowcase } from './components/ThemeShowcase';
+// Unified Design System
+export * from './design-system';
 
 // Providers
 export * from './providers';
