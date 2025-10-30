@@ -65,6 +65,51 @@ The VulHub Leaderboard is a comprehensive cybersecurity education platform desig
   - [ ] Accessibility testing
   - [ ] Visual regression testing
 
+### **Phase 2.5: "Cyber" Theme Activation & Rollout (Weeks 4-5)**
+
+#### **Objective**: Activate and apply the existing "cyber" theme across the web application. This involves implementing the theme-switching mechanism, applying the "cyber" design tokens to all UI components, and adding special effects for an authentic retro-tech feel.
+
+#### **Week 4: Theming Infrastructure & Core Component Styling**
+- [ ] **Verify Design Tokens (`packages/ui`)**
+  - **Colors**: Confirm the "cyber" theme's color palette (dark background, glowing green primary, accents) is defined in `color-system.ts` and correctly integrated with Tailwind CSS.
+  - **Typography**: Ensure the monospaced font (e.g., 'JetBrains Mono' as mentioned in `PHASE_2_COMPLETE.md`) is configured to be the primary font for the "cyber" theme.
+  - **Effects**: Define `box-shadow` and `text-shadow` tokens in `design-tokens.ts` to create a "glow" effect for text and interactive elements, specific to the cyber theme.
+
+- [ ] **Theming Infrastructure (`packages/ui` & `apps/web`)**
+  - Implement the theme provider as planned in `UI_CUSTOMIZATION_STRATEGY.md`. A library like `next-themes` is ideal for this.
+  - Use a `class`-based strategy. For example, adding a `theme-cyber` class to the `<body>` tag will activate the theme.
+  - Configure Tailwind CSS to use the "cyber" theme styles when this class is present.
+
+- [ ] **Apply "Cyber" Theme to Core Components (`packages/ui`)**
+  - **Button**: Style the button component to use the cyber theme's primary green color, monospaced font, and a glow effect on hover/focus.
+  - **Input**: Style inputs with a green border and a glowing focus state.
+  - **Card**: Update the card component to use the dark background with a subtle green border or glow.
+  - **Storybook**: Create new stories for each primitive component (`Button`, `Input`, `Card`, etc.) to display its appearance under the "cyber" theme. This allows for isolated development and visual testing.
+
+#### **Week 5: Pattern Components & Special Effects**
+- [ ] **Apply "Cyber" Theme to Pattern Components (`packages/ui`)**
+  - **Data Table**: Style the table with green text, monospaced font, and glowing headers. Rows should highlight with a green background on hover.
+  - **Forms**: Ensure all form elements (selects, checkboxes) adopt the new aesthetic.
+  - **Modals**: Style with a dark, semi-transparent backdrop and glowing green borders.
+
+- [ ] **Implement "Hacker" Special Effects (`apps/web`)**
+  - **Digital Rain Background**:
+    - Create a new React component `<DigitalRain />`.
+    - Use an HTML `<canvas>` element to render the classic falling green characters effect.
+    - Ensure the component is memoized and optimized to prevent performance degradation.
+    - Add this component to the main layout of the web app, making it visible on all pages when the theme is active.
+  - **Scan Line Overlay**:
+    - Create a CSS-only overlay with a repeating linear gradient to simulate a CRT monitor scan line effect. Apply this to the main application container.
+  - **Text Glitch/Flicker Effect**:
+    - Create a subtle CSS animation for text flicker or a "glitch" effect.
+    - Apply this animation to key headings (`<h1>`, `<h2>`) or the main logo when the cyber theme is active.
+
+- [ ] **Integrate and Test (`apps/web`)**
+  - Add a theme-switcher toggle to the application's header or settings page.
+  - Ensure the theme provider correctly applies the `theme-cyber` class to the root layout.
+  - Perform a full visual review of the application with the new theme enabled, checking for consistency and readability.
+  - Test on different browsers and screen sizes to ensure effects are rendered correctly.
+
 ### **Phase 3: API Development (Weeks 5-7)**
 
 #### **Week 5: NestJS Foundation**
