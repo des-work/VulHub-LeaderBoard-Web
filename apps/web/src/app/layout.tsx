@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { ClientDesignProvider } from '@/lib/providers/design-provider';
-import { QueryProvider } from '@/lib/providers/query-provider';
-import { AuthProvider } from '@/lib/providers/auth-provider';
+import { ThemeProvider } from '../lib/theme/context';
+import { AuthProvider } from '../lib/auth/context';
+import { CSSProvider } from '../components/CSSProvider';
+import { loadFonts } from '../lib/fonts/fonts';
 import './globals.css';
-import './loading.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,13 +24,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ClientDesignProvider>
-          <QueryProvider>
-            <AuthProvider>
+        <CSSProvider showDebugPanel={true} enableFallback={true} enableDebugging={true}>
+          <AuthProvider>
+            <ThemeProvider defaultTheme="matrix">
               {children}
-            </AuthProvider>
-          </QueryProvider>
-        </ClientDesignProvider>
+            </ThemeProvider>
+          </AuthProvider>
+        </CSSProvider>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(${loadFonts.toString()})()`,
+          }}
+        />
       </body>
     </html>
   );

@@ -1,258 +1,375 @@
-import { Suspense } from 'react';
-import { Button } from '@vulhub/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@vulhub/ui';
-import { Badge } from '@vulhub/ui';
-import { UnifiedIcon, Terminology, VisualEffect, CustomizationPanel } from '@vulhub/ui';
-import { Trophy, Users, Target, Award, Settings } from 'lucide-react';
+'use client';
+
+/**
+ * New Home Page
+ * Clean, modular implementation using the new UI system
+ */
+
+import React, { useState, useEffect } from 'react';
+import { Button } from '../lib/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../lib/ui/card';
+import { useThemeValue } from '../lib/theme/context';
+import { useAuth } from '../lib/auth/context';
+import { Leaderboard } from '../components/leaderboard/Leaderboard';
+import { SubmissionForm } from '../components/submissions/SubmissionForm';
+import { Trophy, Users, Target, Award, Zap, Shield, Sword, Crown, Medal, Upload, LogOut } from 'lucide-react';
+import RippleGridV2 from '../components/RippleGrid/RippleGridV2';
+import { Activity } from '../lib/auth/types';
 
 export default function HomePage() {
+  const theme = useThemeValue();
+  const { user, isAuthenticated, logout } = useAuth();
+  const [showSubmissionForm, setShowSubmissionForm] = useState(false);
+  const [activities] = useState<Activity[]>([
+    {
+      id: 'vuln-001',
+      name: 'SQL Injection Challenge',
+      description: 'Find and exploit SQL injection vulnerabilities in a web application',
+      points: 100,
+      difficulty: 'beginner',
+      category: 'Web Security',
+      requirements: ['Basic SQL knowledge', 'Web browser'],
+      isActive: true,
+      createdAt: new Date(),
+    },
+    {
+      id: 'vuln-002',
+      name: 'Buffer Overflow Exploit',
+      description: 'Exploit a buffer overflow vulnerability in a C program',
+      points: 200,
+      difficulty: 'intermediate',
+      category: 'Binary Exploitation',
+      requirements: ['C programming', 'Assembly basics', 'GDB'],
+      isActive: true,
+      createdAt: new Date(),
+    },
+    {
+      id: 'vuln-003',
+      name: 'Cryptographic Challenge',
+      description: 'Break weak encryption and implement secure alternatives',
+      points: 150,
+      difficulty: 'intermediate',
+      category: 'Cryptography',
+      requirements: ['Math background', 'Python programming'],
+      isActive: true,
+      createdAt: new Date(),
+    },
+  ]);
+
+  // Mock users data - in real app, this would come from your backend
+  const [users] = useState([
+    {
+      id: '1',
+      schoolId: 'CS001',
+      name: 'Alice Johnson',
+      email: 'alice@school.edu',
+      role: 'student' as const,
+      points: 1250,
+      level: 3,
+      joinDate: new Date('2024-01-15'),
+      lastActive: new Date(Date.now() - 2 * 60 * 1000), // 2 minutes ago
+      completedActivities: ['vuln-001', 'vuln-002'],
+      pendingSubmissions: [],
+      approvedSubmissions: [],
+    },
+    {
+      id: '2',
+      schoolId: 'CS002',
+      name: 'Bob Smith',
+      email: 'bob@school.edu',
+      role: 'student' as const,
+      points: 1180,
+      level: 3,
+      joinDate: new Date('2024-01-20'),
+      lastActive: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
+      completedActivities: ['vuln-001'],
+      pendingSubmissions: ['sub-001'],
+      approvedSubmissions: [],
+    },
+    {
+      id: '3',
+      schoolId: 'CS003',
+      name: 'Carol Davis',
+      email: 'carol@school.edu',
+      role: 'student' as const,
+      points: 1100,
+      level: 2,
+      joinDate: new Date('2024-02-01'),
+      lastActive: new Date(Date.now() - 60 * 60 * 1000), // 1 hour ago
+      completedActivities: ['vuln-001'],
+      pendingSubmissions: [],
+      approvedSubmissions: ['sub-002'],
+    },
+  ]);
+
+  const handleSubmissionSubmit = (submission: any) => {
+    console.log('New submission:', submission);
+    // In real app, submit to backend
+    setShowSubmissionForm(false);
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-black text-green-400 font-mono flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">Access Denied</h1>
+          <p className="text-gray-400 mb-6">Please sign in to access the platform</p>
+          <Button
+            variant="matrix"
+            onClick={() => window.location.href = '/auth'}
+          >
+            Go to Sign In
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading while user data is being fetched
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-black text-green-400 font-mono flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-green-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-xl">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm dark:bg-gray-900/80">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <VisualEffect type="glow">
-                <UnifiedIcon name="trophy" size={32} className="text-blue-600" />
-              </VisualEffect>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                <Terminology>VulHub Leaderboard</Terminology>
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative group">
-                <Button variant="outline" size="sm" className="flex items-center space-x-2">
-                  <Settings className="h-4 w-4" />
-                  <span>Customize</span>
-                </Button>
-                <div className="absolute right-0 top-full mt-2 w-96 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 max-h-96 overflow-y-auto">
-                  <CustomizationPanel />
+    <div className="min-h-screen bg-black text-white font-mono">
+      {/* OGL RippleGrid Background */}
+      <div className="fixed inset-0 z-0">
+        <RippleGridV2
+          enableRainbow={false}
+          gridColor="#a855f7"
+          rippleIntensity={0.05}
+          gridSize={10}
+          gridThickness={15}
+          fadeDistance={1.5}
+          vignetteStrength={2.0}
+          glowIntensity={0.1}
+          opacity={0.3}
+          gridRotation={0}
+          mouseInteraction={true}
+          mouseInteractionRadius={1.2}
+        />
+      </div>
+      
+      {/* Matrix Background Effects */}
+      <div className="fixed inset-0 bg-gradient-to-br from-black via-green-900/5 to-black" />
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(0,255,0,0.1)_0%,transparent_50%)]" />
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(0,255,0,0.1)_0%,transparent_50%)]" />
+      
+      {/* Scan Lines Effect */}
+      <div className="fixed inset-0 bg-[linear-gradient(transparent_50%,rgba(0,255,0,0.03)_50%)] bg-[length:100%_4px] animate-pulse pointer-events-none" />
+      
+      <div className="relative z-10">
+        {/* Header */}
+        <header className="border-b border-green-500/30 bg-black/90 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              {/* Logo */}
+              <div className="flex items-center space-x-3">
+                <div className="neon-glow-purple">
+                  <Trophy className="h-8 w-8 text-purple-400" />
                 </div>
+                <h1 className="text-2xl font-bold text-purple-400 font-mono neon-glow-purple flicker">
+                  VulHub Scoreboard
+                </h1>
               </div>
-              <Button variant="outline" size="sm">
-                Sign In
-              </Button>
-              <Button size="sm">
-                Get Started
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
 
-      {/* Hero Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            <Terminology>Master Cybersecurity Through Competition</Terminology>
-            <span className="text-blue-600"> Competition</span>
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-            <Terminology>
-              Join the ultimate cybersecurity learning platform where students compete, 
-              learn, and grow through real-world vulnerability challenges.
-            </Terminology>
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8 py-6">
-              Start Learning Now
-            </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-6">
-              View Leaderboard
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 bg-white dark:bg-gray-900">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Why Choose VulHub Leaderboard?
-            </h3>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Our platform combines gamification with real-world cybersecurity challenges 
-              to create an engaging learning experience.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="text-center">
-              <CardHeader>
-                <VisualEffect type="glow">
-                  <div className="mx-auto w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mb-4">
-                    <UnifiedIcon name="castle" size={24} className="text-blue-600" />
+              {/* Navigation */}
+              <nav className="flex items-center space-x-4">
+                <Button variant="outline" size="sm" className="border-green-500/50 text-green-400 hover:bg-green-500/10">
+                  <Users className="h-4 w-4 mr-2" />
+                  Community
+                </Button>
+                <Button variant="outline" size="sm" className="border-green-500/50 text-green-400 hover:bg-green-500/10">
+                  <Target className="h-4 w-4 mr-2" />
+                  Challenges
+                </Button>
+                <Button variant="outline" size="sm" className="border-green-500/50 text-green-400 hover:bg-green-500/10">
+                  <Award className="h-4 w-4 mr-2" />
+                  Badges
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="border-green-500/50 text-green-400 hover:bg-green-500/10"
+                  onClick={() => setShowSubmissionForm(true)}
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Submit
+                </Button>
+                <div className="flex items-center space-x-2 px-3 py-2 bg-green-500/10 border border-green-500/30 rounded">
+                  <div className="w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center text-green-400 font-mono font-bold text-xs">
+                    {user?.name.split(' ').map(n => n[0]).join('')}
                   </div>
-                </VisualEffect>
-                <CardTitle>
-                  <Terminology>Competitive Learning</Terminology>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  <Terminology>
-                    Compete with peers on real vulnerability challenges and climb the leaderboards.
-                  </Terminology>
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardHeader>
-                <VisualEffect type="glow">
-                  <div className="mx-auto w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mb-4">
-                    <UnifiedIcon name="shield" size={24} className="text-green-600" />
+                  <div className="text-xs">
+                    <div className="text-green-400 font-mono font-bold">{user?.name}</div>
+                    <div className="text-gray-400 font-mono">{user?.points} pts</div>
                   </div>
-                </VisualEffect>
-                <CardTitle>
-                  <Terminology>Community Driven</Terminology>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  <Terminology>
-                    Learn from and collaborate with a community of cybersecurity enthusiasts.
-                  </Terminology>
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardHeader>
-                <VisualEffect type="glow">
-                  <div className="mx-auto w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mb-4">
-                    <UnifiedIcon name="sword" size={24} className="text-purple-600" />
-                  </div>
-                </VisualEffect>
-                <CardTitle>
-                  <Terminology>Real Challenges</Terminology>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  <Terminology>
-                    Practice on real-world vulnerabilities and hone your practical skills.
-                  </Terminology>
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center">
-              <CardHeader>
-                <VisualEffect type="glow">
-                  <div className="mx-auto w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center mb-4">
-                    <UnifiedIcon name="award" size={24} className="text-orange-600" />
-                  </div>
-                </VisualEffect>
-                <CardTitle>
-                  <Terminology>Achievement System</Terminology>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  <Terminology>
-                    Earn badges and achievements as you progress through different skill levels.
-                  </Terminology>
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-20 bg-blue-600 dark:bg-blue-800">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8 text-center text-white">
-            <div>
-              <div className="text-4xl font-bold mb-2">500+</div>
-              <div className="text-blue-100">Active Students</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">50+</div>
-              <div className="text-blue-100">Vulnerability Challenges</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">1000+</div>
-              <div className="text-blue-100">Submissions Reviewed</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">95%</div>
-              <div className="text-blue-100">Student Satisfaction</div>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                  onClick={logout}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </nav>
             </div>
           </div>
-        </div>
-      </section>
+        </header>
 
-      {/* CTA Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-            Ready to Start Your Cybersecurity Journey?
-          </h3>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-            Join thousands of students who are already mastering cybersecurity through our 
-            gamified learning platform.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8 py-6">
-              Sign Up Now
-            </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-6">
-              Learn More
-            </Button>
+        {/* Live Leaderboard Section */}
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <Leaderboard
+              users={users}
+              currentUserId={user?.id}
+              onRefresh={() => {
+                // In real app, refresh data from backend
+                console.log('Refreshing leaderboard...');
+              }}
+              title="Live Rankings"
+              showConfig={true}
+            />
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Trophy className="h-6 w-6" />
-                <span className="text-xl font-bold">VulHub Leaderboard</span>
+        {/* Hero Section */}
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              {/* Main Headlines */}
+              <h1 className="text-6xl font-bold text-purple-400 font-mono mb-6 neon-glow-purple flicker-slow">
+                MASTER CYBERSECURITY
+              </h1>
+              <h2 className="text-4xl font-bold text-red-400 font-mono mb-8 neon-glow-red flicker">
+                THROUGH COMPETITION
+              </h2>
+              
+              <p className="text-xl text-gray-300 mb-12 max-w-4xl mx-auto font-mono leading-relaxed">
+                Join the ultimate cybersecurity learning box where hackers compete, 
+                learn, and grow through real-world vuln challenges. 
+                Climb the rankings and prove your skills in the digital battlefield.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
+                <Button variant="neon" size="xl" className="text-lg px-8 py-4">
+                  <Zap className="h-6 w-6 mr-3" />
+                  START HACKING NOW
+                </Button>
+                <Button variant="matrix" size="xl" className="text-lg px-8 py-4">
+                  <Trophy className="h-6 w-6 mr-3" />
+                  VIEW RANKINGS
+                </Button>
               </div>
-              <p className="text-gray-400">
-                Empowering the next generation of cybersecurity professionals.
+            </div>
+
+            {/* Feature Cards */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <Card variant="matrix" hover glow className="text-center">
+                <CardContent className="p-6">
+                  <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
+                    <Shield className="h-8 w-8 text-green-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-green-400 font-mono mb-3">
+                    COMPETITIVE LEARNING
+                  </h3>
+                  <p className="text-gray-300 font-mono text-sm leading-relaxed">
+                    Compete with fellow hackers on real vulnerability challenges 
+                    and climb the scoreboards to prove your skills.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card variant="matrix" hover glow className="text-center">
+                <CardContent className="p-6">
+                  <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
+                    <Users className="h-8 w-8 text-green-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-green-400 font-mono mb-3">
+                    COMMUNITY DRIVEN
+                  </h3>
+                  <p className="text-gray-300 font-mono text-sm leading-relaxed">
+                    Learn from and collaborate with a community of cybersecurity 
+                    enthusiasts and experienced hackers.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card variant="matrix" hover glow className="text-center">
+                <CardContent className="p-6">
+                  <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
+                    <Sword className="h-8 w-8 text-green-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-green-400 font-mono mb-3">
+                    REAL CHALLENGES
+                  </h3>
+                  <p className="text-gray-300 font-mono text-sm leading-relaxed">
+                    Practice on real-world vulnerabilities and hone your 
+                    practical hacking skills in a controlled environment.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card variant="matrix" hover glow className="text-center">
+                <CardContent className="p-6">
+                  <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
+                    <Award className="h-8 w-8 text-green-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-green-400 font-mono mb-3">
+                    ACHIEVEMENT SYSTEM
+                  </h3>
+                  <p className="text-gray-300 font-mono text-sm leading-relaxed">
+                    Earn badges and achievements as you progress through 
+                    different skill levels and complete challenges.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="bg-black border-t border-green-500/30 py-12">
+          <div className="container mx-auto px-4">
+            <div className="text-center">
+              <div className="flex items-center justify-center space-x-3 mb-4">
+                <div className="text-shadow-[0_0_10px_rgba(0,255,0,0.5)]">
+                  <Trophy className="h-6 w-6 text-green-400" />
+                </div>
+                <span className="text-xl font-bold text-green-400 font-mono">
+                  VulHub Scoreboard
+                </span>
+              </div>
+              <p className="text-gray-400 font-mono text-sm">
+                © 2025 CSUSB Cybersecurity Program. All rights reserved.
               </p>
             </div>
-            <div>
-              <h4 className="font-semibold mb-4">Platform</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>Leaderboards</li>
-                <li>Challenges</li>
-                <li>Badges</li>
-                <li>Community</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Resources</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>Documentation</li>
-                <li>Tutorials</li>
-                <li>API</li>
-                <li>Support</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Connect</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>Discord</li>
-                <li>GitHub</li>
-                <li>Twitter</li>
-                <li>LinkedIn</li>
-              </ul>
-            </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 CSUSB Cybersecurity Program. All rights reserved.</p>
+        </footer>
+      </div>
+
+      {/* Submission Form Modal */}
+      {showSubmissionForm && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <SubmissionForm
+              activities={activities}
+              onSubmit={handleSubmissionSubmit}
+              onCancel={() => setShowSubmissionForm(false)}
+            />
           </div>
         </div>
-      </footer>
+      )}
     </div>
   );
 }
