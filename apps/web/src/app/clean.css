@@ -1,0 +1,320 @@
+/* Clean Professional Styling - No Green Haze or Aggressive Effects */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Professional Color Palette */
+:root {
+  /* Primary Colors - Professional Indigo */
+  --color-primary: 99 102 241; /* Indigo */
+  --color-primary-light: 129 140 248;
+  --color-primary-dark: 79 70 229;
+  --color-primary-muted: 165 180 252;
+  
+  /* Secondary Colors - Modern Pink */
+  --color-secondary: 236 72 153; /* Pink */
+  --color-secondary-light: 244 114 182;
+  --color-secondary-dark: 219 39 119;
+  --color-secondary-muted: 249 168 212;
+  
+  /* Neutral Colors */
+  --color-neutral-white: 255 255 255;
+  --color-neutral-black: 0 0 0;
+  --color-neutral-50: 249 250 251;
+  --color-neutral-100: 243 244 246;
+  --color-neutral-200: 229 231 235;
+  --color-neutral-300: 209 213 219;
+  --color-neutral-400: 156 163 175;
+  --color-neutral-500: 107 114 128;
+  --color-neutral-600: 75 85 99;
+  --color-neutral-700: 55 65 81;
+  --color-neutral-800: 31 39 55;
+  --color-neutral-900: 17 24 39;
+  
+  /* Semantic Colors */
+  --color-success: 16 185 129; /* Emerald */
+  --color-warning: 245 158 11; /* Amber */
+  --color-error: 239 68 68; /* Red */
+  --color-info: 59 130 246; /* Blue */
+  
+  /* Professional Font System with Fallbacks */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  --font-secondary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+}
+
+/* Clean Body Styling - No Green Haze */
+body {
+  @apply bg-neutral-900 text-neutral-100;
+  font-family: var(--font-primary);
+  background: #000000; /* Pure black background */
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  /* Remove all green effects and gradients */
+}
+
+/* Professional Typography Classes */
+.font-header {
+  font-family: var(--font-primary);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+.font-body {
+  font-family: var(--font-secondary);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.6;
+}
+
+.font-code {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  line-height: 1.25;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.7;
+}
+
+/* Subtle Professional Effects - No Aggressive Glow */
+.professional-glow {
+  text-shadow: 0 0 8px currentColor;
+  transition: text-shadow 0.3s ease;
+}
+
+.subtle-glow {
+  text-shadow: 0 0 4px currentColor;
+  transition: text-shadow 0.3s ease;
+}
+
+.accent-glow {
+  text-shadow: 0 0 6px currentColor;
+  transition: text-shadow 0.3s ease;
+}
+
+/* Clean Hover Effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.2);
+}
+
+.hover-glow {
+  transition: text-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.hover-glow:hover {
+  text-shadow: 0 0 12px currentColor;
+  filter: brightness(1.1);
+}
+
+/* Professional Button Styling */
+.btn-professional {
+  @apply px-6 py-3 rounded-lg font-medium transition-all duration-300;
+  font-family: var(--font-primary);
+  font-weight: 500;
+  letter-spacing: 0.025em;
+}
+
+.btn-primary {
+  @apply bg-indigo-600 text-white hover:bg-indigo-700;
+  box-shadow: 0 4px 14px 0 rgb(99 102 241 / 0.3);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 20px 0 rgb(99 102 241 / 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  @apply bg-pink-600 text-white hover:bg-pink-700;
+  box-shadow: 0 4px 14px 0 rgb(236 72 153 / 0.3);
+}
+
+.btn-secondary:hover {
+  box-shadow: 0 6px 20px 0 rgb(236 72 153 / 0.4);
+  transform: translateY(-1px);
+}
+
+/* Professional Card Styling */
+.card-professional {
+  @apply bg-neutral-800/50 backdrop-blur-sm border border-neutral-700/50 rounded-xl;
+  box-shadow: 0 8px 32px 0 rgb(0 0 0 / 0.3);
+  transition: all 0.3s ease;
+}
+
+.card-professional:hover {
+  @apply border-neutral-600/50;
+  box-shadow: 0 12px 40px 0 rgb(0 0 0 / 0.4);
+  transform: translateY(-2px);
+}
+
+/* Clean Text Colors */
+.text-primary {
+  color: rgb(var(--color-primary));
+}
+
+.text-secondary {
+  color: rgb(var(--color-secondary));
+}
+
+.text-success {
+  color: rgb(var(--color-success));
+}
+
+.text-warning {
+  color: rgb(var(--color-warning));
+}
+
+.text-error {
+  color: rgb(var(--color-error));
+}
+
+.text-info {
+  color: rgb(var(--color-info));
+}
+
+/* Professional Animations - Subtle */
+@keyframes professional-fade-in {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+@keyframes subtle-scale {
+  from { transform: scale(0.95); }
+  to { transform: scale(1); }
+}
+
+@keyframes elegant-slide-up {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: professional-fade-in 0.8s ease-out;
+}
+
+.slide-up {
+  animation: elegant-slide-up 0.6s ease-out;
+}
+
+.scale-in {
+  animation: subtle-scale 0.5s ease-out;
+}
+
+/* Clean Background - No Green Haze */
+.bg-professional {
+  background: #000000;
+}
+
+.bg-glass {
+  background: rgba(31, 39, 55, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Professional Focus States */
+.focus-professional:focus {
+  outline: 2px solid rgb(var(--color-primary));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgb(var(--color-primary) / 0.2);
+}
+
+/* Responsive Typography */
+@media (max-width: 640px) {
+  .text-responsive {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+}
+
+@media (min-width: 641px) {
+  .text-responsive {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-responsive {
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+}
+
+/* Remove all green effects and aggressive styling */
+.neon-glow,
+.neon-glow-purple,
+.neon-glow-red,
+.neon-glow-green,
+.flicker,
+.flicker-slow,
+.flicker-fast,
+.flicker-random,
+.glow-pulse,
+.text-rainbow {
+  /* Disable all aggressive effects */
+  text-shadow: none !important;
+  animation: none !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  background-clip: unset !important;
+}
+
+/* Ensure proper text rendering */
+* {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fix font loading issues */
+.font-loading {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Professional spacing */
+.space-professional > * + * {
+  margin-top: 1.5rem;
+}
+
+.space-tight > * + * {
+  margin-top: 0.75rem;
+}
+
+.space-loose > * + * {
+  margin-top: 2.5rem;
+}

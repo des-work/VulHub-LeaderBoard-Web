@@ -193,13 +193,12 @@
     @apply border-neutral-200;
   }
 
-  body {
-    @apply bg-neutral-950 text-neutral-50;
-    font-family: var(--font-primary, var(--font-family-mono));
-    background: linear-gradient(135deg, #000000 0%, #1a0a1a 25%, #000000 50%, #0a1a0a 75%, #000000 100%);
-    background-size: 400% 400%;
-    animation: gradient-shift 20s ease infinite;
-  }
+body {
+  @apply bg-neutral-950 text-neutral-50;
+  font-family: var(--font-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+  background: #000000;
+  /* Remove green gradient and animation */
+}
 
   /* Enhanced Theme Classes */
   .theme-cyberpunk {

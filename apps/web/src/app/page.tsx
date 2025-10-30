@@ -11,8 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '../lib/ui/card';
 import { useThemeValue } from '../lib/theme/context';
 import { useAuth } from '../lib/auth/context';
 import { Leaderboard } from '../components/leaderboard/Leaderboard';
+import { SpectacularLeaderboard } from '../components/leaderboard/SpectacularLeaderboard';
 import { SubmissionForm } from '../components/submissions/SubmissionForm';
-import { Trophy, Users, Target, Award, Zap, Shield, Sword, Crown, Medal, Upload, LogOut } from 'lucide-react';
+import { Trophy, Users, Target, Award, Zap, Shield, Sword, Crown, Medal, Upload, LogOut, BookOpen } from 'lucide-react';
 import RippleGridV2 from '../components/RippleGrid/RippleGridV2';
 import { Activity } from '../lib/auth/types';
 
@@ -110,12 +111,12 @@ export default function HomePage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-black text-green-400 font-mono flex items-center justify-center">
+      <div className="min-h-screen bg-black text-neutral-100 font-body flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Access Denied</h1>
-          <p className="text-gray-400 mb-6">Please sign in to access the platform</p>
+          <h1 className="text-4xl font-bold mb-4 text-primary">Access Denied</h1>
+          <p className="text-neutral-400 mb-6">Please sign in to access the platform</p>
           <Button
-            variant="matrix"
+            className="btn-professional btn-primary"
             onClick={() => window.location.href = '/auth'}
           >
             Go to Sign In
@@ -128,94 +129,98 @@ export default function HomePage() {
   // Show loading while user data is being fetched
   if (!user) {
     return (
-      <div className="min-h-screen bg-black text-green-400 font-mono flex items-center justify-center">
+      <div className="min-h-screen bg-black text-neutral-100 font-body flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-green-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-xl">Loading your dashboard...</p>
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-xl text-neutral-300">Loading your dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white font-mono">
+    <div className="min-h-screen bg-black text-neutral-100 font-body">
       {/* OGL RippleGrid Background */}
       <div className="fixed inset-0 z-0">
         <RippleGridV2
           enableRainbow={false}
-          gridColor="#a855f7"
+          gridColor="#a855f7" // Purple grid
           rippleIntensity={0.05}
           gridSize={10}
           gridThickness={15}
           fadeDistance={1.5}
           vignetteStrength={2.0}
           glowIntensity={0.1}
-          opacity={0.3}
+          opacity={0.3} // Visible but not overwhelming
           gridRotation={0}
           mouseInteraction={true}
           mouseInteractionRadius={1.2}
         />
       </div>
       
-      {/* Matrix Background Effects */}
-      <div className="fixed inset-0 bg-gradient-to-br from-black via-green-900/5 to-black" />
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(0,255,0,0.1)_0%,transparent_50%)]" />
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(0,255,0,0.1)_0%,transparent_50%)]" />
-      
-      {/* Scan Lines Effect */}
-      <div className="fixed inset-0 bg-[linear-gradient(transparent_50%,rgba(0,255,0,0.03)_50%)] bg-[length:100%_4px] animate-pulse pointer-events-none" />
+      {/* Clean Background - No Green Effects */}
+      <div className="fixed inset-0 bg-black" />
       
       <div className="relative z-10">
         {/* Header */}
-        <header className="border-b border-green-500/30 bg-black/90 backdrop-blur-sm">
+        <header className="border-b border-neutral-700/30 bg-black/90 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               {/* Logo */}
-              <div className="flex items-center space-x-3">
-                <div className="neon-glow-purple">
-                  <Trophy className="h-8 w-8 text-purple-400" />
-                </div>
-                <h1 className="text-2xl font-bold text-purple-400 font-mono neon-glow-purple flicker">
-                  VulHub Scoreboard
-                </h1>
-              </div>
+        <div className="flex items-center space-x-3">
+          <div className="professional-glow">
+            <Trophy className="h-8 w-8 text-primary" />
+          </div>
+          <h1 className="text-2xl font-bold text-primary font-display professional-glow">
+            VulHub Scoreboard
+          </h1>
+        </div>
 
               {/* Navigation */}
               <nav className="flex items-center space-x-4">
-                <Button variant="outline" size="sm" className="border-green-500/50 text-green-400 hover:bg-green-500/10">
+                <Button variant="outline" size="sm" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50" onClick={() => window.location.href = '/community'}>
                   <Users className="h-4 w-4 mr-2" />
                   Community
                 </Button>
-                <Button variant="outline" size="sm" className="border-green-500/50 text-green-400 hover:bg-green-500/10">
+                <Button variant="outline" size="sm" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50">
                   <Target className="h-4 w-4 mr-2" />
                   Challenges
                 </Button>
-                <Button variant="outline" size="sm" className="border-green-500/50 text-green-400 hover:bg-green-500/10">
+                <Button variant="outline" size="sm" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50">
                   <Award className="h-4 w-4 mr-2" />
                   Badges
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="border-green-500/50 text-green-400 hover:bg-green-500/10"
+                  className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50"
                   onClick={() => setShowSubmissionForm(true)}
                 >
                   <Upload className="h-4 w-4 mr-2" />
                   Submit
                 </Button>
-                <div className="flex items-center space-x-2 px-3 py-2 bg-green-500/10 border border-green-500/30 rounded">
-                  <div className="w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center text-green-400 font-mono font-bold text-xs">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50"
+                  onClick={() => window.location.href = '/resources'}
+                >
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Resources
+                </Button>
+                <div className="flex items-center space-x-2 px-3 py-2 bg-neutral-800/50 border border-neutral-600/30 rounded">
+                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-primary font-mono font-bold text-xs">
                     {user?.name.split(' ').map(n => n[0]).join('')}
                   </div>
                   <div className="text-xs">
-                    <div className="text-green-400 font-mono font-bold">{user?.name}</div>
-                    <div className="text-gray-400 font-mono">{user?.points} pts</div>
+                    <div className="text-primary font-mono font-bold">{user?.name}</div>
+                    <div className="text-neutral-300 font-mono">{user?.points} pts</div>
                   </div>
                 </div>
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                  className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50"
                   onClick={logout}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
@@ -226,18 +231,14 @@ export default function HomePage() {
           </div>
         </header>
 
-        {/* Live Leaderboard Section */}
+        {/* Spectacular Live Leaderboard Section - The Star of the Show */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <Leaderboard
+            <SpectacularLeaderboard
               users={users}
-              currentUserId={user?.id}
-              onRefresh={() => {
-                // In real app, refresh data from backend
-                console.log('Refreshing leaderboard...');
-              }}
+              currentUser={user}
               title="Live Rankings"
-              showConfig={true}
+              showLiveIndicator={true}
             />
           </div>
         </section>
@@ -247,28 +248,28 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
               {/* Main Headlines */}
-              <h1 className="text-6xl font-bold text-purple-400 font-mono mb-6 neon-glow-purple flicker-slow">
-                MASTER CYBERSECURITY
-              </h1>
-              <h2 className="text-4xl font-bold text-red-400 font-mono mb-8 neon-glow-red flicker">
-                THROUGH COMPETITION
-              </h2>
+        <h1 className="text-6xl font-bold text-primary font-display mb-6 professional-glow fade-in">
+          Master Cybersecurity
+        </h1>
+        <h2 className="text-4xl font-bold text-secondary font-display mb-8 subtle-glow slide-up">
+          Through Competition
+        </h2>
               
-              <p className="text-xl text-gray-300 mb-12 max-w-4xl mx-auto font-mono leading-relaxed">
-                Join the ultimate cybersecurity learning box where hackers compete, 
-                learn, and grow through real-world vuln challenges. 
+              <p className="text-xl text-neutral-300 mb-12 max-w-4xl mx-auto font-body leading-relaxed">
+                Join the ultimate cybersecurity learning platform where students compete, 
+                learn, and grow through real-world vulnerability challenges. 
                 Climb the rankings and prove your skills in the digital battlefield.
               </p>
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-                <Button variant="neon" size="xl" className="text-lg px-8 py-4">
+                <Button className="btn-professional btn-primary text-lg px-8 py-4 hover-lift">
                   <Zap className="h-6 w-6 mr-3" />
-                  START HACKING NOW
+                  Start Competing
                 </Button>
-                <Button variant="matrix" size="xl" className="text-lg px-8 py-4">
+                <Button className="btn-professional btn-secondary text-lg px-8 py-4 hover-lift">
                   <Trophy className="h-6 w-6 mr-3" />
-                  VIEW RANKINGS
+                  View Rankings
                 </Button>
               </div>
             </div>

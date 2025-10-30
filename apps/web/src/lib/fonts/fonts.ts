@@ -4,85 +4,115 @@
  */
 
 export const fonts = {
-  // Primary fonts for headers and important text
+  // Primary fonts for headers and important text - Professional and sophisticated
   primary: {
-    name: 'Orbitron',
-    css: "'Orbitron', monospace",
-    weights: [400, 700, 900],
-    description: 'Futuristic geometric sans-serif'
+    name: 'Inter',
+    css: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    weights: [300, 400, 500, 600, 700, 800],
+    description: 'Modern, professional sans-serif with excellent readability'
   },
   
-  // Secondary fonts for body text
+  // Secondary fonts for body text - Clean and elegant
   secondary: {
-    name: 'Exo 2',
-    css: "'Exo 2', sans-serif", 
-    weights: [300, 400, 500, 600, 700],
-    description: 'Modern geometric sans-serif'
+    name: 'Poppins',
+    css: "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", 
+    weights: [300, 400, 500, 600, 700, 800],
+    description: 'Geometric sans-serif with friendly, approachable feel'
   },
   
-  // Monospace for code and technical content
+  // Monospace for code and technical content - Developer-friendly
   mono: {
-    name: 'JetBrains Mono',
-    css: "'JetBrains Mono', monospace",
-    weights: [400, 500, 600, 700],
-    description: 'Modern monospace for developers'
+    name: 'Fira Code',
+    css: "'Fira Code', 'JetBrains Mono', 'Consolas', monospace",
+    weights: [300, 400, 500, 600, 700],
+    description: 'Programming font with ligatures and excellent readability'
   },
   
-  // Display fonts for special effects
+  // Display fonts for special effects - Elegant and sophisticated
   display: {
-    name: 'Audiowide',
-    css: "'Audiowide', monospace",
-    weights: [400],
-    description: 'Bold futuristic display font'
+    name: 'Space Grotesk',
+    css: "'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif",
+    weights: [300, 400, 500, 600, 700],
+    description: 'Modern display font with geometric precision'
+  },
+  
+  // Elegant serif for special elements
+  serif: {
+    name: 'Playfair Display',
+    css: "'Playfair Display', Georgia, serif",
+    weights: [400, 500, 600, 700],
+    description: 'Elegant serif for sophisticated headings'
   }
 } as const;
 
 // Easy font switching function
 export const getFont = (type: keyof typeof fonts) => fonts[type].css;
 
-// Font loading function
+// Font loading function with proper error handling
 export const loadFonts = () => {
   if (typeof document === 'undefined') return;
   
-  // Create font links
+  // Check if fonts are already loaded
+  if (document.querySelector('link[href*="fonts.googleapis.com"]')) {
+    return;
+  }
+  
+  // Create preconnect links first
+  const preconnectGoogle = document.createElement('link');
+  preconnectGoogle.rel = 'preconnect';
+  preconnectGoogle.href = 'https://fonts.googleapis.com';
+  document.head.appendChild(preconnectGoogle);
+  
+  const preconnectGstatic = document.createElement('link');
+  preconnectGstatic.rel = 'preconnect';
+  preconnectGstatic.href = 'https://fonts.gstatic.com';
+  preconnectGstatic.crossOrigin = 'anonymous';
+  document.head.appendChild(preconnectGstatic);
+  
+  // Create font links with proper fallbacks
   const fontLinks = [
     {
-      family: 'Orbitron',
-      weights: '400;700;900',
+      family: 'Inter',
+      weights: '300;400;500;600;700;800',
       display: 'swap'
     },
     {
-      family: 'Exo 2', 
+      family: 'Poppins', 
+      weights: '300;400;500;600;700;800',
+      display: 'swap'
+    },
+    {
+      family: 'Fira Code',
+      weights: '300;400;500;600;700', 
+      display: 'swap'
+    },
+    {
+      family: 'Space Grotesk',
       weights: '300;400;500;600;700',
       display: 'swap'
     },
     {
-      family: 'JetBrains Mono',
-      weights: '400;500;600;700', 
-      display: 'swap'
-    },
-    {
-      family: 'Audiowide',
-      weights: '400',
+      family: 'Playfair Display',
+      weights: '400;500;600;700',
       display: 'swap'
     }
   ];
   
+  // Load fonts with error handling
   fontLinks.forEach(font => {
-    const link = document.createElement('link');
-    link.rel = 'preconnect';
-    link.href = 'https://fonts.googleapis.com';
-    document.head.appendChild(link);
-    
-    const link2 = document.createElement('link');
-    link2.rel = 'preconnect';
-    link2.href = 'https://fonts.gstatic.com';
-    link2.crossOrigin = 'anonymous';
-    document.head.appendChild(link2);
-    
     const fontLink = document.createElement('link');
     fontLink.rel = 'stylesheet';
     fontLink.href = `https://fonts.googleapis.com/css2?family=${font.family}:wght@${font.weights}&display=${font.display}`;
+    fontLink.onerror = () => {
+      console.warn(`Failed to load font: ${font.family}`);
+    };
     document.head.appendChild(fontLink);
   });
+  
+  // Set up font loading detection
+  if ('fonts' in document) {
+    document.fonts.ready.then(() => {
+      console.log('All fonts loaded successfully');
+    });
+  }
 };

@@ -126,35 +126,62 @@ Observability — logs, traces, metrics, and correlation IDs from day one.
 
 Composable UI — everything is slot-based and themable; primitives → patterns → features.
 
-## 🎨 **Unified Design System**
+## 🎨 **Custom Design System**
 
-Our UI system represents a **major architectural evolution** - we've eliminated complex theme switching in favor of a **unified, intelligent design system** that provides superior user experience and developer productivity.
+Our UI system features a **dramatic, futuristic design** optimized for cybersecurity education with a carefully crafted color palette and typography system.
 
-### **🎯 Key Achievements**
+### **🎯 Design Philosophy**
 
-- ✅ **Unified Experience**: Single, beautiful default UI combining modern, medieval, cyberpunk, and hacker aesthetics
-- ✅ **Live Customization**: Real-time editing of colors, effects, typography, and layout without page refresh
-- ✅ **Intelligent Components**: Icons, terminology, and effects automatically adapt based on configuration
-- ✅ **Persistent Settings**: User preferences saved and restored across sessions
-- ✅ **Clean Architecture**: Eliminated theme switching complexity while preserving all aesthetic options
+- ✅ **Purple/Red/Black/Green Palette**: High-contrast colors for maximum visual impact
+- ✅ **Dramatic Typography**: Futuristic fonts (Orbitron, Exo 2, JetBrains Mono, Audiowide)
+- ✅ **Visual Effects**: Flickering text, neon glows, and animated elements
+- ✅ **Stacked Bar Chart Leaderboard**: Live comparison of student progress
+- ✅ **Seamless Customization**: Easy font and color switching in code
 
-### **🧠 Smart Features**
+### **🎨 Visual Features**
 
-- **Dynamic Terminology**: Automatic text transformation (user → knight, challenge → quest, etc.)
-- **Visual Effects**: Glow, neon, gradient, and shadow effects that respond to configuration
-- **Unified Icons**: Single component rendering different icon styles (castle, shield, sword, etc.)
-- **CSS Variables**: Dynamic theming using CSS custom properties
-- **Live Updates**: Real-time DOM manipulation for instant visual feedback
+- **Flickering Effects**: Multiple animation types (slow, fast, random)
+- **Neon Glows**: Color-specific glow effects (purple, red, green)
+- **Gradient Backgrounds**: Dynamic shifting color backgrounds
+- **WebGL Effects**: Interactive ripple grid background
+- **Responsive Design**: Optimized for all screen sizes
+
+### **🔤 Typography System**
+
+- **Orbitron**: Headers and titles (futuristic geometric)
+- **Exo 2**: Body text (modern geometric sans-serif)
+- **JetBrains Mono**: Code and technical content
+- **Audiowide**: Display text (bold futuristic)
 
 ### **📊 Technical Excellence**
 
-- **TypeScript**: Full type safety with comprehensive configuration interfaces
+- **TypeScript**: Full type safety with font and color utilities
 - **Next.js Compatible**: Proper client/server component handling
-- **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation
-- **Performance**: Optimized for production with minimal bundle impact
-- **Maintainable**: Clean, scalable architecture for future development
+- **Performance**: Optimized Google Fonts loading
+- **Accessibility**: High contrast and readable design
+- **Maintainable**: Clean, scalable architecture
 
-*See full documentation in `packages/ui/README.md`*
+*See detailed documentation in `apps/web/src/docs/design-system.md`*
+
+## 📚 **Documentation**
+
+### **Design System**
+- [🎨 Design System Guide](apps/web/src/docs/design-system.md) - Complete color and typography documentation
+- [⚡ Quick Reference](apps/web/src/docs/quick-reference.md) - Developer quick reference guide
+- [🔧 Font Utilities](apps/web/src/lib/fonts/font-utils.ts) - Font switching utilities
+
+### **Application Documentation**
+- [🌐 Web App README](apps/web/README.md) - Frontend application documentation
+- [📊 Leaderboard Components](apps/web/src/components/leaderboard/) - Leaderboard system documentation
+- [🔐 Authentication System](apps/web/src/lib/auth/) - User authentication and management
+- [🧪 Grading System](apps/web/src/docs/grading.md) - Grading console and point updates
+- [🗣️ Community Forum](apps/web/src/docs/community.md) - Topics, comments, upvotes/likes, and Vulhub tagging
+- [🏆 Challenges & Badges](apps/web/src/docs/challenges-badges.md) - Catalog, routes, and badge rules
+- [📖 Resources Page](apps/web/src/app/resources/page.tsx) - Vulhub quick start & credits
+
+### **Development Guides**
+- [🐳 Docker Testing Guide](docs/DOCKER_TESTING_GUIDE.md) - Complete Docker setup
+- [⚡ Docker Quick Start](docs/DOCKER_QUICK_START.md) - Quick reference commands
 
 🧩 API Architecture (NestJS)
 

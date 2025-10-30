@@ -3,8 +3,11 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from '../lib/theme/context';
 import { AuthProvider } from '../lib/auth/context';
 import { CSSProvider } from '../components/CSSProvider';
+import { AnimationProvider } from '../components/AnimationProvider';
 import { loadFonts } from '../lib/fonts/fonts';
 import './globals.css';
+import './clean.css';
+import './spectacular.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,7 +30,9 @@ export default function RootLayout({
         <CSSProvider showDebugPanel={true} enableFallback={true} enableDebugging={true}>
           <AuthProvider>
             <ThemeProvider defaultTheme="matrix">
-              {children}
+              <AnimationProvider>
+                {children}
+              </AnimationProvider>
             </ThemeProvider>
           </AuthProvider>
         </CSSProvider>

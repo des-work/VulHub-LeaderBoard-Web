@@ -1,0 +1,398 @@
+/* Sophisticated Professional Styling */
+/* Replaces the current aggressive neon styling with refined, professional effects */
+
+:root {
+  /* Professional Color Palette - Sophisticated and Refined */
+  --color-primary: 99 102 241; /* Indigo - Professional and trustworthy */
+  --color-primary-light: 129 140 248;
+  --color-primary-dark: 79 70 229;
+  --color-primary-muted: 165 180 252;
+  
+  --color-secondary: 236 72 153; /* Pink - Modern and energetic */
+  --color-secondary-light: 244 114 182;
+  --color-secondary-dark: 219 39 119;
+  --color-secondary-muted: 249 168 212;
+  
+  --color-neutral-white: 255 255 255;
+  --color-neutral-black: 0 0 0;
+  
+  /* Sophisticated Gray Scale */
+  --color-neutral-50: 249 250 251;
+  --color-neutral-100: 243 244 246;
+  --color-neutral-200: 229 231 235;
+  --color-neutral-300: 209 213 219;
+  --color-neutral-400: 156 163 175;
+  --color-neutral-500: 107 114 128;
+  --color-neutral-600: 75 85 99;
+  --color-neutral-700: 55 65 81;
+  --color-neutral-800: 31 39 55;
+  --color-neutral-900: 17 24 39;
+  
+  /* Semantic Colors - Refined */
+  --color-success: 16 185 129; /* Emerald */
+  --color-warning: 245 158 11; /* Amber */
+  --color-error: 239 68 68; /* Red */
+  --color-info: 59 130 246; /* Blue */
+  
+  /* Professional Font System */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-secondary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  
+  /* Sophistication Settings */
+  --color-saturation: 85%;
+  --color-brightness: 90%;
+  --color-contrast: 95%;
+  --color-temperature: neutral;
+}
+
+/* Professional Body Styling */
+body {
+  @apply bg-neutral-900 text-neutral-100;
+  font-family: var(--font-primary);
+  background: linear-gradient(135deg, 
+    rgb(17 24 39) 0%, 
+    rgb(31 39 55) 25%, 
+    rgb(17 24 39) 50%, 
+    rgb(31 39 55) 75%, 
+    rgb(17 24 39) 100%
+  );
+  background-size: 400% 400%;
+  animation: subtle-gradient-shift 30s ease infinite;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+/* Sophisticated Animations */
+@keyframes subtle-gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes professional-fade-in {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+@keyframes subtle-scale {
+  from { transform: scale(0.95); }
+  to { transform: scale(1); }
+}
+
+@keyframes professional-glow {
+  0%, 100% { 
+    text-shadow: 0 0 5px currentColor;
+    filter: brightness(1);
+  }
+  50% { 
+    text-shadow: 0 0 15px currentColor, 0 0 25px currentColor;
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes elegant-slide-up {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+/* Professional Typography Classes */
+.font-header {
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+}
+
+.font-body {
+  font-family: var(--font-secondary);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  line-height: var(--line-height-normal);
+}
+
+.font-code {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  line-height: var(--line-height-normal);
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wide);
+  line-height: var(--line-height-tight);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Sophisticated Glow Effects */
+.professional-glow {
+  text-shadow: 0 0 10px currentColor;
+  transition: text-shadow 0.3s ease;
+}
+
+.professional-glow:hover {
+  text-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+}
+
+.subtle-glow {
+  text-shadow: 0 0 5px currentColor;
+  transition: text-shadow 0.3s ease;
+}
+
+.accent-glow {
+  text-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
+  transition: text-shadow 0.3s ease;
+}
+
+.accent-glow:hover {
+  text-shadow: 0 0 12px currentColor, 0 0 24px currentColor;
+}
+
+/* Professional Animation Classes */
+.fade-in {
+  animation: professional-fade-in 0.8s ease-out;
+}
+
+.slide-up {
+  animation: elegant-slide-up 0.6s ease-out;
+}
+
+.scale-in {
+  animation: subtle-scale 0.5s ease-out;
+}
+
+.glow-pulse {
+  animation: professional-glow 3s ease-in-out infinite;
+}
+
+/* Sophisticated Hover Effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.2);
+}
+
+.hover-glow {
+  transition: text-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.hover-glow:hover {
+  text-shadow: 0 0 15px currentColor;
+  filter: brightness(1.1);
+}
+
+/* Professional Button Styling */
+.btn-professional {
+  @apply px-6 py-3 rounded-lg font-medium transition-all duration-300;
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.btn-primary {
+  @apply bg-indigo-600 text-white hover:bg-indigo-700;
+  box-shadow: 0 4px 14px 0 rgb(99 102 241 / 0.3);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 20px 0 rgb(99 102 241 / 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  @apply bg-pink-600 text-white hover:bg-pink-700;
+  box-shadow: 0 4px 14px 0 rgb(236 72 153 / 0.3);
+}
+
+.btn-secondary:hover {
+  box-shadow: 0 6px 20px 0 rgb(236 72 153 / 0.4);
+  transform: translateY(-1px);
+}
+
+/* Professional Card Styling */
+.card-professional {
+  @apply bg-neutral-800/50 backdrop-blur-sm border border-neutral-700/50 rounded-xl;
+  box-shadow: 0 8px 32px 0 rgb(0 0 0 / 0.3);
+  transition: all 0.3s ease;
+}
+
+.card-professional:hover {
+  @apply border-neutral-600/50;
+  box-shadow: 0 12px 40px 0 rgb(0 0 0 / 0.4);
+  transform: translateY(-2px);
+}
+
+/* Professional Text Styling */
+.text-primary {
+  color: rgb(var(--color-primary));
+}
+
+.text-secondary {
+  color: rgb(var(--color-secondary));
+}
+
+.text-success {
+  color: rgb(var(--color-success));
+}
+
+.text-warning {
+  color: rgb(var(--color-warning));
+}
+
+.text-error {
+  color: rgb(var(--color-error));
+}
+
+.text-info {
+  color: rgb(var(--color-info));
+}
+
+/* Sophisticated Background Effects */
+.bg-professional {
+  background: linear-gradient(135deg, 
+    rgb(31 39 55) 0%, 
+    rgb(17 24 39) 50%, 
+    rgb(31 39 55) 100%
+  );
+}
+
+.bg-glass {
+  background: rgba(31, 39, 55, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Professional Spacing */
+.space-professional > * + * {
+  margin-top: 1.5rem;
+}
+
+.space-tight > * + * {
+  margin-top: 0.75rem;
+}
+
+.space-loose > * + * {
+  margin-top: 2.5rem;
+}
+
+/* Responsive Typography */
+@media (max-width: 640px) {
+  .text-responsive {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+}
+
+@media (min-width: 641px) {
+  .text-responsive {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-responsive {
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+}
+
+/* Professional Focus States */
+.focus-professional:focus {
+  outline: 2px solid rgb(var(--color-primary));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgb(var(--color-primary) / 0.2);
+}
+
+/* Sophisticated Scroll Animations */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scroll-animate.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Professional Loading States */
+.loading-professional {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-professional::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.1), 
+    transparent
+  );
+  animation: loading-shimmer 2s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Professional Error States */
+.error-professional {
+  @apply border-red-500/50 bg-red-500/10;
+  animation: error-shake 0.5s ease-in-out;
+}
+
+@keyframes error-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Professional Success States */
+.success-professional {
+  @apply border-green-500/50 bg-green-500/10;
+  animation: success-pulse 0.6s ease-in-out;
+}
+
+@keyframes success-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
