@@ -4,86 +4,70 @@ A gamified cybersecurity learning platform where students compete, learn, and gr
 
 ## 🎯 Overview
 
-VulHub Leaderboard is an interactive web application designed for cybersecurity education. Students can complete vulnerability challenges, submit proof of completion, and compete on a live leaderboard with real-time updates.
+VulHub Leaderboard centers on three pillars:
+- A spectacular, live leaderboard
+- A community forum tied to Vulhub environments
+- A rich, animated badge system with progress‑to‑unlock
 
-## ✨ Features
+## ✨ Core Features
 
-### 🎮 Gamification
-- **Live Leaderboard** - Real-time rankings with stacked bar chart visualization
-- **Point System** - Earn points for completing vulnerability challenges
-- **Level Progression** - Advance through levels based on achievements
-- **Competition** - Compete with other students in a friendly environment
+### 🏆 Live Leaderboard (the star of the show)
+- Top 15 view by default with pop‑culture dummy profiles (Neo, Trinity, Morpheus...)
+- Spectacular row cards with a dedicated badge/notification lane (no overlap)
+- Dynamic indicators: On‑Fire, Streak, Close‑Match (non‑blocking, animated)
+- Stacked progress bars and rank icons (Crown/Medals/Trophies)
 
-### 🧩 Challenges & Badges
-- **Challenge Catalog** mapped to official Vulhub environments ([environments](https://vulhub.org/environments))
-- **Completion Routes** (Standard, Red Team, Blue Team) with clear steps
-- **Badges** for category mastery, CVE-specific wins, points milestones, and blue-team tasks
+### 🗣️ Community Forum
+- Threads grouped by Vulhub environments with quick environment filter
+- Topic cards show upvotes/likes/comment counts; posts and comments can tag Vulhub paths (e.g., `langflow/CVE-2025-3248`)
+- Engagement → points: likes (+1) and upvotes (+2) reward authors and affect leaderboard
+- New Topic and Comment flows with tag chips linking to the corresponding Vulhub path
 
-### 🔐 Authentication
-- **Student Registration** - Sign up with school ID, name, and password
-- **Secure Login** - Protected access to the platform
-- **User Profiles** - Track individual progress and achievements
-- **Tutorial System** - Guided onboarding for new students
+### 🏅 Badges (animated + progress‑aware)
+- Card system with unique animated art per badge (shimmer/rotate/glow/orbit/flare)
+- Locked badges are grayscale with a lock tag; unlock triggers a reveal animation
+- Per‑requirement progress bars (points now; categories/CVE/route/streak ready)
+- Tiers (Bronze/Silver/Gold/Platinum) and rules for points, category counts, CVE and route‑steps
 
-### 📊 Submission & Grading
-- **File Uploads** - Submit screenshots, images, or text files as proof
-- **Activity/Challenge Linking** - Tie submissions to a Vulhub challenge
-- **Grading Console** - Approve/Reject, award points, add feedback
-- **Instant Leaderboard Updates** - Scores and ranks update live
+### 📊 Submissions & Grading
+- File uploads as proof; link to challenges
+- Grading console with filters and standardized SubmissionsTable
+- Approved grades update scores and rankings instantly
 
-### 🗣️ Community
-- **Forum** with topics, comments, upvotes/likes
-- **Vulhub Tagging** for topics and comments (e.g., `langflow/CVE-2025-3248`) for fast search and cross‑reference
+### 🔐 Profiles & Auth
+- Edit profile (display name, avatar URL, bio)
+- Profiles show points, level, category progress, badges, and submissions
+- Server‑first with resilient fallback to local storage
 
 ### 📚 Resources
-- Built‑in resources page summarizing Vulhub Quick Start and notes with proper credit to Vulhub
-
-### 🎨 Design System
-- **Dramatic Typography** - Professional, high‑contrast type system
-- **Vibrant Colors** - Purple, red, black, and green color palette
-- **Visual Effects** - Subtle glow, professional animations, WebGL background
-- **Responsive Design** - Works seamlessly on all devices
+- Built‑in resources page summarizing Vulhub Quick Start with proper credits
 
 ## 🧭 Key Pages
 - `/` Home + Live Leaderboard
-- `/auth` Sign in / Register
+- `/community` Community forum (environment filter, thread cards)
+- `/badges` Animated badges with progress‑to‑unlock
 - `/grading` Grading console (graders/admin only)
-- `/community` Forum with Vulhub tagging
+- `/profile` Student profile and editing
 - `/resources` Vulhub quick‑start & documentation links
 
-## 📚 Documentation
-- [Design System Guide](./src/docs/design-system.md)
-- [Customization Guide](./src/docs/customization-guide.md)
-- [Grading System](./src/docs/grading.md)
-- [Community Forum](./src/docs/community.md)
-- [Challenges & Badges](./src/docs/challenges-badges.md)
-- [API Documentation](./src/docs/api.md)
-
-## 🏗️ Architecture
+## 🏗️ Architecture & Tech Details
 
 ### Frontend Stack
-- **Next.js 14** - React framework with App Router
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling
-- **OGL** - WebGL library for background effects
-- **Lucide React** - Icon library
+- **Next.js 14** (App Router) • **TypeScript** • **Tailwind CSS** • **Lucide React** • **OGL** (background effects)
 
 ### Key Components
+- Leaderboard: `SpectacularLeaderboard`, `StackedBarChart`
+- Community: `ForumProvider`, environment filter, thread cards, topic/comment flows
+- Badges: animated cards, `evaluateBadges` for unlocks with progress bars
+- Grading: `GradingProvider`, `GradingDashboard`, reusable `SubmissionsTable`
+- Profiles: `/profile` with edit modal, progress and badges
+- Design System: `globals.css` effects, fonts utils
 
-#### Authentication
-- `AuthProvider` • `LoginForm` • `RegisterForm` • `TutorialModal`
-
-#### Leaderboard
-- `Leaderboard` • `StackedBarChart` • `LeaderboardDisplay` • `SpectacularLeaderboard`
-
-#### Grading
-- `GradingProvider` • `GradingDashboard` (filters/table) • Grade modal
-
-#### Community
-- `ForumProvider` • Community pages (topic list/detail) • New Topic modal
-
-#### Design System
-- `fonts.ts` • `font-utils.ts` • `globals.css` (effects, animations)
+### Resilience & Security
+- Resilient API client (timeout, retry, circuit‑breaker) with server‑first providers and local fallback
+- ErrorBoundary + `useAsync` hook for robust error/abort handling
+- Security headers middleware (CSP, frame/referrer, HSTS on HTTPS)
+- Sanitization helpers for user‑generated content
 
 ## 🚀 Quick Start
 
@@ -115,7 +99,6 @@ VulHub Leaderboard is an interactive web application designed for cybersecurity 
    Navigate to `http://localhost:3000`
 
 ### Docker Setup (Alternative)
-
 ```bash
 docker-compose -f docker-compose.dev.yml up --build
 ```
@@ -125,7 +108,17 @@ docker-compose -f docker-compose.dev.yml up --build
 Create `apps/web/.env.local`:
 ```env
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+# Optional backend if available
+# NEXT_PUBLIC_API_URL=http://localhost:4000/api
 ```
+
+## 📚 Documentation
+- Leaderboard & Effects: see `SpectacularLeaderboard` and `globals.css`
+- Community Forum: [docs/community.md](./src/docs/community.md)
+- Badges & Progress: [docs/challenges-badges.md](./src/docs/challenges-badges.md)
+- Grading System: [docs/grading.md](./src/docs/grading.md)
+- Design & Customization: [docs/design-system.md](./src/docs/design-system.md), [docs/customization-guide.md](./src/docs/customization-guide.md)
+- Security: [docs/security.md](./src/docs/security.md)
 
 ## 📄 License & Credits
 - MIT License (see LICENSE)
