@@ -61,8 +61,13 @@ services:
       - "4000:4000"
     volumes:
       # Mount source code for hot-reloading
-      - ./apps/api:/usr/src/app/apps/api
-      - ./packages:/usr/src/app/packages
+      - ./apps/api/src:/usr/src/app/apps/api/src
+      - ./prisma:/usr/src/app/prisma
+      # Mount individual package source code, not the whole directory
+      - ./packages/config/src:/usr/src/app/packages/config/src
+      - ./packages/schema/src:/usr/src/app/packages/schema/src
+      - ./packages/ui/src:/usr/src/app/packages/ui/src
+      - ./packages/utils/src:/usr/src/app/packages/utils/src
       - ./prisma:/usr/src/app/prisma
       # Prevent node_modules from being overwritten
       - /usr/src/app/node_modules
@@ -74,8 +79,14 @@ services:
     restart: unless-stopped
     networks:
       - vulhub-dev-network
-    working_dir: /usr/src/app
+    working_dir: /usr/src/app/apps/api
     command: ["pnpm", "dev"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:4000/api/v1/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   # Web Application for Development
   web-dev:
@@ -92,13 +103,18 @@ services:
       - "4010:3000"
     volumes:
       # Mount source code for hot-reloading
-      - ./apps/web:/usr/src/app/apps/web
-      - ./packages:/usr/src/app/packages
+      - ./apps/web/src:/usr/src/app/apps/web/src
+      - ./apps/web/public:/usr/src/app/apps/web/public
+      # Mount individual package source code
+      - ./packages/config/src:/usr/src/app/packages/config/src
+      - ./packages/schema/src:/usr/src/app/packages/schema/src
+      - ./packages/ui/src:/usr/src/app/packages/ui/src
+      - ./packages/utils/src:/usr/src/app/packages/utils/src
       # Prevent node_modules from being overwritten
       - /usr/src/app/node_modules
     depends_on:
       api-dev:
-        condition: service_started
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - vulhub-dev-network

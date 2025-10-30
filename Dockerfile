@@ -31,15 +31,17 @@ EXPOSE 3000 4000
 # Default command for development
 CMD ["pnpm", "dev"]
 
+# Builder stage for production
+FROM base AS builder
+
+# Generate prisma client first
+RUN pnpm --filter @vulhub/api prisma generate
+
+# Build all packages and apps
+RUN pnpm build
+
 # Production stage for API
 FROM base AS api-production
-
-# Build packages individually to avoid monorepo issues
-RUN cd packages/schema && pnpm install && pnpm build && \
-    cd ../utils && pnpm install && pnpm build && \
-    cd ../ui && pnpm install && pnpm build && \
-    cd ../../apps/api && pnpm install && npx prisma generate && pnpm build && \
-    cd ../web && pnpm install && pnpm build
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && adduser -S nestjs -u 1001
@@ -47,6 +49,10 @@ RUN addgroup -g 1001 -S nodejs && adduser -S nestjs -u 1001
 # Change ownership
 RUN chown -R nestjs:nodejs /usr/src/app
 USER nestjs
+
+# Copy built artifacts from builder stage
+COPY --from=builder /usr/src/app/apps/api/dist ./apps/api/dist
+COPY --from=builder /usr/src/app/node_modules ./node_modules
 
 # Expose port
 EXPOSE 4000
@@ -61,19 +67,16 @@ CMD ["sh", "-c", "cd apps/api && pnpm start"]
 # Production stage for Web App
 FROM base AS web-production
 
-# Build packages individually to avoid monorepo issues
-RUN cd packages/schema && pnpm install && pnpm build && \
-    cd ../utils && pnpm install && pnpm build && \
-    cd ../ui && pnpm install && pnpm build && \
-    cd ../../apps/api && pnpm install && npx prisma generate && pnpm build && \
-    cd ../web && pnpm install && pnpm build
-
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
 
 # Change ownership
 RUN chown -R nextjs:nodejs /usr/src/app
 USER nextjs
+
+# Copy built artifacts from builder stage
+COPY --from=builder /usr/src/app/apps/web/.next ./apps/web/.next
+COPY --from=builder /usr/src/app/node_modules ./node_modules
 
 # Expose port
 EXPOSE 3000
