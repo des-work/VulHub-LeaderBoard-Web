@@ -82,46 +82,39 @@ VulHub Leaderboard centers on three pillars:
 
 ### Installation
 
-1. **Clone the repository**
+1.  **Clone the repository**
    ```bash
    git clone https://github.com/des-work/VulHub-LeaderBoard-Web.git
    cd VulHub-LeaderBoard-Web
    ```
 
-2. **Install dependencies**
+2.  **Install dependencies (from project root)**
    ```bash
-   cd apps/web
    pnpm install
    ```
 
-3. **Start development server**
+3.  **Start development server (local, non-Docker)**
    ```bash
-   pnpm dev
+   pnpm dev # Starts web and api servers
    ```
 
-4. **Open in browser**
-   Navigate to `http://localhost:3000`
+    - **Web App**: `http://localhost:3000`
+    - **API Health**: `http://localhost:4000/api/v1/health`
 
 ### Docker Setup (Alternative)
+
+This is the recommended method for a full development environment.
 ```bash
 docker-compose -f docker-compose.dev.yml up --build
 ```
 
-**Access URLs:**
-- Website: http://localhost:4010 (if configured) or http://localhost:3000 for dev
-- API: http://localhost:4000/api/health (if backend present)
+    - **Web App**: `http://localhost:4010`
+    - **API Health**: `http://localhost:4000/api/v1/health`
 
-### 🛠 **Local Development Setup**
-```bash
-# Clone and run
-git clone https://github.com/des-work/VulHub-LeaderBoard-Web.git
-cd VulHub-LeaderBoard-Web
-pnpm install
-pnpm -r dev
-```
-
-Verify:
-- Web → http://localhost:3000
-- API → http://localhost:4000/api/health (optional)
-
-For additional guides and docs, see `apps/web/README.md` and `apps/web/src/docs/`.
+## 📚 Documentation
+- Leaderboard & Effects: see `SpectacularLeaderboard` and `globals.css`
+- Community Forum: docs/community.md
+- Badges & Progress: docs/challenges-badges.md
+- Grading System: docs/grading.md
+- Design & Customization: docs/design-system.md, docs/customization-guide.md
+- Security: docs/security.md

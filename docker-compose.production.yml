@@ -101,7 +101,7 @@ services:
     environment:
       - NODE_ENV=production
       - API_URL=http://api-prod:4000/api/v1
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:4000/api/v1}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} # MUST be set to the public-facing API URL
     ports:
       - "3000:3000"
     depends_on:

@@ -74,14 +74,19 @@ chmod +x scripts/setup.sh
    ```
 
 ## 🌐 Access Points
+### For Docker-based Development (`pnpm dev:stack` followed by `pnpm dev`)
+- **Web Application**: `http://localhost:4010`
+- **API Health Check**: `http://localhost:4000/api/v1/health`
+- **Prisma Studio**: `http://localhost:5555`
+- **MailHog (Email Testing)**: `http://localhost:8025`
+- **MinIO Console**: `http://localhost:9001`
 
-Once everything is running, you can access:
-
-- **Web Application**: http://localhost:3000
-- **API Health Check**: http://localhost:4000/api/health
-- **Prisma Studio**: http://localhost:5555
-- **MailHog (Email Testing)**: http://localhost:8025
-- **MinIO Console**: http://localhost:9001
+### For Local (non-Docker) Development (`pnpm dev`)
+- **Web Application**: `http://localhost:3000`
+- **API Health Check**: `http://localhost:4000/api/v1/health`
+- **Prisma Studio**: `http://localhost:5555` (if `pnpm db:dev:studio` is run separately)
+- **MailHog (Email Testing)**: `http://localhost:8025` (if infrastructure is started separately)
+- **MinIO Console**: `http://localhost:9001` (if infrastructure is started separately)
 
 ## 📁 Project Structure
 
