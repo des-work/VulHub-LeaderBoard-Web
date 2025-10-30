@@ -1,0 +1,19 @@
+import { User } from '../auth/types';
+
+export const MOCK_USERS: User[] = [
+  { id: '1', schoolId: 'CS001', name: 'Neo', email: 'neo@matrix.io', role: 'student', points: 1820, level: 4, joinDate: new Date('2024-01-15'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '2', schoolId: 'CS002', name: 'Trinity', email: 'trinity@matrix.io', role: 'student', points: 1710, level: 4, joinDate: new Date('2024-01-18'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '3', schoolId: 'CS003', name: 'Morpheus', email: 'morpheus@matrix.io', role: 'student', points: 1660, level: 4, joinDate: new Date('2024-01-20'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '4', schoolId: 'CS004', name: 'Oracle', email: 'oracle@matrix.io', role: 'student', points: 1600, level: 3, joinDate: new Date('2024-01-22'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '5', schoolId: 'CS005', name: 'Acid Burn', email: 'acid@hackers.net', role: 'student', points: 1540, level: 3, joinDate: new Date('2024-01-25'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '6', schoolId: 'CS006', name: 'Zero Cool', email: 'zerocool@hackers.net', role: 'student', points: 1490, level: 3, joinDate: new Date('2024-01-28'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '7', schoolId: 'CS007', name: 'Crash Override', email: 'crash@hackers.net', role: 'student', points: 1450, level: 3, joinDate: new Date('2024-02-01'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '8', schoolId: 'CS008', name: 'The Architect', email: 'architect@matrix.io', role: 'student', points: 1425, level: 3, joinDate: new Date('2024-02-05'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '9', schoolId: 'CS009', name: 'Cypher', email: 'cypher@matrix.io', role: 'student', points: 1370, level: 3, joinDate: new Date('2024-02-08'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '10', schoolId: 'CS010', name: 'Tank', email: 'tank@matrix.io', role: 'student', points: 1330, level: 3, joinDate: new Date('2024-02-11'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '11', schoolId: 'CS011', name: 'Dozer', email: 'dozer@matrix.io', role: 'student', points: 1290, level: 2, joinDate: new Date('2024-02-14'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '12', schoolId: 'CS012', name: 'Root', email: 'root@fsociety.tv', role: 'student', points: 1260, level: 2, joinDate: new Date('2024-02-17'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '13', schoolId: 'CS013', name: 'Elliot Alderson', email: 'elliot@fsociety.tv', role: 'student', points: 1210, level: 2, joinDate: new Date('2024-02-20'), lastActive: new Date(), completedSubmissions: [], completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] } as any,
+  { id: '14', schoolId: 'CS014', name: 'Darlene', email: 'darlene@fsociety.tv', role: 'student', points: 1185, level: 2, joinDate: new Date('2024-02-22'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+  { id: '15', schoolId: 'CS015', name: 'Lisbeth Salander', email: 'lisbeth@millennium.se', role: 'student', points: 1150, level: 2, joinDate: new Date('2024-02-25'), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] },
+];

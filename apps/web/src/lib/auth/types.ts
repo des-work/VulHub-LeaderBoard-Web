@@ -9,6 +9,7 @@ export interface User {
   joinDate: Date;
   lastActive: Date;
   avatar?: string;
+  bio?: string;
   completedActivities: string[];
   pendingSubmissions: Submission[];
   approvedSubmissions: Submission[];

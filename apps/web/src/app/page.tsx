@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Button } from '../lib/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../lib/ui/card';
 import { useThemeValue } from '../lib/theme/context';
@@ -59,48 +60,21 @@ export default function HomePage() {
 
   // Mock users data - in real app, this would come from your backend
   const [users] = useState([
-    {
-      id: '1',
-      schoolId: 'CS001',
-      name: 'Alice Johnson',
-      email: 'alice@school.edu',
-      role: 'student' as const,
-      points: 1250,
-      level: 3,
-      joinDate: new Date('2024-01-15'),
-      lastActive: new Date(Date.now() - 2 * 60 * 1000), // 2 minutes ago
-      completedActivities: ['vuln-001', 'vuln-002'],
-      pendingSubmissions: [],
-      approvedSubmissions: [],
-    },
-    {
-      id: '2',
-      schoolId: 'CS002',
-      name: 'Bob Smith',
-      email: 'bob@school.edu',
-      role: 'student' as const,
-      points: 1180,
-      level: 3,
-      joinDate: new Date('2024-01-20'),
-      lastActive: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
-      completedActivities: ['vuln-001'],
-      pendingSubmissions: ['sub-001'],
-      approvedSubmissions: [],
-    },
-    {
-      id: '3',
-      schoolId: 'CS003',
-      name: 'Carol Davis',
-      email: 'carol@school.edu',
-      role: 'student' as const,
-      points: 1100,
-      level: 2,
-      joinDate: new Date('2024-02-01'),
-      lastActive: new Date(Date.now() - 60 * 60 * 1000), // 1 hour ago
-      completedActivities: ['vuln-001'],
-      pendingSubmissions: [],
-      approvedSubmissions: ['sub-002'],
-    },
+    { id: '1', schoolId: 'CS001', name: 'Neo', email: 'neo@matrix.io', role: 'student' as const, points: 1820, level: 4, joinDate: new Date('2024-01-15'), lastActive: new Date(Date.now() - 2 * 60 * 1000), completedActivities: ['vuln-001','vuln-002'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '2', schoolId: 'CS002', name: 'Trinity', email: 'trinity@matrix.io', role: 'student' as const, points: 1710, level: 4, joinDate: new Date('2024-01-18'), lastActive: new Date(Date.now() - 5 * 60 * 1000), completedActivities: ['vuln-001'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '3', schoolId: 'CS003', name: 'Morpheus', email: 'morpheus@matrix.io', role: 'student' as const, points: 1660, level: 4, joinDate: new Date('2024-01-20'), lastActive: new Date(Date.now() - 35 * 60 * 1000), completedActivities: ['vuln-001'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '4', schoolId: 'CS004', name: 'Oracle', email: 'oracle@matrix.io', role: 'student' as const, points: 1600, level: 3, joinDate: new Date('2024-01-22'), lastActive: new Date(Date.now() - 15 * 60 * 1000), completedActivities: ['vuln-003'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '5', schoolId: 'CS005', name: 'Acid Burn', email: 'acid@hackers.net', role: 'student' as const, points: 1540, level: 3, joinDate: new Date('2024-01-25'), lastActive: new Date(Date.now() - 10 * 60 * 1000), completedActivities: ['vuln-004'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '6', schoolId: 'CS006', name: 'Zero Cool', email: 'zerocool@hackers.net', role: 'student' as const, points: 1490, level: 3, joinDate: new Date('2024-01-28'), lastActive: new Date(Date.now() - 50 * 60 * 1000), completedActivities: ['vuln-001'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '7', schoolId: 'CS007', name: 'Crash Override', email: 'crash@hackers.net', role: 'student' as const, points: 1450, level: 3, joinDate: new Date('2024-02-01'), lastActive: new Date(Date.now() - 70 * 60 * 1000), completedActivities: ['vuln-005'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '8', schoolId: 'CS008', name: 'The Architect', email: 'architect@matrix.io', role: 'student' as const, points: 1425, level: 3, joinDate: new Date('2024-02-05'), lastActive: new Date(Date.now() - 25 * 60 * 1000), completedActivities: ['vuln-002'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '9', schoolId: 'CS009', name: 'Cypher', email: 'cypher@matrix.io', role: 'student' as const, points: 1370, level: 3, joinDate: new Date('2024-02-08'), lastActive: new Date(Date.now() - 5 * 60 * 60 * 1000), completedActivities: ['vuln-001'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '10', schoolId: 'CS010', name: 'Tank', email: 'tank@matrix.io', role: 'student' as const, points: 1330, level: 3, joinDate: new Date('2024-02-11'), lastActive: new Date(Date.now() - 90 * 60 * 1000), completedActivities: ['vuln-006'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '11', schoolId: 'CS011', name: 'Dozer', email: 'dozer@matrix.io', role: 'student' as const, points: 1290, level: 2, joinDate: new Date('2024-02-14'), lastActive: new Date(Date.now() - 40 * 60 * 1000), completedActivities: ['vuln-007'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '12', schoolId: 'CS012', name: 'Root', email: 'root@fsociety.tv', role: 'student' as const, points: 1260, level: 2, joinDate: new Date('2024-02-17'), lastActive: new Date(Date.now() - 20 * 60 * 1000), completedActivities: ['vuln-008'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '13', schoolId: 'CS013', name: 'Elliot Alderson', email: 'elliot@fsociety.tv', role: 'student' as const, points: 1210, level: 2, joinDate: new Date('2024-02-20'), lastActive: new Date(Date.now() - 10 * 60 * 60 * 1000), completedSubmissions: [], completedActivities: ['vuln-009'], pendingSubmissions: [], approvedSubmissions: [] } as any,
+    { id: '14', schoolId: 'CS014', name: 'Darlene', email: 'darlene@fsociety.tv', role: 'student' as const, points: 1185, level: 2, joinDate: new Date('2024-02-22'), lastActive: new Date(Date.now() - 30 * 60 * 1000), completedActivities: ['vuln-010'], pendingSubmissions: [], approvedSubmissions: [] },
+    { id: '15', schoolId: 'CS015', name: 'Lisbeth Salander', email: 'lisbeth@millennium.se', role: 'student' as const, points: 1150, level: 2, joinDate: new Date('2024-02-25'), lastActive: new Date(Date.now() - 120 * 60 * 1000), completedActivities: ['vuln-011'], pendingSubmissions: [], approvedSubmissions: [] },
   ]);
 
   const handleSubmissionSubmit = (submission: any) => {
@@ -115,12 +89,9 @@ export default function HomePage() {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4 text-primary">Access Denied</h1>
           <p className="text-neutral-400 mb-6">Please sign in to access the platform</p>
-          <Button
-            className="btn-professional btn-primary"
-            onClick={() => window.location.href = '/auth'}
-          >
-            Go to Sign In
-          </Button>
+          <Link href="/auth">
+            <Button className="btn-professional btn-primary">Go to Sign In</Button>
+          </Link>
         </div>
       </div>
     );
@@ -182,11 +153,11 @@ export default function HomePage() {
                   <Users className="h-4 w-4 mr-2" />
                   Community
                 </Button>
-                <Button variant="outline" size="sm" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50">
+                <Button variant="outline" size="sm" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50" onClick={() => window.location.href = '/challenges'}>
                   <Target className="h-4 w-4 mr-2" />
                   Challenges
                 </Button>
-                <Button variant="outline" size="sm" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50">
+                <Button variant="outline" size="sm" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50" onClick={() => window.location.href = '/badges'}>
                   <Award className="h-4 w-4 mr-2" />
                   Badges
                 </Button>
@@ -207,6 +178,10 @@ export default function HomePage() {
                 >
                   <BookOpen className="h-4 w-4 mr-2" />
                   Resources
+                </Button>
+                <Button variant="outline" size="sm" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50" onClick={() => window.location.href = '/profile'}>
+                  <Users className="h-4 w-4 mr-2" />
+                  Profile
                 </Button>
                 <div className="flex items-center space-x-2 px-3 py-2 bg-neutral-800/50 border border-neutral-600/30 rounded">
                   <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-primary font-mono font-bold text-xs">

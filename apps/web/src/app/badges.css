@@ -1,0 +1,57 @@
+/* Badges animations */
+
+.reveal-enter {
+  opacity: 0;
+  transform: scale(0.96);
+  animation: revealIn 600ms cubic-bezier(0.4,0,0.2,1) forwards;
+}
+
+@keyframes revealIn {
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Unique animation palette */
+.anim-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.anim-shimmer::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.25) 40%, transparent 80%);
+  transform: translateX(-100%);
+  animation: shimmer 2.2s infinite;
+}
+@keyframes shimmer { to { transform: translateX(100%); } }
+
+.anim-rotate3d {
+  transform-style: preserve-3d;
+  animation: rotate3d 5s linear infinite;
+}
+@keyframes rotate3d { to { transform: rotateY(360deg); } }
+
+.anim-glowPulse {
+  box-shadow: 0 0 10px rgba(168,85,247,0.5);
+  animation: glowPulse 2.4s ease-in-out infinite;
+}
+@keyframes glowPulse { 50% { box-shadow: 0 0 24px rgba(236,72,153,0.6); } }
+
+.anim-orbit {
+  position: relative;
+}
+.anim-orbit::before {
+  content: '';
+  position: absolute; width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.8);
+  left: 50%; top: 50%; transform-origin: -40px -40px; animation: orbit 3.2s linear infinite;
+}
+@keyframes orbit { to { transform: rotate(360deg); } }
+
+.anim-flare {
+  background-image: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent 40%), radial-gradient(circle at 70% 70%, rgba(255,255,255,0.15), transparent 40%);
+  animation: flare 4s ease-in-out infinite;
+}
+@keyframes flare { 50% { filter: brightness(1.15); } }
+
+/* Progress bar */
+.badge-progress { height: 6px; border-radius: 4px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.badge-progress > span { display: block; height: 100%; background: linear-gradient(90deg, #a855f7, #ec4899); }

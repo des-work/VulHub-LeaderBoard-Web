@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useReducer } from 'react';
 import { GradeEvent, GradeInput, Submission, SubmissionFilters } from './types';
+import { GradingApi } from '../api/endpoints';
 import { useAuth } from '../auth/context';
 
 interface GradingState {
@@ -77,9 +78,18 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const { user: currentUser, updateUserPoints } = useAuth();
 
   useEffect(() => {
-    dispatch({ type: 'LOAD_START' });
-    const data = loadFromStorage();
-    dispatch({ type: 'LOAD_SUCCESS', payload: data });
+    const init = async () => {
+      dispatch({ type: 'LOAD_START' });
+      try {
+        const list = await GradingApi.listSubmissions();
+        persistServer(list);
+        dispatch({ type: 'LOAD_SUCCESS', payload: list });
+      } catch {
+        const data = loadFromStorage();
+        dispatch({ type: 'LOAD_SUCCESS', payload: data });
+      }
+    };
+    init();
   }, []);
 
   const reload = () => {
@@ -90,6 +100,12 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const persist = (submissions: Submission[]) => {
     saveToStorage(submissions);
     dispatch({ type: 'BULK_SET', payload: submissions });
+  };
+
+  const persistServer = (submissions: Submission[]) => {
+    // normalize Dates if server returns strings
+    const norm = submissions.map(s => ({ ...s })) as Submission[];
+    saveToStorage(norm);
   };
 
   const addSubmission = (s: Submission) => {
@@ -132,6 +148,10 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       gradedBy: currentUser?.id,
     };
 
+    // Try server; fallback to local
+    try {
+      await GradingApi.grade(updated.id, { status: updated.status, pointsAwarded: input.pointsAwarded, feedback: input.feedback });
+    } catch {}
     const next = [...state.submissions];
     next[idx] = updated;
     persist(next);

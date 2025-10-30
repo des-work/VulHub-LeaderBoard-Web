@@ -72,13 +72,16 @@ interface ForumContextValue {
   toggleUpvoteComment: (commentId: string) => void;
   toggleLikeComment: (commentId: string) => void;
   search: (filters: ForumSearchFilters) => Topic[];
+  extractEnvironments: () => string[];
 }
 
 const ForumContext = createContext<ForumContextValue | null>(null);
 
+const ENGAGEMENT = { like: 1, upvote: 2 } as const;
+
 export const ForumProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, undefined, () => load());
-  const { user } = useAuth();
+  const { user, updateUserPoints } = useAuth();
 
   const ensureUser = (): ForumUserRef => ({ id: user?.id || 'anon', name: user?.name || 'Anonymous' });
 
@@ -121,40 +124,57 @@ export const ForumProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (i >= 0) list.splice(i, 1); else list.push(id);
   }
 
+  const award = async (authorId: string, delta: number) => {
+    if (!authorId || delta === 0) return;
+    try { await updateUserPoints(authorId, delta); } catch {}
+  };
+
   const toggleUpvoteTopic = (topicId: string) => {
     const u = ensureUser().id;
     const t = state.topics.find(x => x.id === topicId);
     if (!t) return;
+    const already = t.votes.upvoters.includes(u);
     const next: Topic = { ...t, votes: { ...t.votes, upvoters: [...t.votes.upvoters] } };
     toggle(next.votes.upvoters, u);
     dispatch({ type: 'UPSERT_TOPIC', payload: next });
+    const delta = already ? -ENGAGEMENT.upvote : ENGAGEMENT.upvote;
+    award(t.author.id, delta);
   };
 
   const toggleLikeTopic = (topicId: string) => {
     const u = ensureUser().id;
     const t = state.topics.find(x => x.id === topicId);
     if (!t) return;
+    const already = t.votes.likers.includes(u);
     const next: Topic = { ...t, votes: { ...t.votes, likers: [...t.votes.likers] } };
     toggle(next.votes.likers, u);
     dispatch({ type: 'UPSERT_TOPIC', payload: next });
+    const delta = already ? -ENGAGEMENT.like : ENGAGEMENT.like;
+    award(t.author.id, delta);
   };
 
   const toggleUpvoteComment = (commentId: string) => {
     const u = ensureUser().id;
     const c = state.comments.find(x => x.id === commentId);
     if (!c) return;
+    const already = c.votes.upvoters.includes(u);
     const next: Comment = { ...c, votes: { ...c.votes, upvoters: [...c.votes.upvoters] } };
     toggle(next.votes.upvoters, u);
     dispatch({ type: 'UPSERT_COMMENT', payload: next });
+    const delta = already ? -ENGAGEMENT.upvote : ENGAGEMENT.upvote;
+    award(c.author.id, delta);
   };
 
   const toggleLikeComment = (commentId: string) => {
     const u = ensureUser().id;
     const c = state.comments.find(x => x.id === commentId);
     if (!c) return;
+    const already = c.votes.likers.includes(u);
     const next: Comment = { ...c, votes: { ...c.votes, likers: [...c.votes.likers] } };
     toggle(next.votes.likers, u);
     dispatch({ type: 'UPSERT_COMMENT', payload: next });
+    const delta = already ? -ENGAGEMENT.like : ENGAGEMENT.like;
+    award(c.author.id, delta);
   };
 
   const search = (filters: ForumSearchFilters): Topic[] => {
@@ -175,6 +195,12 @@ export const ForumProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return list;
   };
 
+  const extractEnvironments = () => {
+    const set = new Set<string>();
+    state.topics.forEach(t => t.tags.forEach(tag => set.add(tag.id)));
+    return Array.from(set).sort();
+  };
+
   const value: ForumContextValue = useMemo(() => ({
     topics: search({}),
     commentsByTopic,
@@ -185,6 +211,7 @@ export const ForumProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     toggleUpvoteComment,
     toggleLikeComment,
     search,
+    extractEnvironments,
   }), [state, user?.id]);
 
   return <ForumContext.Provider value={value}>{children}</ForumContext.Provider>;

@@ -5,7 +5,8 @@ import { useGrading } from '../../lib/grading/context';
 import { Submission, SubmissionFilters } from '../../lib/grading/types';
 import { Card, CardContent, CardHeader, CardTitle } from '../../lib/ui/card';
 import { Button } from '../../lib/ui/button';
-import { Search, Filter, RefreshCw, CheckCircle2, XCircle, Eye } from 'lucide-react';
+import { RefreshCw, CheckCircle2, XCircle } from 'lucide-react';
+import { SubmissionsTable } from '../submissions/SubmissionsTable';
 
 interface GradeModalProps {
   submission: Submission | null;
@@ -147,57 +148,7 @@ export const GradingDashboard: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-purple-300 font-display">Submissions ({filtered.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead className="text-neutral-400">
-                <tr className="border-b border-neutral-800">
-                  <th className="text-left py-2 pr-4">Date</th>
-                  <th className="text-left py-2 pr-4">Student</th>
-                  <th className="text-left py-2 pr-4">Activity</th>
-                  <th className="text-left py-2 pr-4">Status</th>
-                  <th className="text-left py-2 pr-4">Points</th>
-                  <th className="text-left py-2 pr-4">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map(s => (
-                  <tr key={s.id} className="border-b border-neutral-900 hover:bg-neutral-900/40">
-                    <td className="py-2 pr-4 font-mono text-neutral-400">{new Date(s.createdAt).toLocaleString()}</td>
-                    <td className="py-2 pr-4">{s.userName}</td>
-                    <td className="py-2 pr-4">{s.activityName}</td>
-                    <td className="py-2 pr-4">
-                      <span className={`px-2 py-1 rounded text-xs font-mono ${
-                        s.status === 'pending' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/30'
-                        : s.status === 'approved' ? 'bg-green-500/10 text-green-400 border border-green-500/30'
-                        : 'bg-red-500/10 text-red-400 border border-red-500/30'
-                      }`}>{s.status}</span>
-                    </td>
-                    <td className="py-2 pr-4">{s.pointsAwarded ?? '—'}</td>
-                    <td className="py-2 pr-4">
-                      <div className="flex gap-2">
-                        <Button size="sm" className="btn-professional btn-primary" onClick={() => setActive(s)}>
-                          <Eye className="h-4 w-4 mr-1" /> Review
-                        </Button>
-                        {s.status === 'approved' || s.status === 'rejected' ? null : (
-                          <Button size="sm" variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-500/10" onClick={() => setActive(s)}>
-                            <CheckCircle2 className="h-4 w-4 mr-1" /> Grade
-                          </Button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      <SubmissionsTable submissions={filtered as any} title={`Submissions (${filtered.length})`} showStudent onReview={(s) => setActive(s as any)} />
 
       <GradeModal
         submission={active}

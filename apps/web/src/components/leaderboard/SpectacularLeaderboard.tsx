@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { User } from '../../lib/auth/types';
 import { Card, CardContent, CardHeader, CardTitle } from '../../lib/ui/card';
-import { BarChart3, Crown, Medal, Trophy, Zap, Star, Flame, Target } from 'lucide-react';
+import { BarChart3, Crown, Medal, Trophy, Zap, Star, Flame, Target, Swords, TrendingUp } from 'lucide-react';
 import { leaderboardAnimationManager } from '../../lib/animations/leaderboard-animations';
 
 interface SpectacularLeaderboardProps {
@@ -11,6 +11,7 @@ interface SpectacularLeaderboardProps {
   currentUser?: User | null;
   title?: string;
   showLiveIndicator?: boolean;
+  topN?: number; // new: limit display
 }
 
 const getInitials = (name: string) => {
@@ -49,64 +50,46 @@ export const SpectacularLeaderboard: React.FC<SpectacularLeaderboardProps> = ({
   users, 
   currentUser, 
   title = 'Live Leaderboard',
-  showLiveIndicator = true 
+  showLiveIndicator = true,
+  topN = 15,
 }) => {
   const [sortedUsers, setSortedUsers] = useState<User[]>([]);
-  const [isAnimating, setIsAnimating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const entryRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
-  // Sort users by points
+  // Sort and limit
   useEffect(() => {
-    const sorted = [...users].sort((a, b) => b.points - a.points);
+    const sorted = [...users].sort((a, b) => b.points - a.points).slice(0, topN);
     setSortedUsers(sorted);
-  }, [users]);
+  }, [users, topN]);
 
-  // Initialize animations
+  // Animation wiring
   useEffect(() => {
     if (sortedUsers.length === 0) return;
-
-    // Add elements to animation manager
-    sortedUsers.forEach((user, index) => {
+    sortedUsers.forEach((user) => {
       const element = entryRefs.current.get(user.id);
-      if (element) {
-        leaderboardAnimationManager.addElement(user.id, element);
-      }
+      if (element) leaderboardAnimationManager.addElement(user.id, element);
     });
-
-    // Start animation sequence
-    const elementIds = sortedUsers.map(user => user.id);
-    leaderboardAnimationManager.startAnimationSequence(elementIds);
-
-    // Animate progress bars
+    const ids = sortedUsers.map(u => u.id);
+    leaderboardAnimationManager.startAnimationSequence(ids);
     sortedUsers.forEach((user, index) => {
-      setTimeout(() => {
-        const maxPoints = Math.max(...sortedUsers.map(u => u.points), 1);
-        const progress = (user.points / maxPoints) * 100;
-        leaderboardAnimationManager.animateProgress(user.id, progress, index * 200);
-      }, index * 300);
+      const maxPoints = Math.max(...sortedUsers.map(u => u.points), 1);
+      const progress = (user.points / maxPoints) * 100;
+      leaderboardAnimationManager.animateProgress(user.id, progress, index * 150);
     });
-
-    return () => {
-      leaderboardAnimationManager.cleanup();
-    };
+    return () => leaderboardAnimationManager.cleanup();
   }, [sortedUsers]);
 
-  // Simulate live updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (Math.random() > 0.7) { // 30% chance of update
-        const randomUser = sortedUsers[Math.floor(Math.random() * sortedUsers.length)];
-        if (randomUser) {
-          leaderboardAnimationManager.animateLiveUpdate(randomUser.id);
-        }
-      }
-    }, 3000);
+  const maxPoints = useMemo(() => Math.max(...sortedUsers.map(user => user.points), 1), [sortedUsers]);
 
-    return () => clearInterval(interval);
-  }, [sortedUsers]);
-
-  const maxPoints = Math.max(...sortedUsers.map(user => user.points), 1);
+  // Compute dynamic indicators
+  const isOnFire = (user: User) => user.points >= maxPoints * 0.9; // top 10%
+  const isStreaking = (user: User) => (user.points % 300 === 0) || (user.level > 3 && user.points % 250 < 20);
+  const isCloseMatch = (idx: number) => {
+    if (idx === 0) return false;
+    const diff = sortedUsers[idx - 1].points - sortedUsers[idx].points;
+    return diff > 0 && diff <= Math.max(50, Math.round(maxPoints * 0.02));
+  };
 
   return (
     <div ref={containerRef} className="w-full">
@@ -127,7 +110,7 @@ export const SpectacularLeaderboard: React.FC<SpectacularLeaderboardProps> = ({
                 </div>
               )}
               <div className="text-neutral-400 text-sm font-mono">
-                {sortedUsers.length} Players
+                Top {sortedUsers.length} Players
               </div>
             </div>
           </div>
@@ -138,6 +121,9 @@ export const SpectacularLeaderboard: React.FC<SpectacularLeaderboardProps> = ({
             const rank = index + 1;
             const isCurrentUser = currentUser && user.id === currentUser.id;
             const progressWidth = (user.points / maxPoints) * 100;
+            const fire = isOnFire(user);
+            const streak = isStreaking(user);
+            const close = isCloseMatch(index);
             
             return (
               <div
@@ -151,13 +137,12 @@ export const SpectacularLeaderboard: React.FC<SpectacularLeaderboardProps> = ({
                   spectacular-hover-lift
                 `}
                 style={{
-                  animationDelay: `${index * 200}ms`
+                  animationDelay: `${index * 150}ms`
                 }}
               >
-                {/* Animated background gradient */}
+                {/* subtle bg */}
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 via-pink-900/20 to-purple-900/20 opacity-50" />
                 
-                {/* Main content */}
                 <div className="relative z-10 p-4">
                   <div className="flex items-center space-x-4">
                     {/* Ranking */}
@@ -179,11 +164,11 @@ export const SpectacularLeaderboard: React.FC<SpectacularLeaderboardProps> = ({
                     </div>
 
                     {/* User info */}
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 w-[22%]">
                       <h3 className={`
-                        text-lg font-bold font-display
+                        text-lg font-bold font-display truncate
                         ${isCurrentUser ? 'text-purple-300' : 'text-white'}
-                      `}>
+                      }`}>
                         {user.name}
                         {isCurrentUser && (
                           <span className="ml-2 text-xs bg-purple-500/20 px-2 py-1 rounded-full">
@@ -191,13 +176,13 @@ export const SpectacularLeaderboard: React.FC<SpectacularLeaderboardProps> = ({
                           </span>
                         )}
                       </h3>
-                      <p className="text-sm text-neutral-400 font-mono">
+                      <p className="text-sm text-neutral-400 font-mono truncate">
                         Level {user.level} • {user.completedActivities.length} completed
                       </p>
                     </div>
 
-                    {/* Progress bar */}
-                    <div className="flex-1 max-w-xs">
+                    {/* Progress bar - give it breathing room on the right */}
+                    <div className="flex-1 mr-8">
                       <div className="spectacular-progress">
                         <div
                           className={`
@@ -211,62 +196,40 @@ export const SpectacularLeaderboard: React.FC<SpectacularLeaderboardProps> = ({
                       </div>
                     </div>
 
-                    {/* Score */}
-                    <div className="spectacular-score text-right">
-                      <div className="text-2xl font-bold text-purple-400 font-mono spectacular-text-glow">
-                        {user.points.toLocaleString()}
+                    {/* Right column: badges + score (fixed width to prevent overlap) */}
+                    <div className="w-64 flex items-center justify-end gap-4">
+                      {/* badges row */}
+                      <div className="flex items-center gap-2 flex-wrap justify-end max-w-[12rem]">
+                        {fire && (
+                          <span title="On Fire" className="inline-flex items-center text-orange-400 animate-pulse">
+                            <Flame className="h-4 w-4 mr-1"/> Fire
+                          </span>
+                        )}
+                        {streak && (
+                          <span title="Streak" className="inline-flex items-center text-green-300">
+                            <TrendingUp className="h-4 w-4 mr-1"/> Streak
+                          </span>
+                        )}
+                        {close && (
+                          <span title="Close Match" className="inline-flex items-center text-yellow-300">
+                            <Swords className="h-4 w-4 mr-1"/> Close
+                          </span>
+                        )}
                       </div>
-                      <div className="text-xs text-neutral-400 font-mono">
-                        points
+                      {/* score */}
+                      <div className="text-right min-w-[5.5rem]">
+                        <div className="text-2xl font-bold text-purple-400 font-mono spectacular-text-glow leading-none">
+                          {user.points.toLocaleString()}
+                        </div>
+                        <div className="text-xs text-neutral-400 font-mono">points</div>
                       </div>
                     </div>
                   </div>
-
-                  {/* Special effects for top 3 */}
-                  {rank <= 3 && (
-                    <div className="absolute top-0 right-0 w-20 h-20 opacity-20">
-                      {rank === 1 && <Star className="w-full h-full text-yellow-400 animate-pulse" />}
-                      {rank === 2 && <Medal className="w-full h-full text-gray-300 animate-pulse" />}
-                      {rank === 3 && <Trophy className="w-full h-full text-amber-500 animate-pulse" />}
-                    </div>
-                  )}
-
-                  {/* Live update indicator */}
-                  {Math.random() > 0.8 && (
-                    <div className="absolute top-2 right-2 w-2 h-2 bg-green-400 rounded-full animate-ping" />
-                  )}
                 </div>
-
-                {/* Hover glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-xl" />
               </div>
             );
           })}
         </CardContent>
-
-        {/* Footer with live stats */}
-        <div className="px-6 py-4 border-t border-purple-500/20 bg-purple-900/10">
-          <div className="flex items-center justify-between text-sm text-neutral-400 font-mono">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-1">
-                <Crown className="h-4 w-4 text-yellow-400" />
-                <span>1st Place</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <Medal className="h-4 w-4 text-gray-300" />
-                <span>2nd Place</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <Medal className="h-4 w-4 text-amber-500" />
-                <span>3rd Place</span>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span>Live Updates</span>
-            </div>
-          </div>
-        </div>
       </Card>
     </div>
   );

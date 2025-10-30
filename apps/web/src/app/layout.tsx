@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from '../lib/theme/context';
 import { AuthProvider } from '../lib/auth/context';
 import { CSSProvider } from '../components/CSSProvider';
+import { ErrorBoundary } from '../components/common/ErrorBoundary';
 import { AnimationProvider } from '../components/AnimationProvider';
 import { loadFonts } from '../lib/fonts/fonts';
 import './globals.css';
@@ -31,7 +32,9 @@ export default function RootLayout({
           <AuthProvider>
             <ThemeProvider defaultTheme="matrix">
               <AnimationProvider>
-                {children}
+                <ErrorBoundary>
+                  {children}
+                </ErrorBoundary>
               </AnimationProvider>
             </ThemeProvider>
           </AuthProvider>
