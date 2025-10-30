@@ -25,13 +25,13 @@ VulHub Leaderboard centers on three pillars:
 
 ### 🏅 Badges (animated + progress‑aware)
 - Card system with unique animated art per badge (shimmer/rotate/glow/orbit/flare)
-- Locked badges are grayscale with a lock tag; unlock triggers a reveal animation
+- Locked badges are grayscale with a lock tag; unlock with animated reveal
 - Per‑requirement progress bars (points now; categories/CVE/route/streak ready)
 - Tiers (Bronze/Silver/Gold/Platinum) and rules for points, category counts, CVE and route‑steps
 
 ### 📊 Submissions & Grading
 - File uploads as proof; link to challenges
-- Grading console with filters and standardized SubmissionsTable
+- Grading console with filters, standardized SubmissionsTable
 - Approved grades update scores and rankings instantly
 
 ### 🔐 Profiles & Auth
@@ -80,7 +80,7 @@ VulHub Leaderboard centers on three pillars:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/des-work/VulHub-LeaderBoard-Web.git
    cd VulHub-LeaderBoard-Web
    ```
 
