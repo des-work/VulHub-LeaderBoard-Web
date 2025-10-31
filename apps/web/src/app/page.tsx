@@ -44,9 +44,11 @@ export default function HomePage() {
   const { data: userRankData } = useUserRank(user?.id);
 
   // Calculate user rank
-  const userRank = userRankData?.rank || (leaderboardData 
-    ? leaderboardData.findIndex(p => p.id === user?.id || p.name === user?.name) + 1 
-    : null);
+  const userRank = (userRankData && typeof userRankData === 'object' && 'rank' in userRankData) 
+    ? userRankData.rank 
+    : (leaderboardData 
+        ? leaderboardData.findIndex(p => String(p.id) === String(user?.id) || p.name === user?.name) + 1 
+        : null);
 
   return (
     <div className="min-h-screen bg-black text-neutral-100 font-body relative">
@@ -173,7 +175,7 @@ export default function HomePage() {
             ) : (
               <Leaderboard
                 players={leaderboardData || []}
-                currentUserId={user?.id}
+                currentUserId={!isNaN(Number(user?.id)) ? Number(user?.id) : 0}
                 currentUserRank={userRank || undefined}
                 currentUserName={user.name}
                 currentUserPoints={user.points}

@@ -155,6 +155,8 @@ export class GlowManager {
     gradient?: boolean;
     gradientColors?: string[];
     animate?: boolean;
+    pulseSpeed?: number;
+    pulseIntensity?: number;
   }): void {
     const config: GlowConfig = {
       intensity: options.intensity || 'medium',
@@ -163,8 +165,8 @@ export class GlowManager {
       blur: 30,
       opacity: 0.8,
       animate: options.animate || false,
-      pulseSpeed: 5,
-      pulseIntensity: 0.3,
+      pulseSpeed: options.pulseSpeed || 5,
+      pulseIntensity: options.pulseIntensity || 0.3,
       gradient: options.gradient || false,
       gradientColors: options.gradientColors || [options.color],
       gradientAngle: 45

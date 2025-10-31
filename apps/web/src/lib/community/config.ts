@@ -224,6 +224,11 @@ export const COMMUNITY_WELCOME_SCREEN = {
     border: `${COMMUNITY_COLORS.matrix.primary}80`,
     glow: COMMUNITY_COLORS.glow.matrix,
   },
+
+  text: {
+    question: 'What knowledge do you seek?',
+    hint: 'Press Enter or click below to continue →',
+  },
 } as const;
 
 export const COMMUNITY_TERMINAL_HEADER = {
@@ -243,13 +248,21 @@ export const COMMUNITY_CATEGORY_CARD = {
   sizing: {
     padding: COMMUNITY_SIZING.spacing.lg,
     borderRadius: COMMUNITY_SIZING.borderRadius.lg,
+    borderWidth: '1px',
   },
   
   colors: {
     background: 'rgba(20, 20, 20, 0.8)',
     border: COMMUNITY_COLORS.matrix.dim,
-    hoverBorder: COMMUNITY_COLORS.matrix.primary,
+    borderHover: COMMUNITY_COLORS.matrix.primary,
     text: COMMUNITY_COLORS.text.primary,
+    textHover: COMMUNITY_COLORS.matrix.bright,
+    icon: COMMUNITY_COLORS.matrix.medium,
+  },
+  
+  effects: {
+    hoverTranslate: '-4px',
+    transition: `all ${COMMUNITY_ANIMATIONS.durations.normal}ms ${COMMUNITY_ANIMATIONS.easings.spring}`,
   },
 } as const;
 
@@ -257,13 +270,24 @@ export const COMMUNITY_VULNERABILITY_CARD = {
   sizing: {
     padding: COMMUNITY_SIZING.spacing.lg,
     borderRadius: COMMUNITY_SIZING.borderRadius.lg,
+    borderWidth: '1px',
+    tagPadding: `${COMMUNITY_SIZING.spacing.xs} ${COMMUNITY_SIZING.spacing.sm}`,
   },
   
   colors: {
     background: 'rgba(20, 20, 20, 0.8)',
     border: COMMUNITY_COLORS.matrix.dim,
-    hoverBorder: COMMUNITY_COLORS.cyan.primary,
+    borderHover: COMMUNITY_COLORS.cyan.primary,
     text: COMMUNITY_COLORS.text.primary,
+    title: COMMUNITY_COLORS.matrix.bright,
+    cve: COMMUNITY_COLORS.cyan.medium,
+    description: COMMUNITY_COLORS.text.secondary,
+    tag: COMMUNITY_COLORS.cyan.primary,
+  },
+
+  effects: {
+    hoverScale: 1.02,
+    transition: 'all 0.3s ease-in-out',
   },
 } as const;
 
@@ -271,12 +295,17 @@ export const COMMUNITY_TERMINAL_WINDOW = {
   sizing: {
     padding: COMMUNITY_SIZING.spacing.lg,
     borderRadius: COMMUNITY_SIZING.borderRadius.lg,
+    borderWidth: '1px',
+    minHeight: '400px',
   },
   
   colors: {
     background: COMMUNITY_COLORS.background.black,
     border: COMMUNITY_COLORS.matrix.dim,
     text: COMMUNITY_COLORS.text.primary,
+    headerBg: 'rgba(0, 255, 0, 0.05)',
+    headerText: COMMUNITY_COLORS.matrix.bright,
+    scrollbar: COMMUNITY_COLORS.matrix.primary,
   },
 } as const;
 
@@ -284,16 +313,48 @@ export const COMMUNITY_QUICK_ACTION_BUTTON = {
   sizing: {
     padding: `${COMMUNITY_SIZING.spacing.sm} ${COMMUNITY_SIZING.spacing.md}`,
     borderRadius: COMMUNITY_SIZING.borderRadius.md,
+    borderWidth: '1px',
+    iconSize: '1.25rem',
   },
   
   colors: {
     background: 'rgba(0, 255, 0, 0.1)',
     border: COMMUNITY_COLORS.matrix.primary,
     text: COMMUNITY_COLORS.matrix.primary,
+    icon: COMMUNITY_COLORS.matrix.primary,
+    glow: COMMUNITY_COLORS.glow.matrix,
     hover: {
       background: 'rgba(0, 255, 0, 0.2)',
       border: COMMUNITY_COLORS.matrix.bright,
     },
+  },
+
+  effects: {
+    transition: 'all 0.3s ease-in-out',
+    hoverScale: 1.02,
+    activeScale: 0.95,
+    glowOnHover: true,
+  },
+} as const;
+
+export const COMMUNITY_SEARCH_INPUT = {
+  sizing: {
+    padding: `${COMMUNITY_SIZING.spacing.sm} ${COMMUNITY_SIZING.spacing.md}`,
+    fontSize: COMMUNITY_TYPOGRAPHY.sizes.base,
+  },
+  
+  colors: {
+    background: 'rgba(0, 0, 0, 0.5)',
+    border: COMMUNITY_COLORS.matrix.dim,
+    text: COMMUNITY_COLORS.text.primary,
+    placeholder: COMMUNITY_COLORS.text.muted,
+    cursor: COMMUNITY_COLORS.matrix.bright,
+  },
+  
+  effects: {
+    cursorWidth: '2px',
+    cursorHeight: '1.2em',
+    borderAnimationDuration: '2s',
   },
 } as const;
 
@@ -314,4 +375,5 @@ export const CATEGORY_CARD = COMMUNITY_CATEGORY_CARD;
 export const VULNERABILITY_CARD = COMMUNITY_VULNERABILITY_CARD;
 export const TERMINAL_WINDOW = COMMUNITY_TERMINAL_WINDOW;
 export const QUICK_ACTION_BUTTON = COMMUNITY_QUICK_ACTION_BUTTON;
+export const SEARCH_INPUT = COMMUNITY_SEARCH_INPUT;
 

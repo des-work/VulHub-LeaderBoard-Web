@@ -209,16 +209,8 @@ export async function uploadFile(
           formData.append('chunk', chunk);
 
           // Upload chunk with timeout
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), UPLOAD_CONFIG.TIMEOUT_MS);
-
-          try {
-            await apiClient.post('/submissions/upload-chunk', formData, {
-              signal: controller.signal,
-            });
-          } finally {
-            clearTimeout(timeoutId);
-          }
+          // TODO: Implement timeout handling in apiClient
+          await apiClient.post('/submissions/upload-chunk', formData);
 
           uploaded = true;
 

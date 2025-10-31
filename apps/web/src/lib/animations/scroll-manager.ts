@@ -124,7 +124,7 @@ export class ScrollAnimationManager {
    * Update current scroll stage
    */
   private updateCurrentStage(stages?: ScrollStage[]): void {
-    const stagesToCheck = stages || this.state.scrollStages || [];
+    const stagesToCheck = stages || [];
     
     for (const stage of stagesToCheck) {
       if (this.state.scrollPercent >= stage.start && this.state.scrollPercent <= stage.end) {

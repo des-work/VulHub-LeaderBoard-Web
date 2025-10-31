@@ -1,7 +1,7 @@
 'use client';
 
 import { UnifiedIcon, Terminology, VisualEffect } from '@vulhub/ui';
-import { Trophy, Github, Twitter, Linkedin, Discord } from 'lucide-react';
+import { Trophy, Github, Twitter, Linkedin, MessageCircle } from 'lucide-react';
 
 interface FooterProps {
   className?: string;
@@ -99,7 +99,7 @@ export function Footer({ className = '' }: FooterProps) {
                 className="text-gray-400 hover:text-green-400 transition-colors duration-300"
                 aria-label="Discord"
               >
-                <Discord className="h-6 w-6" />
+                <MessageCircle className="h-6 w-6" />
               </a>
               <a 
                 href="https://github.com/vulhub" 

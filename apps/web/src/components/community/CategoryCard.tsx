@@ -32,11 +32,17 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
         borderRadius: CATEGORY_CARD.sizing.borderRadius,
         borderWidth: CATEGORY_CARD.sizing.borderWidth,
         borderColor: isHovered ? CATEGORY_CARD.colors.borderHover : CATEGORY_CARD.colors.border,
+        borderStyle: 'solid',
         backgroundColor: isHovered ? `${COLORS.matrix.dim}10` : 'transparent',
-        ...createHoverEffect({
-          translateX: isHovered ? CATEGORY_CARD.effects.hoverTranslate : '0',
-          glow: isHovered ? COLORS.glow.matrix : undefined,
-        }),
+        ...(() => {
+          const hoverEffect = createHoverEffect({
+            translateX: isHovered ? CATEGORY_CARD.effects.hoverTranslate : '0',
+            glow: isHovered ? COLORS.glow.matrix : undefined,
+          });
+          // Remove borderColor from hoverEffect to avoid duplication
+          const { borderColor, ...rest } = hoverEffect;
+          return rest;
+        })(),
       }}
     >
       <div className="flex items-start gap-3">

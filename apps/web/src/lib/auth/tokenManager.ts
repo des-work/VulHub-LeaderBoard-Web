@@ -26,7 +26,9 @@ export function decodeToken(token: string): TokenPayload | null {
     const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
     return JSON.parse(decoded);
   } catch (error) {
-    console.error('Failed to decode token:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Failed to decode token:', error);
+    }
     return null;
   }
 }
@@ -91,7 +93,9 @@ export class TokenRefreshManager {
   start(): void {
     const accessToken = apiClient.getAuthToken();
     if (!accessToken) {
-      console.warn('No access token found, cannot start refresh manager');
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('No access token found, cannot start refresh manager');
+      }
       return;
     }
 
@@ -118,7 +122,9 @@ export class TokenRefreshManager {
     const timeUntilExpiry = getTimeUntilExpiry(accessToken);
     
     if (timeUntilExpiry <= 0) {
-      console.log('Token already expired, refreshing immediately');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Token already expired, refreshing immediately');
+      }
       this.refreshNow();
       return;
     }
@@ -132,7 +138,9 @@ export class TokenRefreshManager {
       )
     );
 
-    console.log(`Token refresh scheduled in ${refreshInSeconds} seconds`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Token refresh scheduled in ${refreshInSeconds} seconds`);
+    }
 
     this.refreshTimer = setTimeout(() => {
       this.refreshNow();
@@ -150,10 +158,14 @@ export class TokenRefreshManager {
     }
 
     try {
-      console.log('Refreshing access token...');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Refreshing access token...');
+      }
       const response = await AuthApi.refreshToken(this.refreshToken);
       
-      console.log('Token refreshed successfully');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Token refreshed successfully');
+      }
       this.onTokenRefreshed?.(response.accessToken);
       
       // Schedule next refresh

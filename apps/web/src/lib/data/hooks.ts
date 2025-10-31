@@ -27,7 +27,7 @@ export function useLeaderboard(options?: {
     queryKey: queryKeys.leaderboard.list({ limit: options?.limit }),
     queryFn: () => leaderboardAdapter.fetch(),
     enabled: options?.enabled !== false,
-    staleTime: 1000 * 30, // 30 seconds - leaderboard updates frequently
+    staleTime: 1000 * 60 * 2, // 2 minutes - reduced excessive calls
   });
 }
 

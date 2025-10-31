@@ -99,9 +99,11 @@ function notificationReducer(state: NotificationState, action: NotificationActio
       const now = new Date();
       const cutoffTime = new Date(now.getTime() - NOTIFICATION_STORE_CONFIG.RETENTION_HOURS * 60 * 60 * 1000);
       const filtered = state.notifications.filter(n => new Date(n.timestamp) > cutoffTime);
+      const newUnreadCount = filtered.filter(n => !n.read).length;
       return {
         ...state,
         notifications: filtered,
+        unreadCount: newUnreadCount,
       };
     }
 

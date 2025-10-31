@@ -5,7 +5,7 @@
  */
 
 import { useState, useCallback, useRef } from 'react';
-import { Error, isRetryableError } from './errors';
+import { isRetryableError } from './errors';
 
 export interface UseErrorRecoveryOptions {
   maxRetries?: number;
@@ -114,9 +114,9 @@ export function useErrorRecovery(options: UseErrorRecoveryOptions = {}): UseErro
 /**
  * Hook for manual retry with user confirmation
  */
-export interface UseManualRetryReturn {
+export interface UseManualRetryReturn<T = any> {
   canRetry: boolean;
-  retry: <T>(operation: () => Promise<T>) => Promise<T | null>;
+  retry: () => Promise<T | null>;
   isRetrying: boolean;
   error: Error | null;
 }
@@ -124,7 +124,7 @@ export interface UseManualRetryReturn {
 export function useManualRetry<T = any>(
   operation: () => Promise<T>,
   error: Error | null
-): UseManualRetryReturn {
+): UseManualRetryReturn<T> {
   const [isRetrying, setIsRetrying] = useState(false);
   const canRetry = error !== null && isRetryableError(error);
 

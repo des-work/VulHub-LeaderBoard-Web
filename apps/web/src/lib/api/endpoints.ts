@@ -98,6 +98,9 @@ export const GradingApi = {
   async listSubmissions(): Promise<Submission[]> {
     return apiClient.get('/submissions');
   },
+  async getSubmission(id: string): Promise<Submission> {
+    return apiClient.get(`/submissions/${encodeURIComponent(id)}`);
+  },
   async grade(submissionId: string, payload: { status: 'approved' | 'rejected'; pointsAwarded: number; feedback?: string }) {
     return apiClient.post('/submissions/' + encodeURIComponent(submissionId) + '/grade', payload);
   },

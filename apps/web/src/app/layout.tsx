@@ -4,6 +4,8 @@ import { AuthProvider } from '../lib/auth/context';
 import { ErrorBoundary } from '../components/common/ErrorBoundary';
 import { SkipLink } from '../components/accessibility/SkipLink';
 import { QueryProvider } from '../lib/data/QueryProvider';
+import { NotificationProvider } from '../lib/notifications/context';
+import { ToastContainer } from '../components/notifications/ToastContainer';
 import './matrix-unified.css';
 import './styles/accessibility.css';
 import './styles/responsive.css';
@@ -33,11 +35,14 @@ export default function RootLayout({
         <SkipLink targetId="main-content" label="Skip to main content" />
         <QueryProvider>
           <AuthProvider>
-            <ErrorBoundary>
-              <main id="main-content" tabIndex={-1} role="main">
-                {children}
-              </main>
-            </ErrorBoundary>
+            <NotificationProvider>
+              <ErrorBoundary>
+                <main id="main-content" tabIndex={-1} role="main">
+                  {children}
+                </main>
+              </ErrorBoundary>
+              <ToastContainer />
+            </NotificationProvider>
           </AuthProvider>
         </QueryProvider>
       </body>

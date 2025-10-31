@@ -124,7 +124,14 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
                 ? {
                     ...f,
                     url: response.fileUrl,
-                    progress: { ...uploadedFile.progress, status: 'completed', percentComplete: 100 },
+                    progress: { 
+                      fileName: f.name,
+                      uploadedBytes: f.size,
+                      totalBytes: f.size,
+                      percentComplete: 100,
+                      status: 'completed' as const,
+                      retryCount: 0,
+                    },
                   }
                 : f
             )
@@ -141,7 +148,15 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
               f.id === uploadedFile.id
                 ? {
                     ...f,
-                    progress: { ...uploadedFile.progress, status: 'failed', error: error.message },
+                    progress: { 
+                      fileName: f.name,
+                      uploadedBytes: 0,
+                      totalBytes: f.size,
+                      percentComplete: 0,
+                      status: 'failed' as const,
+                      error: error.message,
+                      retryCount: 0,
+                    },
                   }
                 : f
             )
@@ -232,14 +247,16 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
         activityId: selectedActivity!.id,
         activityName: selectedActivity!.name,
         description: description.trim(),
-        files: successfulFiles.map(f => ({
-          id: f.id,
-          name: f.name,
-          type: f.type,
-          size: f.size,
-          url: f.url,
-          uploadedAt: f.uploadedAt,
-        })),
+        files: successfulFiles
+          .filter(f => f.url) // Only include files with URLs
+          .map(f => ({
+            id: f.id,
+            name: f.name,
+            type: f.type as 'image' | 'text' | 'other',
+            size: f.size,
+            url: f.url!,
+            uploadedAt: f.uploadedAt,
+          })),
       });
 
       // Reset form

@@ -319,6 +319,8 @@ export const LEADERBOARD_ROW_CONFIG = {
     hoverBackground: LEADERBOARD_COLORS.background.cardHover,
     hoverBorderColor: LEADERBOARD_COLORS.border.hover,
     hoverScale: LEADERBOARD_ANIMATIONS.hover.scale,
+    showScanLine: false,
+    glowEffect: false,
   },
   
   // Top 3 Row
@@ -329,6 +331,8 @@ export const LEADERBOARD_ROW_CONFIG = {
     borderRadius: LEADERBOARD_SIZING.borderRadius.large,
     backgroundColor: LEADERBOARD_COLORS.background.top3,
     borderColor: LEADERBOARD_COLORS.border.top3,
+    hoverBackground: LEADERBOARD_COLORS.background.cardHover,
+    hoverBorderColor: LEADERBOARD_COLORS.border.hover,
     hoverScale: LEADERBOARD_ANIMATIONS.hover.scaleTop3,
     showScanLine: true,
     glowEffect: true,
@@ -364,6 +368,7 @@ export const RANK_BADGE_CONFIG = {
   rank1: {
     gradient: LEADERBOARD_COLORS.rank.first.gradient,
     iconColor: '#000000',
+    textColor: LEADERBOARD_COLORS.rank.first.text,
     pulseEffect: true,
     bounceEffect: true,
     glowColor: LEADERBOARD_COLORS.rank.first.glow,
@@ -373,14 +378,20 @@ export const RANK_BADGE_CONFIG = {
   rank2: {
     gradient: LEADERBOARD_COLORS.rank.second.gradient,
     iconColor: '#000000',
+    textColor: LEADERBOARD_COLORS.rank.second.text,
     glowColor: LEADERBOARD_COLORS.rank.second.glow,
+    pulseEffect: true,
+    bounceEffect: false,
   },
   
   // Rank 3 (Bronze)
   rank3: {
     gradient: LEADERBOARD_COLORS.rank.third.gradient,
     iconColor: '#000000',
+    textColor: LEADERBOARD_COLORS.rank.third.text,
     glowColor: LEADERBOARD_COLORS.rank.third.glow,
+    pulseEffect: true,
+    bounceEffect: false,
   },
   
   // Default (4+)
@@ -389,6 +400,11 @@ export const RANK_BADGE_CONFIG = {
     borderColor: LEADERBOARD_COLORS.border.matrix,
     borderWidth: LEADERBOARD_SIZING.borderWidth.thin,
     textColor: LEADERBOARD_COLORS.matrix.primary,
+    glowColor: LEADERBOARD_COLORS.glow.matrix,
+    gradient: 'from-green-400 to-green-600',
+    iconColor: LEADERBOARD_COLORS.matrix.bright,
+    pulseEffect: false,
+    bounceEffect: false,
   },
 } as const;
 
@@ -415,6 +431,8 @@ export const STATUS_BADGE_CONFIG = {
     borderColor: LEADERBOARD_COLORS.status.close.border,
     textColor: LEADERBOARD_COLORS.status.close.primary,
     iconColor: LEADERBOARD_COLORS.status.close.primary,
+    pulseEffect: false,
+    glowEffect: false,
   },
   
   // Trending Status
@@ -423,6 +441,8 @@ export const STATUS_BADGE_CONFIG = {
     borderColor: LEADERBOARD_COLORS.status.trending.border,
     textColor: LEADERBOARD_COLORS.status.trending.primary,
     iconColor: LEADERBOARD_COLORS.status.trending.primary,
+    pulseEffect: false,
+    glowEffect: false,
   },
 } as const;
 
@@ -433,6 +453,7 @@ export const TREND_INDICATOR_CONFIG = {
   
   // Up Trend
   up: {
+    show: true,
     iconColor: LEADERBOARD_COLORS.matrix.primary,
     textColor: LEADERBOARD_COLORS.matrix.primary,
     glowEffect: true,
@@ -440,13 +461,18 @@ export const TREND_INDICATOR_CONFIG = {
   
   // Down Trend
   down: {
+    show: true,
     iconColor: '#ef4444',
     textColor: '#ef4444',
+    glowEffect: false,
   },
   
   // Stable
   stable: {
     show: false,
+    iconColor: '#999999',
+    textColor: '#999999',
+    glowEffect: false,
   },
 } as const;
 

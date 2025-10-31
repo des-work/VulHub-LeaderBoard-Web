@@ -319,21 +319,20 @@ export default function SubmissionsPage() {
       {/* Submission Form Modal */}
       {showSubmissionForm && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-2xl surface-3 max-h-[90vh] overflow-y-auto">
-            <CardHeader>
+          <div className="matrix-card w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="border-b border-matrix/30 p-6">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-primary font-display">Submit Challenge Completion</CardTitle>
-                <Button
-                  variant="outline"
-                  size="sm"
+                <h2 className="text-xl font-display font-bold text-bright">Submit Challenge Completion</h2>
+                <button
                   onClick={() => setShowSubmissionForm(false)}
-                  className="border-neutral-600 text-neutral-300 hover:bg-neutral-800"
+                  className="matrix-button matrix-button-outline p-2"
+                  aria-label="Close submission form"
                 >
                   <X className="h-4 w-4" />
-                </Button>
+                </button>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
+            </div>
+            <div className="p-6 space-y-6">
               {/* Challenge Selection */}
               <div>
                 <label className="block text-sm font-medium text-neutral-300 mb-2">
@@ -360,15 +359,15 @@ export default function SubmissionsPage() {
                           <h4 className="font-medium text-neutral-200">{challenge.name}</h4>
                           <p className="text-sm text-neutral-400 mt-1">{challenge.description}</p>
                           <div className="flex items-center space-x-4 mt-2 text-xs">
-                            <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30">
                               {challenge.category}
-                            </Badge>
-                            <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+                            </span>
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
                               {challenge.difficulty}
-                            </Badge>
-                            <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+                            </span>
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400 border border-green-500/30">
                               {challenge.points} points
-                            </Badge>
+                            </span>
                           </div>
                         </div>
                       ) : null;
@@ -382,7 +381,7 @@ export default function SubmissionsPage() {
                 <label className="block text-sm font-medium text-neutral-300 mb-2">
                   Description *
                 </label>
-                <Textarea
+                <textarea
                   value={submissionDescription}
                   onChange={(e) => setSubmissionDescription(e.target.value)}
                   placeholder="Describe how you completed the challenge, what vulnerabilities you found, and your approach..."
@@ -435,14 +434,13 @@ export default function SubmissionsPage() {
                             <span className="text-sm text-neutral-300">{file.name}</span>
                             <span className="text-xs text-neutral-500">({(file.size / 1024).toFixed(1)} KB)</span>
                           </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
+                          <button
                             onClick={() => removeFile(index)}
-                            className="border-red-500/30 text-red-400 hover:bg-red-500/20"
+                            className="matrix-button matrix-button-outline p-2 border-red-500/30 text-red-400 hover:bg-red-500/20"
+                            aria-label="Remove file"
                           >
                             <X className="h-3 w-3" />
-                          </Button>
+                          </button>
                         </div>
                       ))}
                     </div>
@@ -452,10 +450,10 @@ export default function SubmissionsPage() {
 
               {/* Submit Button */}
               <div className="flex space-x-3 pt-4">
-                <Button
+                <button
                   onClick={handleSubmit}
                   disabled={!selectedChallenge || !submissionDescription.trim() || isSubmitting}
-                  className="flex-1 bg-primary hover:bg-primary/90 text-black font-semibold disabled:opacity-50"
+                  className="flex-1 matrix-button matrix-button-primary text-black font-semibold disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <>
@@ -468,17 +466,16 @@ export default function SubmissionsPage() {
                       Submit Challenge
                     </>
                   )}
-                </Button>
-                <Button
-                  variant="outline"
+                </button>
+                <button
                   onClick={() => setShowSubmissionForm(false)}
-                  className="border-neutral-600 text-neutral-300 hover:bg-neutral-800"
+                  className="matrix-button matrix-button-outline border-neutral-600 text-neutral-300 hover:bg-neutral-800"
                 >
                   Cancel
-                </Button>
+                </button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -333,3 +333,24 @@ export const CATEGORY_ICONS: Record<BadgeCategory, string> = {
   achievement: '🏆'
 };
 
+// ============================================================================
+// BADGE HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Get all badge definitions
+ */
+export function getAllBadges(): typeof BADGE_DEFINITIONS {
+  return BADGE_DEFINITIONS;
+}
+
+/**
+ * Get user's earned badges
+ * Note: This is a placeholder - in production, this would fetch from the API
+ */
+export function getUserBadges(userId: string): typeof BADGE_DEFINITIONS {
+  // Placeholder: Return empty array
+  // In production, this would fetch user's unlocked badges from the API
+  return [];
+}
+

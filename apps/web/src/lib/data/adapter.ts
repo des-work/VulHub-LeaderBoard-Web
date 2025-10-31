@@ -96,7 +96,7 @@ export const leaderboardAdapter = createDataAdapter({
       points: entry.points,
       level: entry.level || Math.floor(entry.points / 500),
       completed: 0, // TODO: Get from API
-      status: entry.status || 'normal',
+      status: ((entry.status === 'fire' || entry.status === 'close' || entry.status === 'trending' || entry.status === 'normal') ? entry.status : 'normal') as 'fire' | 'close' | 'trending' | 'normal',
       trend: 'stable' as const,
       streak: 0, // TODO: Get from API
       change: 0, // TODO: Get from API

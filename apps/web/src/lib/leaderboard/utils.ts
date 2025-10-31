@@ -221,6 +221,8 @@ export function createTrendIndicatorStyles(trend: 'up' | 'down' | 'stable') {
       iconColor: '#ef4444',
     },
     stable: {
+      color: '#999999',
+      iconColor: '#999999',
       display: 'none',
     },
   };
@@ -301,4 +303,7 @@ export function createFadeInAnimation(delay: number = 0) {
     animation: `fadeIn ${LEADERBOARD_ANIMATIONS.durations.normal}ms ${LEADERBOARD_ANIMATIONS.easings.smooth} ${delay}ms both`,
   };
 }
+
+// Re-export config helper functions
+export { getRankConfig, getRowConfig } from './config';
 

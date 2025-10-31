@@ -214,7 +214,7 @@ function formatContext(context?: ErrorContext): { tags: Record<string, string>; 
  */
 class ErrorTrackingService implements ErrorTrackingService {
   private deduplicator = new ErrorDeduplicator();
-  private user: ErrorContext['user'] = null;
+  private user: ErrorContext['user'] = undefined;
   private contexts = new Map<string, any>();
 
   captureException(error: Error, context?: ErrorContext): void {
@@ -304,7 +304,7 @@ class ErrorTrackingService implements ErrorTrackingService {
   }
 
   setUser(user: { id: string; email?: string; username?: string } | null): void {
-    this.user = user;
+    this.user = user || undefined;
 
     const sentry = getSentry();
     if (sentry) {

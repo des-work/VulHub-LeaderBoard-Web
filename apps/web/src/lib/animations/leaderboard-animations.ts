@@ -63,7 +63,7 @@ export interface LeaderboardAnimationConfig {
 export class LeaderboardAnimationManager {
   private config: LeaderboardAnimationConfig;
   private elements: Map<string, HTMLElement> = new Map();
-  private animationIds: Map<string, number> = new Map();
+  private animationIds: Map<string, ReturnType<typeof setInterval>> = new Map();
   private isAnimating = false;
 
   constructor(config: LeaderboardAnimationConfig) {

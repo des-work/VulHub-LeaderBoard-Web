@@ -163,7 +163,7 @@ export default function GradingDashboard() {
   };
 
   const getStatusColor = (status: string) => {
-    const config = STATUS_CONFIG[status as any];
+    const config = STATUS_CONFIG[status as keyof typeof STATUS_CONFIG];
     if (!config) return 'gray';
     return config.color;
   };
@@ -414,7 +414,7 @@ export default function GradingDashboard() {
                       <div className="flex items-center space-x-1">
                         {getStatusIcon(sub.status)}
                         <span className={`text-xs font-semibold`}>
-                          {STATUS_CONFIG[sub.status as any]?.label || sub.status}
+                          {STATUS_CONFIG[sub.status as keyof typeof STATUS_CONFIG]?.label || sub.status}
                         </span>
                       </div>
                     </td>

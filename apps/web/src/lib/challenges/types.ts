@@ -36,3 +36,12 @@ export interface ChallengeCatalog {
   routes: Record<string, CompletionRoute>;
   challenges: Challenge[];
 }
+
+export interface ChallengeFilterOptions {
+  searchQuery?: string;
+  category?: string;
+  difficulty?: Difficulty | 'all';
+  route?: string;
+  sortBy?: 'title' | 'points' | 'difficulty' | 'category';
+  sortOrder?: 'asc' | 'desc';
+}

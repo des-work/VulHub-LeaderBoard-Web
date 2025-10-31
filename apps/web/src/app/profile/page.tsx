@@ -65,14 +65,15 @@ export default function ProfilePage() {
           totalSubmissions: userSubmissions.length,
           approvedSubmissions: userSubmissions.filter(s => s.status === 'approved').length,
           rejectedSubmissions: userSubmissions.filter(s => s.status === 'rejected').length,
-          pendingSubmissions: userSubmissions.filter(s => s.status === 'pending' || s.status === 'under_review').length,
-          averageScore: userSubmissions.length > 0
-            ? Math.round(
-                userSubmissions
-                  .filter(s => s.pointsAwarded)
-                  .reduce((sum, s) => sum + (s.pointsAwarded || 0), 0) / userSubmissions.length
-              )
-            : 0,
+          pendingSubmissions: userSubmissions.filter(s => s.status === 'pending').length,
+          averageScore: (() => {
+            const scoredSubmissions = userSubmissions.filter(s => s.pointsAwarded && s.pointsAwarded > 0);
+            return scoredSubmissions.length > 0
+              ? Math.round(
+                  scoredSubmissions.reduce((sum, s) => sum + (s.pointsAwarded || 0), 0) / scoredSubmissions.length
+                )
+              : 0;
+          })(),
           longestStreak: calculateStreak(userSubmissions),
         };
 
@@ -84,6 +85,7 @@ export default function ProfilePage() {
           title: 'Error Loading Profile',
           message: err.message || 'Failed to load your profile data',
           duration: 'medium',
+          read: false,
         });
       } finally {
         setIsLoading(false);
