@@ -141,7 +141,7 @@ export function useKeyboardNavigation(itemCount: number, options?: {
  *   
  *   return (
  *     <div className={isFocusVisible ? 'focus-visible' : ''}>
- *       {/* App content */}
+ *       App content
  *     </div>
  *   );
  * }

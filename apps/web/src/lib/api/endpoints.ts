@@ -15,14 +15,40 @@ interface RegisterResponse {
 
 export const AuthApi = {
   async login(schoolId: string, password: string): Promise<LoginResponse> {
-    const response = await apiClient.post('/auth/login', { schoolId, password });
+    // API expects 'email' field, but we receive 'schoolId' from the form
+    // For now, use schoolId as email (users can enter email in School ID field)
+    const response = await apiClient.post('/auth/login', { email: schoolId, password });
     
-    // Store the access token
-    if (response.accessToken) {
-      apiClient.setAuthToken(response.accessToken);
-    }
+    // API returns { success: true, data: { user, accessToken, refreshToken } }
+    // Extract the data property
+    const data = response.data || response;
     
-    return response;
+    // Transform API user to frontend User interface
+    const apiUser = data.user;
+    const frontendUser = {
+      id: apiUser.id,
+      schoolId: apiUser.email || apiUser.schoolId || '', // Use email as schoolId for now
+      name: apiUser.firstName && apiUser.lastName 
+        ? `${apiUser.firstName} ${apiUser.lastName}`
+        : apiUser.name || apiUser.email || 'User',
+      email: apiUser.email,
+      role: (apiUser.role?.toLowerCase() || 'student') as 'student' | 'grader' | 'admin',
+      points: apiUser.points || 0,
+      level: apiUser.level || 1,
+      joinDate: apiUser.createdAt ? new Date(apiUser.createdAt) : new Date(),
+      lastActive: apiUser.updatedAt ? new Date(apiUser.updatedAt) : new Date(),
+      avatar: apiUser.avatarUrl || undefined,
+      bio: apiUser.bio || undefined,
+      completedActivities: apiUser.completedActivities || [],
+      pendingSubmissions: apiUser.pendingSubmissions || [],
+      approvedSubmissions: apiUser.approvedSubmissions || [],
+    };
+    
+    return {
+      user: frontendUser,
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+    };
   },
   
   async register(payload: { schoolId: string; name: string; password: string }): Promise<RegisterResponse> {

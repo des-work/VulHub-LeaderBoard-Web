@@ -53,13 +53,18 @@ export class TenantGuard implements CanActivate {
     
     // For development/testing, allow default tenant
     if (process.env.NODE_ENV === 'development') {
-      return 'default';
+      return 'default-tenant';
     }
     
     return null;
   }
   
   private isValidTenantId(tenantId: string): boolean {
+    // Allow 'default-tenant' in development mode
+    if (process.env.NODE_ENV === 'development' && tenantId === 'default-tenant') {
+      return true;
+    }
+    
     // CUID format validation (basic check)
     const cuidRegex = /^c[a-z0-9]{24}$/;
     return cuidRegex.test(tenantId);

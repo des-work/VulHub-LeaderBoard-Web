@@ -192,25 +192,70 @@ export function requiresReauth(error: Error): boolean {
 
 /**
  * Log error for monitoring
+ * Uses error tracking service if available, falls back to console
  */
 export function logError(error: Error, context?: any): void {
-  // Always log in development (console.error does nothing in production builds)
-  console.error('[API Error]', {
-    name: error.name,
-    message: error.message,
-    ...(error instanceof ApiError && {
-      status: error.status,
-      code: error.code,
-      details: error.details
-    }),
-    context,
-    stack: error.stack
-  });
+  // Use lazy import to avoid circular dependencies
+  // This will be replaced at build time and only loads errorTracking when needed
+  try {
+    // Only import if we're in a browser environment
+    if (typeof window !== 'undefined') {
+      // Use setTimeout to defer import and break potential circular dependency
+      setTimeout(() => {
+        import('./errorTracking').then(({ trackError }) => {
+          trackError(error, {
+            tags: {
+              errorType: error.constructor.name,
+              ...(error instanceof ApiError && {
+                statusCode: String(error.status),
+                errorCode: error.code,
+              }),
+            },
+            extra: {
+              ...context,
+              ...(error instanceof ApiError && {
+                apiError: {
+                  status: error.status,
+                  code: error.code,
+                  details: error.details,
+                },
+              }),
+            },
+          });
+        }).catch(() => {
+          // Silent fallback - already handled below
+        });
+      }, 0);
+    }
+  } catch {
+    // Silent catch - fallback to console
+  }
+
+  // Always log to console as well for immediate visibility
+  // In Next.js, process.env is replaced at build time, so we can check directly
+  // Use a try-catch to handle cases where process is not defined
+  let isDevelopment = false;
+  try {
+    // @ts-ignore - process.env is replaced by Next.js at build time
+    isDevelopment = process.env.NODE_ENV === 'development';
+  } catch {
+    // Default to true if we can't determine
+    isDevelopment = true;
+  }
   
-  // TODO: Send to error tracking service (e.g., Sentry) in production
-  // if (typeof window !== 'undefined' && window.Sentry) {
-  //   window.Sentry.captureException(error, { extra: context });
-  // }
+  if (isDevelopment) {
+    console.error('[API Error]', {
+      name: error.name,
+      message: error.message,
+      ...(error instanceof ApiError && {
+        status: error.status,
+        code: error.code,
+        details: error.details
+      }),
+      context,
+      stack: error.stack
+    });
+  }
 }
 
 /**

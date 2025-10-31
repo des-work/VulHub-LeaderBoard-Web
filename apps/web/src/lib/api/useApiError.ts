@@ -7,6 +7,7 @@
 import { useState, useCallback } from 'react';
 import { ApiError, getUserFriendlyMessage, requiresReauth } from './errors';
 import { useAuth } from '../auth/context';
+import { addErrorBreadcrumb } from './errorTracking';
 
 export interface UseApiErrorReturn {
   error: string | null;
@@ -36,6 +37,13 @@ export function useApiError(): UseApiErrorReturn {
   }, []);
 
   const handleError = useCallback((err: Error) => {
+    // Track error breadcrumb
+    addErrorBreadcrumb(
+      `API Error: ${getUserFriendlyMessage(err)}`,
+      'api',
+      err instanceof ApiError && err.status >= 500 ? 'error' : 'warning'
+    );
+
     // Handle authentication errors
     if (requiresReauth(err)) {
       setError('Your session has expired. Please log in again.');

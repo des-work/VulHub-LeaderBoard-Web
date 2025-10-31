@@ -35,17 +35,25 @@ export class RateLimitGuard implements CanActivate {
   }
   
   private getRateLimit(endpoint: string) {
-    // Auth endpoints - stricter limits
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
+    // Auth endpoints - stricter limits (but more lenient in development)
     if (endpoint.includes('/auth/login') || endpoint.includes('/auth/register')) {
-      return { max: 5, window: 900 }; // 5 attempts per 15 minutes
+      return isDevelopment 
+        ? { max: 50, window: 900 } // 50 attempts per 15 minutes in dev
+        : { max: 5, window: 900 }; // 5 attempts per 15 minutes in production
     }
     
-    // API endpoints - moderate limits
+    // API endpoints - moderate limits (more lenient in development)
     if (endpoint.includes('/api/')) {
-      return { max: 100, window: 3600 }; // 100 requests per hour
+      return isDevelopment
+        ? { max: 1000, window: 3600 } // 1000 requests per hour in dev
+        : { max: 100, window: 3600 }; // 100 requests per hour in production
     }
     
     // Default limits
-    return { max: 200, window: 3600 }; // 200 requests per hour
+    return isDevelopment
+      ? { max: 2000, window: 3600 } // 2000 requests per hour in dev
+      : { max: 200, window: 3600 }; // 200 requests per hour in production
   }
 }

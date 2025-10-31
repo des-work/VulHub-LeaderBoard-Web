@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { trackError, ErrorContext } from '../../lib/api/errorTracking';
 
 interface Props {
   children: React.ReactNode;
@@ -35,25 +36,33 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Log error to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Error caught by boundary:', error);
-      console.error('Error info:', errorInfo);
-    }
-
     // Store error info in state
     this.setState({
       error,
       errorInfo,
     });
 
+    // Prepare error context for tracking
+    const errorContext: ErrorContext = {
+      tags: {
+        errorBoundary: 'true',
+        componentStack: errorInfo.componentStack ? 'present' : 'missing',
+      },
+      extra: {
+        componentStack: errorInfo.componentStack,
+        errorInfo: {
+          errorBoundary: true,
+        },
+      },
+    };
+
+    // Track error
+    trackError(error, errorContext);
+
     // Call custom error handler if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
-
-    // TODO: Send to error tracking service (e.g., Sentry)
-    // logErrorToService(error, errorInfo);
   }
 
   handleReset = () => {
@@ -81,7 +90,9 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
       // Default error UI
       const { error, errorInfo } = this.state;
-      const showDetails = this.props.showDetails ?? process.env.NODE_ENV === 'development';
+      // @ts-ignore - process.env is replaced by Next.js at build time
+      const isDev = typeof process !== 'undefined' && process.env?.NODE_ENV === 'development';
+      const showDetails = this.props.showDetails ?? isDev;
 
       return (
         <div className="min-h-screen bg-black text-neutral-100 flex items-center justify-center p-4">

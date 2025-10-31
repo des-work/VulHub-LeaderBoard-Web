@@ -4,6 +4,7 @@ import React, { createContext, useContext, useReducer, useEffect, useRef } from 
 import { User, AuthState, LoginCredentials, RegisterData } from './types';
 import { AuthApi } from '../api/endpoints';
 import { TokenRefreshManager, storeTokens, clearTokens, getStoredTokens } from './tokenManager';
+import { setErrorTrackingUser } from '../api/errorTracking';
 
 // Toggle between mock and real API
 const USE_MOCK_AUTH = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === 'true';
@@ -177,6 +178,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('auth_token', 'mock_token');
         localStorage.setItem('user_data', JSON.stringify(mockUser));
         dispatch({ type: 'LOGIN_SUCCESS', payload: mockUser });
+        
+        // Set user in error tracking
+        setErrorTrackingUser({
+          id: mockUser.id,
+          email: mockUser.email,
+          username: mockUser.schoolId,
+        });
       } else {
         // REAL API AUTH - For production
         const response = await AuthApi.login(credentials.schoolId, credentials.password);
@@ -186,6 +194,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('user_data', JSON.stringify(response.user));
         
         dispatch({ type: 'LOGIN_SUCCESS', payload: response.user });
+        
+        // Set user in error tracking
+        setErrorTrackingUser({
+          id: response.user.id,
+          email: response.user.email,
+          username: response.user.schoolId,
+        });
       }
     } catch (error: any) {
       const errorMessage = error?.message || 'Invalid credentials';
@@ -236,7 +251,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         storeTokens(response.accessToken, response.refreshToken);
         localStorage.setItem('user_data', JSON.stringify(response.user));
         
-        dispatch({ type: 'LOGIN_SUCCESS', payload: response.user));
+        dispatch({ type: 'LOGIN_SUCCESS', payload: response.user });
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Registration failed';
@@ -265,6 +280,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       clearTokens();
       localStorage.removeItem('user_data');
       dispatch({ type: 'LOGOUT' });
+      
+      // Clear user from error tracking
+      setErrorTrackingUser(null);
     }
   };
 
