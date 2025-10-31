@@ -1,7 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import { User, AuthState, LoginCredentials, RegisterData } from './types';
+import { AuthApi } from '../api/endpoints';
+import { TokenRefreshManager, storeTokens, clearTokens, getStoredTokens } from './tokenManager';
+
+// Toggle between mock and real API
+const USE_MOCK_AUTH = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === 'true';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
@@ -70,6 +75,7 @@ const initialState: AuthState = {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const tokenManagerRef = useRef<TokenRefreshManager | null>(null);
 
   // Check for existing session on mount - optimized for speed
   useEffect(() => {
@@ -110,34 +116,81 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuth();
   }, []);
 
+  // Initialize token refresh manager
+  useEffect(() => {
+    if (state.isAuthenticated && !USE_MOCK_AUTH) {
+      const { refreshToken } = getStoredTokens();
+      
+      if (refreshToken) {
+        // Create token manager
+        tokenManagerRef.current = new TokenRefreshManager(
+          refreshToken,
+          (newAccessToken) => {
+            // On token refreshed
+            console.log('Token refreshed successfully');
+            storeTokens(newAccessToken, refreshToken);
+          },
+          () => {
+            // On refresh failed
+            console.error('Token refresh failed, logging out');
+            logout();
+          }
+        );
+        
+        // Start automatic refresh
+        tokenManagerRef.current.start();
+      }
+    }
+
+    // Cleanup on unmount or when user logs out
+    return () => {
+      if (tokenManagerRef.current) {
+        tokenManagerRef.current.stop();
+        tokenManagerRef.current = null;
+      }
+    };
+  }, [state.isAuthenticated]);
+
   const login = async (credentials: LoginCredentials) => {
     dispatch({ type: 'LOGIN_START' });
     
     try {
-      // Simulate network delay with minimal timeout
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
-      // Create user based on credentials
-      const mockUser: User = {
-        id: Date.now().toString(),
-        schoolId: credentials.schoolId,
-        name: credentials.schoolId === 'admin' ? 'Admin User' : 'Student User',
-        email: `${credentials.schoolId}@school.edu`,
-        role: credentials.schoolId === 'admin' ? 'admin' : 'student',
-        points: credentials.schoolId === 'admin' ? 0 : 1000,
-        level: credentials.schoolId === 'admin' ? 1 : 3,
-        joinDate: new Date(),
-        lastActive: new Date(),
-        completedActivities: [],
-        pendingSubmissions: [],
-        approvedSubmissions: []
-      };
-      
-      localStorage.setItem('auth_token', 'mock_token');
-      localStorage.setItem('user_data', JSON.stringify(mockUser));
-      dispatch({ type: 'LOGIN_SUCCESS', payload: mockUser });
-    } catch (error) {
-      dispatch({ type: 'LOGIN_FAILURE', payload: 'Invalid credentials' });
+      if (USE_MOCK_AUTH) {
+        // MOCK AUTH - For development
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        const mockUser: User = {
+          id: Date.now().toString(),
+          schoolId: credentials.schoolId,
+          name: credentials.schoolId === 'admin' ? 'Admin User' : 'Student User',
+          email: `${credentials.schoolId}@school.edu`,
+          role: credentials.schoolId === 'admin' ? 'admin' : 'student',
+          points: credentials.schoolId === 'admin' ? 0 : 1000,
+          level: credentials.schoolId === 'admin' ? 1 : 3,
+          joinDate: new Date(),
+          lastActive: new Date(),
+          completedActivities: [],
+          pendingSubmissions: [],
+          approvedSubmissions: []
+        };
+        
+        localStorage.setItem('auth_token', 'mock_token');
+        localStorage.setItem('user_data', JSON.stringify(mockUser));
+        dispatch({ type: 'LOGIN_SUCCESS', payload: mockUser });
+      } else {
+        // REAL API AUTH - For production
+        const response = await AuthApi.login(credentials.schoolId, credentials.password);
+        
+        // Store tokens and user data
+        storeTokens(response.accessToken, response.refreshToken);
+        localStorage.setItem('user_data', JSON.stringify(response.user));
+        
+        dispatch({ type: 'LOGIN_SUCCESS', payload: response.user });
+      }
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Invalid credentials';
+      dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage });
+      throw error;
     }
   };
 
@@ -149,36 +202,70 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error('Passwords do not match');
       }
       
-      // Simulate network delay with minimal timeout
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      const newUser: User = {
-        id: Date.now().toString(),
-        schoolId: data.schoolId,
-        name: data.name,
-        email: `${data.schoolId}@school.edu`,
-        role: 'student',
-        points: 0,
-        level: 1,
-        joinDate: new Date(),
-        lastActive: new Date(),
-        completedActivities: [],
-        pendingSubmissions: [],
-        approvedSubmissions: []
-      };
-      
-      localStorage.setItem('auth_token', 'mock_token');
-      localStorage.setItem('user_data', JSON.stringify(newUser));
-      dispatch({ type: 'LOGIN_SUCCESS', payload: newUser });
+      if (USE_MOCK_AUTH) {
+        // MOCK AUTH - For development
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        const newUser: User = {
+          id: Date.now().toString(),
+          schoolId: data.schoolId,
+          name: data.name,
+          email: `${data.schoolId}@school.edu`,
+          role: 'student',
+          points: 0,
+          level: 1,
+          joinDate: new Date(),
+          lastActive: new Date(),
+          completedActivities: [],
+          pendingSubmissions: [],
+          approvedSubmissions: []
+        };
+        
+        localStorage.setItem('auth_token', 'mock_token');
+        localStorage.setItem('user_data', JSON.stringify(newUser));
+        dispatch({ type: 'LOGIN_SUCCESS', payload: newUser });
+      } else {
+        // REAL API AUTH - For production
+        const response = await AuthApi.register({
+          schoolId: data.schoolId,
+          name: data.name,
+          password: data.password
+        });
+        
+        // Store tokens and user data
+        storeTokens(response.accessToken, response.refreshToken);
+        localStorage.setItem('user_data', JSON.stringify(response.user));
+        
+        dispatch({ type: 'LOGIN_SUCCESS', payload: response.user));
+      }
     } catch (error) {
-      dispatch({ type: 'LOGIN_FAILURE', payload: error instanceof Error ? error.message : 'Registration failed' });
+      const errorMessage = error instanceof Error ? error.message : 'Registration failed';
+      dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage });
+      throw error;
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
-    dispatch({ type: 'LOGOUT' });
+  const logout = async () => {
+    // Stop token refresh
+    if (tokenManagerRef.current) {
+      tokenManagerRef.current.stop();
+      tokenManagerRef.current = null;
+    }
+
+    try {
+      if (!USE_MOCK_AUTH) {
+        // Call real API logout
+        await AuthApi.logout();
+      }
+    } catch (error) {
+      console.error('Logout API call failed:', error);
+      // Continue with local logout even if API fails
+    } finally {
+      // Always clear all tokens and user data
+      clearTokens();
+      localStorage.removeItem('user_data');
+      dispatch({ type: 'LOGOUT' });
+    }
   };
 
   const updateUser = (userData: Partial<User>) => {

@@ -9,25 +9,10 @@ import {
 import RippleGridV2 from '../components/RippleGrid/RippleGridV2';
 import Leaderboard from '../components/leaderboard/Leaderboard';
 import { LeaderboardPlayer } from '../components/leaderboard/LeaderboardRow';
-
-// Mock leaderboard data
-const LEADERBOARD_DATA: LeaderboardPlayer[] = [
-  { id: 1, name: 'NeoYOU', points: 1820, level: 4, completed: 3, status: 'fire', trend: 'up', streak: 5, change: 120 },
-  { id: 2, name: 'Trinity', points: 1710, level: 4, completed: 3, status: 'fire', trend: 'up', streak: 3, change: 95 },
-  { id: 3, name: 'Morpheus', points: 1660, level: 4, completed: 2, status: 'close', trend: 'up', streak: 0, change: 45 },
-  { id: 4, name: 'Oracle', points: 1600, level: 3, completed: 2, status: 'normal', trend: 'stable', streak: 0, change: 10 },
-  { id: 5, name: 'Acid Burn', points: 1540, level: 3, completed: 3, status: 'normal', trend: 'stable', streak: 0, change: 5 },
-  { id: 6, name: 'Zero Cool', points: 1490, level: 3, completed: 2, status: 'close', trend: 'up', streak: 0, change: 30 },
-  { id: 7, name: 'Crash Override', points: 1450, level: 3, completed: 3, status: 'close', trend: 'down', streak: 0, change: -15 },
-  { id: 8, name: 'The Architect', points: 1425, level: 3, completed: 1, status: 'close', trend: 'stable', streak: 0, change: 0 },
-  { id: 9, name: 'Cypher', points: 1370, level: 3, completed: 1, status: 'normal', trend: 'stable', streak: 0, change: 2 },
-  { id: 10, name: 'Tank', points: 1330, level: 3, completed: 3, status: 'close', trend: 'up', streak: 0, change: 20 },
-  { id: 11, name: 'Dozer', points: 1290, level: 2, completed: 2, status: 'close', trend: 'stable', streak: 0, change: 0 },
-  { id: 12, name: 'Root', points: 1260, level: 2, completed: 2, status: 'close', trend: 'down', streak: 0, change: -10 },
-  { id: 13, name: 'Elliot Alderson', points: 1210, level: 2, completed: 1, status: 'close', trend: 'stable', streak: 0, change: 5 },
-  { id: 14, name: 'Darlene', points: 1185, level: 2, completed: 3, status: 'close', trend: 'up', streak: 0, change: 25 },
-  { id: 15, name: 'Lisbeth Salander', points: 1150, level: 2, completed: 2, status: 'close', trend: 'stable', streak: 0, change: 0 }
-];
+import { MobileMenu } from '../components/navigation/MobileMenu';
+import { PageLoader } from '../components/common/Loading';
+import { useLeaderboard, useUserRank } from '../lib/data/hooks';
+import { SkeletonList } from '../components/common/Loading';
 
 export default function HomePage() {
   const router = useRouter();
@@ -40,14 +25,7 @@ export default function HomePage() {
   }, [isAuthenticated, isLoading, router]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-black text-neutral-100 font-body flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-xl text-neutral-300">Loading...</p>
-        </div>
-      </div>
-    );
+    return <PageLoader message="Loading leaderboard..." />;
   }
 
   if (!isAuthenticated || !user) {
@@ -59,8 +37,16 @@ export default function HomePage() {
     router.replace('/auth');
   };
 
-  // Find user's rank (for demo, assume user "Des" is rank 20 with 850 points)
-  const userRank = 20;
+  // Fetch leaderboard data
+  const { data: leaderboardData, isLoading: isLoadingLeaderboard, error: leaderboardError } = useLeaderboard({ limit: 15 });
+  
+  // Fetch user's rank
+  const { data: userRankData } = useUserRank(user?.id);
+
+  // Calculate user rank
+  const userRank = userRankData?.rank || (leaderboardData 
+    ? leaderboardData.findIndex(p => p.id === user?.id || p.name === user?.name) + 1 
+    : null);
 
   return (
     <div className="min-h-screen bg-black text-neutral-100 font-body relative">
@@ -83,20 +69,25 @@ export default function HomePage() {
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 layer-header header-surface">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center matrix-glow">
+      <header className="sticky top-0 layer-header header-surface responsive-header" role="banner">
+        <div className="responsive-container">
+          <div className="responsive-header-content">
+            <div className="flex items-center space-x-3">
+              <div 
+                className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center matrix-glow"
+                aria-hidden="true"
+              >
                 <Trophy className="h-6 w-6 text-black" />
               </div>
-              <h1 className="text-2xl font-display font-bold text-matrix-glow">VulHub Scoreboard</h1>
+              <h1 className="responsive-text-xl font-display font-bold text-matrix-glow">VulHub Scoreboard</h1>
             </div>
             
-            <nav className="flex items-center space-x-4">
+            {/* Desktop Navigation */}
+            <nav className="responsive-header-nav" role="navigation" aria-label="Main navigation">
               <button 
                 className="matrix-button matrix-button-outline"
                 onClick={() => router.push('/community')}
+                aria-label="Navigate to Community page"
               >
                 <Users className="h-4 w-4 mr-2" />
                 Community
@@ -104,53 +95,66 @@ export default function HomePage() {
               <button 
                 className="matrix-button matrix-button-outline"
                 onClick={() => router.push('/challenges')}
+                aria-label="Navigate to Challenges page"
               >
-                <Target className="h-4 w-4 mr-2" />
+                <Target className="h-4 w-4 mr-2" aria-hidden="true" />
                 Challenges
               </button>
               <button 
                 className="matrix-button matrix-button-outline"
                 onClick={() => router.push('/badges')}
+                aria-label="Navigate to Badges page"
               >
-                <Award className="h-4 w-4 mr-2" />
+                <Award className="h-4 w-4 mr-2" aria-hidden="true" />
                 Badges
               </button>
               <button
                 className="matrix-button matrix-button-outline"
                 onClick={() => router.push('/submissions')}
+                aria-label="Navigate to Submissions page"
               >
-                <Upload className="h-4 w-4 mr-2" />
+                <Upload className="h-4 w-4 mr-2" aria-hidden="true" />
                 Submissions
               </button>
               <button
                 className="matrix-button matrix-button-outline"
                 onClick={() => router.push('/resources')}
+                aria-label="Navigate to Resources page"
               >
-                <BookOpen className="h-4 w-4 mr-2" />
+                <BookOpen className="h-4 w-4 mr-2" aria-hidden="true" />
                 Resources
               </button>
               <button 
                 className="matrix-button matrix-button-outline"
                 onClick={() => router.push('/profile')}
+                aria-label="Navigate to Profile page"
               >
-                <Users className="h-4 w-4 mr-2" />
+                <Users className="h-4 w-4 mr-2" aria-hidden="true" />
                 Profile
               </button>
               
-              <div className="flex items-center space-x-3 pl-4 border-l border-matrix">
-                <div className="text-right">
+              <div className="flex items-center space-x-3 pl-4 border-l border-matrix" role="group" aria-label="User information and logout">
+                <div className="text-right" aria-label="Current user">
                   <div className="text-sm font-medium text-bright">{user.name}</div>
-                  <div className="text-xs text-matrix">{user.points} pts</div>
+                  <div className="text-xs text-matrix" aria-label={`${user.points} points`}>{user.points} pts</div>
                 </div>
                 <button 
                   className="matrix-button matrix-button-outline"
                   onClick={handleLogout}
+                  aria-label="Logout from application"
                 >
-                  <LogOut className="h-4 w-4 mr-2" />
+                  <LogOut className="h-4 w-4 mr-2" aria-hidden="true" />
                   Logout
                 </button>
               </div>
             </nav>
+
+            {/* Mobile Menu */}
+            <MobileMenu 
+              userName={user.name}
+              userPoints={user.points}
+              onLogout={handleLogout}
+            />
           </div>
         </div>
       </header>
@@ -160,14 +164,22 @@ export default function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Leaderboard */}
           <div className="lg:col-span-2">
-            <Leaderboard
-              players={LEADERBOARD_DATA}
-              currentUserId={undefined} // Set to user.id if user is in leaderboard
-              currentUserRank={userRank}
-              currentUserName={user.name}
-              currentUserPoints={user.points}
-              maxDisplay={15}
-            />
+            {isLoadingLeaderboard ? (
+              <SkeletonList items={15} />
+            ) : leaderboardError ? (
+              <div className="matrix-card p-6 text-center">
+                <p className="text-error">Failed to load leaderboard. Please try again.</p>
+              </div>
+            ) : (
+              <Leaderboard
+                players={leaderboardData || []}
+                currentUserId={user?.id}
+                currentUserRank={userRank || undefined}
+                currentUserName={user.name}
+                currentUserPoints={user.points}
+                maxDisplay={15}
+              />
+            )}
           </div>
 
           {/* Welcome Section */}

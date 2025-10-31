@@ -1,100 +1,163 @@
+/**
+ * Challenges Page - Modular & Redesigned
+ * 
+ * Browse and filter VulHub challenges with advanced filtering and statistics
+ */
+
 "use client";
 
-import React, { useMemo, useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft, Sparkles } from 'lucide-react';
+import RippleGridV2 from '../../components/RippleGrid/RippleGridV2';
 import { challengeCatalog } from '../../lib/challenges/catalog';
-import { Flame, Sword, Shield, Filter, Tag, Rocket, ArrowLeft } from 'lucide-react';
+import { Challenge } from '../../lib/challenges/types';
+import {
+  filterChallenges,
+  calculateChallengeStats,
+  getUniqueCategories,
+  getUniqueRoutes,
+  ChallengeFilterOptions
+} from '../../lib/challenges/utils';
+import { ChallengeCard, ChallengeFilters, ChallengeStats } from '../../components/challenges';
 
 export default function ChallengesPage() {
   const router = useRouter();
-  const [q, setQ] = useState('');
-  const [category, setCategory] = useState('all');
 
-  const categories = useMemo(() => {
-    const set = new Set<string>();
-    challengeCatalog.challenges.forEach(c => set.add(c.category));
-    return ['all', ...Array.from(set)];
-  }, []);
+  // State
+  const [filters, setFilters] = useState<ChallengeFilterOptions>({
+    searchQuery: '',
+    category: 'all',
+    difficulty: 'all',
+    route: 'all',
+    sortBy: 'title',
+    sortOrder: 'asc'
+  });
 
-  const list = useMemo(() => {
-    return challengeCatalog.challenges.filter(c => {
-      if (category !== 'all' && c.category !== category) return false;
-      if (q && !(`${c.title} ${c.tags.join(' ')}`.toLowerCase().includes(q.toLowerCase()))) return false;
-      return true;
-    });
-  }, [q, category]);
+  // Memoized data
+  const challenges = useMemo(() => challengeCatalog.challenges, []);
+  const categories = useMemo(() => getUniqueCategories(challenges), [challenges]);
+  const routes = useMemo(() => getUniqueRoutes(challenges), [challenges]);
+  const filteredChallenges = useMemo(() => 
+    filterChallenges(challenges, filters), 
+    [challenges, filters]
+  );
+  const stats = useMemo(() => calculateChallengeStats(challenges), [challenges]);
 
-  const RouteChip = ({ id }: { id: string }) => {
-    const map: Record<string, { label: string; icon: React.ReactNode }> = {
-      standard: { label: 'Standard', icon: <Rocket className="h-3 w-3 mr-1"/> },
-      redTeam: { label: 'Red', icon: <Sword className="h-3 w-3 mr-1"/> },
-      blueTeam: { label: 'Blue', icon: <Shield className="h-3 w-3 mr-1"/> },
-    };
-    const item = map[id] || { label: id, icon: null };
-    return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-500/10 text-purple-300 border border-purple-500/30 mr-2">{item.icon}{item.label}</span>;
+  // Handle challenge start
+  const handleStartChallenge = (challenge: Challenge) => {
+    // In production, this would navigate to the challenge detail page
+    // For now, just show an alert
+    alert(`Starting challenge: ${challenge.title}\n\nThis would normally navigate to the challenge workspace.`);
+    // router.push(`/challenges/${challenge.id}`);
   };
 
   return (
-    <div className="min-h-screen bg-black text-neutral-100 font-body">
-      <div className="container mx-auto px-4 py-12">
-        <button 
-          onClick={() => router.push('/')}
-          className="matrix-button matrix-button-outline mb-6"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Home
-        </button>
+    <div className="min-h-screen bg-black text-neutral-100 font-body relative">
+      {/* RippleGrid Background */}
+      <div className="fixed inset-0 z-0">
+        <RippleGridV2
+          enableRainbow={false}
+          gridColor="var(--color-matrix-500)"
+          rippleIntensity={0.03}
+          gridSize={10}
+          gridThickness={12}
+          fadeDistance={1.5}
+          vignetteStrength={1.6}
+          glowIntensity={0.08}
+          opacity={0.08}
+          gridRotation={0}
+          mouseInteraction={true}
+          mouseInteractionRadius={1.2}
+        />
+      </div>
 
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-display text-matrix-glow">Challenges</h1>
-          <p className="text-muted mt-2">Mapped to official Vulhub environments. Pick a route and start hacking.</p>
-        </div>
-
-        <div className="matrix-card mb-6">
-          <div className="matrix-card-header">
-            <h2 className="text-xl font-display font-bold text-matrix">Filters</h2>
-          </div>
-          <div className="matrix-card-content flex flex-col md:flex-row gap-3">
-            <input 
-              className="flex-1 bg-neutral-900/50 border border-matrix/30 rounded px-3 py-2 text-bright focus:border-matrix focus:ring-1 focus:ring-matrix" 
-              placeholder="Search title or tags" 
-              value={q} 
-              onChange={e => setQ(e.target.value)} 
-            />
-            <select 
-              className="bg-neutral-900/50 border border-matrix/30 rounded px-3 py-2 text-bright focus:border-matrix focus:ring-1 focus:ring-matrix" 
-              value={category} 
-              onChange={e => setCategory(e.target.value)}
-            >
-              {categories.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {list.map(ch => (
-            <div key={ch.id} className="matrix-card hover-lift">
-              <div className="matrix-card-header">
-                <div className="flex items-center justify-between">
-                  <span className="text-matrix font-display font-bold">{ch.title}</span>
-                  <span className="text-sm text-yellow-400 inline-flex items-center"><Flame className="h-4 w-4 mr-1"/>{ch.defaultPoints} pts</span>
-                </div>
-              </div>
-              <div className="matrix-card-content space-y-3">
-                <div className="text-muted text-sm">{ch.category} {ch.cve ? `• ${ch.cve}` : ''}</div>
-                <div>
-                  {ch.routeIds.map(id => <RouteChip key={id} id={id} />)}
-                </div>
-                <div>
-                  {ch.tags.map(t => <span key={t} className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-neutral-800 text-bright border border-matrix/30 mr-2"><Tag className="h-3 w-3 mr-1"/>{t}</span>)}
-                </div>
-                <a className="text-sm text-matrix hover:text-matrix-bright underline" href={ch.vulhub.url} target="_blank" rel="noreferrer">Vulhub docs</a>
-                <div className="pt-2">
-                  <button className="matrix-button matrix-button-primary w-full">Start • {ch.difficulty}</button>
-                </div>
-              </div>
+      {/* Header */}
+      <div className="sticky top-0 z-20 header-surface backdrop-blur-md border-b border-neutral-800">
+        <div className="container mx-auto px-4 py-6">
+          <button 
+            onClick={() => router.push('/')}
+            className="matrix-button matrix-button-outline mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </button>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-display font-bold text-matrix-glow mb-2 flex items-center gap-3">
+                <Sparkles className="h-8 w-8 animate-bounce-subtle" />
+                VulHub Challenges
+              </h1>
+              <p className="text-muted text-lg">
+                Practice real-world vulnerabilities in isolated environments
+              </p>
             </div>
-          ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-10 container mx-auto px-4 py-8 space-y-8">
+        {/* Statistics */}
+        <ChallengeStats stats={stats} animated={true} />
+
+        {/* Filters */}
+        <ChallengeFilters
+          filters={filters}
+          onFiltersChange={setFilters}
+          categories={categories}
+          routes={routes}
+          totalCount={challenges.length}
+          filteredCount={filteredChallenges.length}
+        />
+
+        {/* Challenge Grid */}
+        <div>
+          {filteredChallenges.length === 0 ? (
+            <div className="matrix-card p-12 text-center">
+              <div className="text-6xl mb-4 opacity-30">🔍</div>
+              <h3 className="text-2xl font-display font-bold text-bright mb-2">
+                No Challenges Found
+              </h3>
+              <p className="text-muted">
+                Try adjusting your filters or search terms
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Results Header */}
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-xl font-display font-bold text-bright">
+                  {filteredChallenges.length === challenges.length 
+                    ? 'All Challenges' 
+                    : `${filteredChallenges.length} ${filteredChallenges.length === 1 ? 'Challenge' : 'Challenges'}`
+                  }
+                </h2>
+                <div className="text-sm text-muted">
+                  {filters.sortBy && (
+                    <span>
+                      Sorted by {filters.sortBy} ({filters.sortOrder === 'asc' ? 'ascending' : 'descending'})
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredChallenges.map((challenge, index) => (
+                  <ChallengeCard
+                    key={challenge.id}
+                    challenge={challenge}
+                    onStart={handleStartChallenge}
+                    showRoutes={true}
+                    showTags={true}
+                    animated={true}
+                    animationDelay={index * 50}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

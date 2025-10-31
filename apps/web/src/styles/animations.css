@@ -249,6 +249,28 @@
   }
 }
 
+/* Bounce Subtle (for Castle Siege) */
+@keyframes bounce-subtle {
+  0%, 100% { 
+    transform: translateY(0) scale(1);
+  }
+  50% { 
+    transform: translateY(-8px) scale(1.05);
+  }
+}
+
+/* Pulse Slow (for Castle Siege) */
+@keyframes pulse-slow {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
 
 /* ============================================
    3. ANIMATION UTILITY CLASSES
@@ -333,6 +355,14 @@
 
 .animate-cyber-scan {
   animation: cyberScan var(--duration-scan) var(--ease-cyber) infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s var(--ease-in-out) infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s var(--ease-in-out) infinite;
 }
 
 

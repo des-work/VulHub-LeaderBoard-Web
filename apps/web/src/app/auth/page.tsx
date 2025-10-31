@@ -3,6 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../lib/auth/context';
 import { useRouter } from 'next/navigation';
+import CastleSiegeAnimation from '../../components/auth/CastleSiegeAnimation';
+import type { AnimationPhase } from '../../lib/auth/animation-types';
+import { useValidation } from '../../lib/validation/useValidation';
+import { authSchemas, validators } from '../../lib/validation/schemas';
+import { loginRateLimiter, registerRateLimiter, RateLimitError } from '../../lib/security/rate-limiter';
 
 export default function AuthPage() {
   const { isAuthenticated, isLoading, login, register } = useAuth();
@@ -10,6 +15,12 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [animationPhase, setAnimationPhase] = useState<AnimationPhase>('intro');
+  const [showForm, setShowForm] = useState(false);
+  
+  // Validation hooks
+  const loginValidation = useValidation(authSchemas.login);
+  const registerValidation = useValidation(authSchemas.register);
 
   useEffect(() => {
     // If already authenticated, redirect to home
@@ -18,26 +29,52 @@ export default function AuthPage() {
     }
   }, [isAuthenticated, router]);
 
+  // Handle animation completion
+  const handleAnimationComplete = () => {
+    setAnimationPhase('idle');
+    setShowForm(true);
+  };
+
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError('');
 
-    const formData = new FormData(e.currentTarget);
-    const schoolId = formData.get('schoolId') as string;
-    const password = formData.get('password') as string;
-
-    if (!schoolId || !password) {
-      setError('Please enter both school ID and password');
+    // Check rate limit
+    if (!loginRateLimiter.check()) {
+      setError(`Too many login attempts. Please wait ${loginRateLimiter.getResetTime()}.`);
       setIsSubmitting(false);
       return;
     }
 
+    const formData = new FormData(e.currentTarget);
+    const schoolId = formData.get('schoolId') as string;
+    const password = formData.get('password') as string;
+
+    // Sanitize inputs
+    const sanitizedData = {
+      email: validators.sanitizeHtml(schoolId),
+      password: password, // Don't sanitize password, but validate length
+    };
+
+    // Validate inputs
+    if (!loginValidation.validateAll(sanitizedData)) {
+      const firstError = Object.values(loginValidation.errors)[0];
+      setError(firstError || 'Please check your inputs');
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Increment rate limit
+    loginRateLimiter.increment();
+
     try {
-      await login({ schoolId, password });
+      await login({ schoolId: sanitizedData.email, password });
       // Redirect will happen automatically via useEffect
-    } catch (error) {
-      setError('Login failed. Please try again.');
+      // Reset rate limit on successful login
+      loginRateLimiter.reset();
+    } catch (error: any) {
+      setError(error?.message || 'Login failed. Please check your credentials.');
     } finally {
       setIsSubmitting(false);
     }
@@ -48,29 +85,56 @@ export default function AuthPage() {
     setIsSubmitting(true);
     setError('');
 
+    // Check rate limit
+    if (!registerRateLimiter.check()) {
+      setError(`Too many registration attempts. Please wait ${registerRateLimiter.getResetTime()}.`);
+      setIsSubmitting(false);
+      return;
+    }
+
     const formData = new FormData(e.currentTarget);
     const schoolId = formData.get('schoolId') as string;
     const name = formData.get('name') as string;
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
 
+    // Check password match first
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       setIsSubmitting(false);
       return;
     }
 
-    if (!schoolId || !name || !password) {
-      setError('Please fill in all fields');
+    // Sanitize inputs
+    const sanitizedData = {
+      email: validators.sanitizeHtml(schoolId),
+      username: validators.sanitizeHtml(name),
+      password: password,
+    };
+
+    // Validate inputs
+    if (!registerValidation.validateAll(sanitizedData)) {
+      const firstError = Object.values(registerValidation.errors)[0];
+      setError(firstError || 'Please check your inputs');
       setIsSubmitting(false);
       return;
     }
 
+    // Increment rate limit
+    registerRateLimiter.increment();
+
     try {
-      await register({ schoolId, name, password, confirmPassword });
+      await register({ 
+        schoolId: sanitizedData.email, 
+        name: sanitizedData.username, 
+        password, 
+        confirmPassword 
+      });
       // Redirect will happen automatically via useEffect
-    } catch (error) {
-      setError('Registration failed. Please try again.');
+      // Reset rate limit on successful registration
+      registerRateLimiter.reset();
+    } catch (error: any) {
+      setError(error?.message || 'Registration failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -83,14 +147,23 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen bg-black text-green-400 font-mono relative">
-      {/* Animated Background */}
-      <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 via-transparent to-green-800/20"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,0,0.1),transparent_50%)]"></div>
-      </div>
+      {/* Epic Castle Siege Animation */}
+      <CastleSiegeAnimation 
+        phase={animationPhase} 
+        onComplete={handleAnimationComplete}
+      />
 
-      {/* Content */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+      {/* Auth Form - Only show after animation */}
+      {showForm && (
+        <>
+          {/* Animated Background */}
+          <div className="fixed inset-0 z-0 animate-fade-in">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 via-transparent to-green-800/20"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,0,0.1),transparent_50%)]"></div>
+          </div>
+
+          {/* Content */}
+          <div className="relative z-10 min-h-screen flex items-center justify-center p-4 animate-auth-form-entrance">
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="text-center mb-8">
@@ -290,6 +363,8 @@ export default function AuthPage() {
           </div>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }

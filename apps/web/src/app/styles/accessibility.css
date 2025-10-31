@@ -1,0 +1,436 @@
+/**
+ * Accessibility Styles
+ * 
+ * CSS for improved accessibility, including focus indicators, screen reader utilities, and more
+ */
+
+/* ===== SCREEN READER ONLY ===== */
+
+/**
+ * Hide content visually but keep it accessible to screen readers
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/**
+ * Show sr-only content on focus (for skip links)
+ */
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ===== FOCUS INDICATORS ===== */
+
+/**
+ * Global focus styles
+ * - High contrast outline
+ * - Visible in all contexts
+ * - Follows Matrix theme
+ */
+:focus {
+  outline: 2px solid var(--color-primary-500, #00ff00);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-primary-500, #00ff00);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(0, 255, 0, 0.2);
+}
+
+/**
+ * Focus for interactive elements
+ */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[role="link"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--color-primary-500, #00ff00);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(0, 255, 0, 0.15);
+}
+
+/**
+ * Focus for matrix-styled buttons
+ */
+.matrix-button:focus-visible {
+  outline: 3px solid var(--color-primary-500, #00ff00);
+  outline-offset: 2px;
+  box-shadow: 
+    0 0 0 5px rgba(0, 255, 0, 0.15),
+    0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+/* ===== SKIP LINKS ===== */
+
+/**
+ * Skip to main content link
+ * - Hidden by default
+ * - Visible on focus
+ * - High contrast
+ */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary-500, #00ff00);
+  color: #000;
+  padding: 12px 24px;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 100;
+  border-radius: 0 0 4px 0;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #000;
+  outline-offset: 2px;
+}
+
+/* ===== KEYBOARD NAVIGATION ===== */
+
+/**
+ * Show focus indicator only when using keyboard
+ */
+body:not(.user-is-tabbing) *:focus {
+  outline: none;
+}
+
+body.user-is-tabbing *:focus-visible {
+  outline: 3px solid var(--color-primary-500, #00ff00);
+  outline-offset: 2px;
+}
+
+/* ===== REDUCED MOTION ===== */
+
+/**
+ * Respect user's motion preferences
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+
+/**
+ * Enhanced contrast for users with visual impairments
+ */
+@media (prefers-contrast: high) {
+  :root {
+    --color-primary-500: 0 255 0; /* Brighter green */
+    --color-neutral-50: 255 255 255; /* Pure white */
+    --color-neutral-900: 0 0 0; /* Pure black */
+  }
+
+  /* Increase border contrast */
+  .matrix-card,
+  .matrix-button,
+  input,
+  select,
+  textarea {
+    border-width: 2px;
+    border-color: rgb(var(--color-primary-500));
+  }
+
+  /* Increase text contrast */
+  body {
+    color: #fff;
+    background: #000;
+  }
+
+  /* Remove subtle backgrounds */
+  .surface-1,
+  .surface-2,
+  .surface-3 {
+    background: #000 !important;
+  }
+}
+
+/* ===== LIVE REGIONS ===== */
+
+/**
+ * Styles for screen reader announcements
+ */
+[role="status"],
+[role="alert"],
+[aria-live] {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ===== FORM ACCESSIBILITY ===== */
+
+/**
+ * Error state for form fields
+ */
+[aria-invalid="true"] {
+  border-color: rgb(var(--color-error-500, 239 68 68));
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+[aria-invalid="true"]:focus {
+  outline-color: rgb(var(--color-error-500, 239 68 68));
+  box-shadow: 
+    0 0 0 3px rgba(239, 68, 68, 0.2),
+    0 0 0 6px rgba(239, 68, 68, 0.1);
+}
+
+/**
+ * Required field indicator
+ */
+[aria-required="true"]::after {
+  content: " *";
+  color: rgb(var(--color-error-500, 239 68 68));
+  font-weight: bold;
+}
+
+/**
+ * Disabled state
+ */
+[aria-disabled="true"],
+:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ===== DIALOG/MODAL ACCESSIBILITY ===== */
+
+/**
+ * Modal overlay
+ */
+[role="dialog"],
+[role="alertdialog"] {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background: rgb(var(--color-neutral-900, 0 0 0));
+  border: 2px solid rgb(var(--color-primary-500, 0 255 0));
+  padding: 24px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+/**
+ * Modal backdrop
+ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 999;
+}
+
+/* ===== NAVIGATION ACCESSIBILITY ===== */
+
+/**
+ * Current page indicator
+ */
+[aria-current="page"] {
+  font-weight: bold;
+  border-bottom: 3px solid rgb(var(--color-primary-500, 0 255 0));
+}
+
+/**
+ * Expanded/collapsed indicator
+ */
+[aria-expanded="false"] .icon-expanded {
+  display: none;
+}
+
+[aria-expanded="true"] .icon-collapsed {
+  display: none;
+}
+
+/* ===== INTERACTIVE ELEMENTS ===== */
+
+/**
+ * Ensure minimum touch target size (44x44px)
+ */
+button,
+a,
+[role="button"],
+[role="link"] {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/**
+ * Pressed state for toggle buttons
+ */
+[aria-pressed="true"] {
+  background: rgba(0, 255, 0, 0.2);
+  border-color: rgb(var(--color-primary-500, 0 255 0));
+}
+
+/* ===== TEXT ACCESSIBILITY ===== */
+
+/**
+ * Ensure readable line height
+ */
+p,
+li,
+dd,
+dt {
+  line-height: 1.5;
+}
+
+/**
+ * Ensure readable text spacing
+ */
+.accessible-text {
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  word-spacing: 0.05em;
+}
+
+/* ===== LANDMARKS ===== */
+
+/**
+ * Main content area
+ */
+[role="main"],
+main {
+  min-height: 50vh;
+  outline: none; /* Remove default focus outline, will use skip link */
+}
+
+/**
+ * Navigation landmarks
+ */
+[role="navigation"],
+nav {
+  /* Ensure navigation is keyboard accessible */
+}
+
+/* ===== FOCUS TRAP (for modals) ===== */
+
+.focus-trap-active {
+  overflow: hidden;
+}
+
+.focus-trap-active > *:not(.modal):not(.modal-backdrop) {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ===== LOADING STATES ===== */
+
+/**
+ * Loading spinner with aria-label
+ */
+[role="progressbar"],
+[aria-busy="true"] {
+  position: relative;
+}
+
+[role="progressbar"]::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 255, 0, 0.2);
+  border-top-color: rgb(var(--color-primary-500, 0 255 0));
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== TOOLTIP ACCESSIBILITY ===== */
+
+/**
+ * Accessible tooltips
+ */
+[role="tooltip"] {
+  position: absolute;
+  z-index: 1001;
+  background: rgb(var(--color-neutral-900, 0 0 0));
+  color: rgb(var(--color-primary-500, 0 255 0));
+  border: 1px solid rgb(var(--color-primary-500, 0 255 0));
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  max-width: 250px;
+  word-wrap: break-word;
+}
+
+/* ===== COLOR CONTRAST ===== */
+
+/**
+ * Ensure text meets WCAG AA contrast ratio (4.5:1)
+ */
+.text-high-contrast {
+  color: #ffffff;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+}
+
+.bg-high-contrast {
+  background: #000000;
+}
+
+/* ===== PRINT ACCESSIBILITY ===== */
+
+@media print {
+  /* Ensure content is readable when printed */
+  .skip-link,
+  [role="navigation"],
+  .modal-backdrop {
+    display: none;
+  }
+
+  * {
+    background: white !important;
+    color: black !important;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+  }
+}
+
