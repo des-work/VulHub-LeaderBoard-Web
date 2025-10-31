@@ -17,10 +17,14 @@ export default function AuthPage() {
   const [error, setError] = useState('');
   const [animationPhase, setAnimationPhase] = useState<AnimationPhase>('intro');
   const [showForm, setShowForm] = useState(false);
+  const [animationFadingOut, setAnimationFadingOut] = useState(false);
   
   // Validation hooks
   const loginValidation = useValidation(authSchemas.login);
   const registerValidation = useValidation(authSchemas.register);
+
+  // Animation plays every time for brand impact
+  // Users can skip it if they prefer, but it should always show by default
 
   useEffect(() => {
     // If already authenticated, redirect to home
@@ -29,10 +33,26 @@ export default function AuthPage() {
     }
   }, [isAuthenticated, router]);
 
-  // Handle animation completion
+  // Handle animation completion with smooth transition
   const handleAnimationComplete = () => {
-    setAnimationPhase('idle');
-    setShowForm(true);
+    // Start fade out
+    setAnimationFadingOut(true);
+    
+    // After fade out, show form
+    setTimeout(() => {
+      setAnimationPhase('idle');
+      setShowForm(true);
+    }, 800); // 800ms fade out
+  };
+
+  // Handle skip with smooth transition
+  const handleSkipAnimation = () => {
+    setAnimationFadingOut(true);
+    
+    setTimeout(() => {
+      setAnimationPhase('idle');
+      setShowForm(true);
+    }, 500); // Faster skip transition
   };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -146,24 +166,101 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-green-400 font-mono relative">
-      {/* Epic Castle Siege Animation */}
-      <CastleSiegeAnimation 
-        phase={animationPhase} 
-        onComplete={handleAnimationComplete}
-      />
+    <div className="min-h-screen bg-black text-green-400 font-mono relative overflow-hidden">
+      {/* Epic Castle Siege Animation with fade out */}
+      <div 
+        className={`transition-opacity duration-700 ${
+          animationFadingOut ? 'opacity-0' : 'opacity-100'
+        }`}
+      >
+        <CastleSiegeAnimation 
+          phase={animationPhase} 
+          onComplete={handleAnimationComplete}
+        />
+      </div>
 
-      {/* Auth Form - Only show after animation */}
+      {/* Skip Animation Button - Enhanced design */}
+      {animationPhase === 'intro' && !animationFadingOut && (
+        <div className="fixed top-6 right-6 z-[60] animate-fade-in">
+          <button
+            onClick={handleSkipAnimation}
+            className="group relative px-6 py-3 bg-gradient-to-r from-green-500/10 to-cyan-500/10 hover:from-green-500/20 hover:to-cyan-500/20 border-2 border-green-500/40 hover:border-green-400/60 rounded-lg text-green-400 text-sm font-mono font-bold transition-all duration-300 hover:scale-105 hover:shadow-lg backdrop-blur-sm"
+            style={{
+              boxShadow: '0 0 30px rgba(0, 255, 0, 0.2)'
+            }}
+          >
+            {/* Animated glow effect */}
+            <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-green-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
+            
+            {/* Button content */}
+            <div className="relative flex items-center gap-2">
+              <span>Skip Intro</span>
+              <svg 
+                className="w-4 h-4 transition-transform group-hover:translate-x-1" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </div>
+            
+            {/* Corner accent */}
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse" style={{ boxShadow: '0 0 10px rgba(0, 255, 0, 0.8)' }} />
+          </button>
+          
+          {/* Hint text */}
+          <div className="mt-3 text-center text-green-400/60 text-xs font-mono animate-pulse">
+            Press any key to skip
+          </div>
+        </div>
+      )}
+
+      {/* Keyboard shortcut to skip */}
+      {animationPhase === 'intro' && !animationFadingOut && (
+        <div className="fixed inset-0 z-[59]" onKeyDown={handleSkipAnimation} tabIndex={0} />
+      )}
+
+      {/* Auth Form - Only show after animation with enhanced entrance */}
       {showForm && (
         <>
-          {/* Animated Background */}
-          <div className="fixed inset-0 z-0 animate-fade-in">
-            <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 via-transparent to-green-800/20"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,0,0.1),transparent_50%)]"></div>
+          {/* Animated Background with staggered fade-in */}
+          <div className="fixed inset-0 z-0 animate-fade-in" style={{ animationDuration: '1.2s' }}>
+            {/* Layered gradient backgrounds */}
+            <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 via-black to-cyan-900/20 animate-fade-in" style={{ animationDelay: '0ms' }}></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,0,0.1),transparent_50%)] animate-fade-in" style={{ animationDelay: '200ms' }}></div>
+            
+            {/* Grid overlay effect */}
+            <div 
+              className="absolute inset-0 opacity-5 animate-fade-in"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(0, 255, 0, 0.3) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(0, 255, 0, 0.3) 1px, transparent 1px)
+                `,
+                backgroundSize: '50px 50px',
+                animationDelay: '400ms'
+              }}
+            />
+            
+            {/* Floating particles */}
+            {Array.from({ length: 20 }).map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-1 h-1 bg-green-400 rounded-full animate-float"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  opacity: Math.random() * 0.5,
+                  animationDelay: `${i * 0.2}s`,
+                  animationDuration: `${3 + Math.random() * 4}s`
+                }}
+              />
+            ))}
           </div>
 
-          {/* Content */}
-          <div className="relative z-10 min-h-screen flex items-center justify-center p-4 animate-auth-form-entrance">
+          {/* Content with smooth slide-up entrance */}
+          <div className="relative z-10 min-h-screen flex items-center justify-center p-4 opacity-0 translate-y-8 animate-slide-up-fade" style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}>
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="text-center mb-8">
@@ -185,7 +282,7 @@ export default function AuthPage() {
               </div>
             </div>
             <h1 className="text-4xl font-bold text-green-400 font-mono mb-2">
-              VulHub
+              VulHub Leaderboard
             </h1>
             <p className="text-gray-400 font-mono">
               Master cybersecurity through competition
@@ -340,7 +437,7 @@ export default function AuthPage() {
           {/* Features */}
           <div className="mt-8 text-center">
             <p className="text-gray-400 font-mono text-sm mb-4">
-              What you'll get:
+              VulHub Leaderboard - What you'll get:
             </p>
             <div className="grid grid-cols-2 gap-4 text-xs font-mono text-gray-300">
               <div className="flex items-center space-x-2">

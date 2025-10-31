@@ -2,12 +2,22 @@
  * Leaderboard Component
  * 
  * Main container for displaying rankings
+ * Uses centralized config for full customization
  */
 
 import React from 'react';
 import { Trophy, Activity } from 'lucide-react';
 import LeaderboardRow, { LeaderboardPlayer } from './LeaderboardRow';
 import UserRankCard from './UserRankCard';
+import {
+  LEADERBOARD_CONTAINER_CONFIG,
+  LEADERBOARD_COLORS,
+  LEADERBOARD_TYPOGRAPHY,
+  LEADERBOARD_SIZING,
+} from '../../lib/leaderboard/config';
+import {
+  createLiveIndicatorPulse,
+} from '../../lib/leaderboard/utils';
 
 interface LeaderboardProps {
   players: LeaderboardPlayer[];
@@ -19,6 +29,7 @@ interface LeaderboardProps {
   subtitle?: string;
   showLiveIndicator?: boolean;
   maxDisplay?: number;
+  className?: string;
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({
@@ -31,34 +42,105 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
   subtitle = 'Top 15 Players • Updated in real-time',
   showLiveIndicator = true,
   maxDisplay = 15,
+  className = '',
 }) => {
   const displayedPlayers = players.slice(0, maxDisplay);
   const maxPoints = players[0]?.points || 1;
   const userInTopList = currentUserId && displayedPlayers.some(p => p.id === currentUserId);
   const showUserCard = currentUserRank && currentUserRank > maxDisplay && !userInTopList;
+  const cardConfig = LEADERBOARD_CONTAINER_CONFIG.card;
+  const headerConfig = LEADERBOARD_CONTAINER_CONFIG.header;
+  const liveConfig = LEADERBOARD_CONTAINER_CONFIG.liveIndicator;
 
   return (
-    <div className="matrix-card hover-lift">
+    <div 
+      className={`hover-lift ${className}`}
+      style={{
+        backgroundColor: cardConfig.backgroundColor,
+        borderColor: cardConfig.borderColor,
+        borderWidth: cardConfig.borderWidth,
+        borderRadius: cardConfig.borderRadius,
+        boxShadow: cardConfig.shadow,
+        borderStyle: 'solid',
+      }}
+    >
       {/* Header */}
-      <div className="matrix-card-header">
+      <div 
+        style={{
+          padding: cardConfig.padding,
+          marginBottom: headerConfig.marginBottom,
+        }}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Trophy className="h-6 w-6 text-matrix animate-matrix-pulse" />
+            <Trophy 
+              className="animate-matrix-pulse" 
+              style={{ 
+                width: headerConfig.iconSize, 
+                height: headerConfig.iconSize,
+                color: LEADERBOARD_COLORS.matrix.primary,
+              }}
+            />
             <div>
-              <h2 className="text-2xl font-display font-black text-hero tracking-tight">
+              <h2 
+                className="font-display font-black tracking-tight"
+                style={{
+                  fontSize: '1.5rem',
+                  color: headerConfig.titleColor,
+                  fontWeight: LEADERBOARD_TYPOGRAPHY.weights.black,
+                  letterSpacing: LEADERBOARD_TYPOGRAPHY.tracking.tight,
+                }}
+              >
                 {title}
               </h2>
-              <p className="text-sm text-muted mt-0.5 flex items-center gap-2">
-                <Activity className="h-3 w-3" />
+              <p 
+                className="flex items-center gap-2 mt-0.5"
+                style={{
+                  fontSize: LEADERBOARD_TYPOGRAPHY.sizes.label.medium,
+                  color: headerConfig.subtitleColor,
+                }}
+              >
+                <Activity 
+                  style={{ 
+                    width: '0.75rem', 
+                    height: '0.75rem',
+                  }}
+                />
                 <span>{subtitle}</span>
               </p>
             </div>
           </div>
           
           {showLiveIndicator && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/30">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-              <span className="text-sm font-bold text-red-400 uppercase tracking-wider">
+            <div 
+              className="flex items-center gap-2 px-3 py-1.5"
+              style={{
+                backgroundColor: liveConfig.backgroundColor,
+                borderColor: liveConfig.borderColor,
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderRadius: liveConfig.borderRadius,
+              }}
+            >
+              <div 
+                className={liveConfig.pulseEffect ? 'animate-pulse' : ''}
+                style={{
+                  width: liveConfig.dotSize,
+                  height: liveConfig.dotSize,
+                  backgroundColor: liveConfig.dotColor,
+                  borderRadius: '50%',
+                  ...(liveConfig.pulseEffect ? createLiveIndicatorPulse() : {}),
+                }}
+              />
+              <span 
+                className="font-bold uppercase tracking-wider"
+                style={{
+                  fontSize: LEADERBOARD_TYPOGRAPHY.sizes.label.medium,
+                  color: liveConfig.textColor,
+                  fontWeight: LEADERBOARD_TYPOGRAPHY.weights.bold,
+                  letterSpacing: LEADERBOARD_TYPOGRAPHY.tracking.wider,
+                }}
+              >
                 LIVE
               </span>
             </div>
@@ -67,8 +149,18 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
       </div>
       
       {/* Player List */}
-      <div className="matrix-card-content">
-        <div className="space-y-3">
+      <div 
+        style={{
+          padding: `0 ${cardConfig.padding} ${cardConfig.padding}`,
+        }}
+      >
+        <div 
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: LEADERBOARD_CONTAINER_CONFIG.list.gap,
+          }}
+        >
           {displayedPlayers.map((player, index) => (
             <LeaderboardRow
               key={player.id}
@@ -76,18 +168,19 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
               rank={index + 1}
               maxPoints={maxPoints}
               isCurrentUser={player.id === currentUserId}
-              animationDelay={index * 50}
             />
           ))}
         </div>
         
         {/* User's Rank Card (if outside top list) */}
         {showUserCard && currentUserName && currentUserPoints && (
-          <UserRankCard
-            rank={currentUserRank!}
-            name={currentUserName}
-            points={currentUserPoints}
-          />
+          <div className="mt-4">
+            <UserRankCard
+              rank={currentUserRank!}
+              name={currentUserName}
+              points={currentUserPoints}
+            />
+          </div>
         )}
       </div>
     </div>

@@ -79,7 +79,7 @@ export default function HomePage() {
               >
                 <Trophy className="h-6 w-6 text-black" />
               </div>
-              <h1 className="responsive-text-xl font-display font-bold text-matrix-glow">VulHub Scoreboard</h1>
+              <h1 className="responsive-text-xl font-display font-bold text-matrix-glow">VulHub Leaderboard</h1>
             </div>
             
             {/* Desktop Navigation */}

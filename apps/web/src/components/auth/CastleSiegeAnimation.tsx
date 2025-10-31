@@ -75,14 +75,15 @@ const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({ phase, onCo
   useEffect(() => {
     if (phase !== 'intro') return;
 
+    // Optimized timing - reduced from 16.5s to 10s total
     const stepTimings = [
-      1000,  // Step 0: Castle appears
-      2000,  // Step 1: Armies assemble
-      5000,  // Step 2: Battle begins (projectiles flying)
-      3000,  // Step 3: Intense battle
-      2000,  // Step 4: Victor emerges
-      2000,  // Step 5: Flag raising
-      1500,  // Step 6: Title reveal
+      800,   // Step 0: Castle appears (was 1000)
+      1200,  // Step 1: Armies assemble (was 2000)
+      3000,  // Step 2: Battle begins (was 5000)
+      2000,  // Step 3: Intense battle (was 3000)
+      1200,  // Step 4: Victor emerges (was 2000)
+      1200,  // Step 5: Flag raising (was 2000)
+      600,   // Step 6: Title reveal (was 1500)
     ];
 
     const timer = setTimeout(() => {
@@ -289,47 +290,60 @@ const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({ phase, onCo
       {/* Starry Sky Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-blue-950 via-purple-950 to-black">
         {/* Stars - Multi-layered with different sizes */}
-        {Array.from({ length: 150 }).map((_, i) => {
+        {Array.from({ length: 200 }).map((_, i) => {
           const size = Math.random();
           const brightness = Math.random();
+          const twinkleSpeed = 2 + Math.random() * 4;
           return (
             <div
               key={`star-${i}`}
-              className="absolute rounded-full animate-pulse"
+              className="absolute rounded-full"
               style={{
-                width: size > 0.7 ? '3px' : size > 0.4 ? '2px' : '1px',
-                height: size > 0.7 ? '3px' : size > 0.4 ? '2px' : '1px',
+                width: size > 0.8 ? '4px' : size > 0.5 ? '2.5px' : '1.5px',
+                height: size > 0.8 ? '4px' : size > 0.5 ? '2.5px' : '1.5px',
                 left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 60}%`,
-                backgroundColor: brightness > 0.8 ? '#ffffff' : brightness > 0.5 ? '#e0e0ff' : '#b0b0ff',
-                opacity: Math.random() * 0.8 + 0.2,
+                top: `${Math.random() * 65}%`,
+                backgroundColor: brightness > 0.85 ? '#ffffff' : brightness > 0.6 ? '#e8e8ff' : '#c0c0ff',
+                opacity: Math.random() * 0.9 + 0.15,
+                animation: `twinkle ${twinkleSpeed}s ease-in-out infinite`,
                 animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${2 + Math.random() * 3}s`,
-                boxShadow: size > 0.7 ? '0 0 4px rgba(255,255,255,0.8)' : 'none'
+                boxShadow: size > 0.8 ? `0 0 ${3 + Math.random() * 3}px currentColor` : size > 0.5 ? `0 0 2px currentColor` : 'none'
               }}
             />
           );
         })}
+        
+        {/* Atmospheric glow */}
+        <div className="absolute inset-0 bg-gradient-to-t from-purple-900/30 via-transparent to-transparent pointer-events-none" />
       </div>
 
-      {/* Moon with craters */}
+      {/* Moon with craters - enhanced */}
       <div 
-        className={`absolute top-[10%] right-[15%] w-24 h-24 rounded-full bg-gradient-to-br from-gray-100 to-gray-300 shadow-lg transition-all duration-1000 ${
-          step >= 0 ? 'opacity-80 scale-100' : 'opacity-0 scale-0'
+        className={`absolute top-[12%] right-[12%] w-28 h-28 rounded-full transition-all duration-1000 ${
+          step >= 0 ? 'opacity-90 scale-100' : 'opacity-0 scale-0'
         }`}
         style={{
-          boxShadow: '0 0 60px rgba(255, 255, 255, 0.5), inset -10px -10px 20px rgba(0,0,0,0.2)'
+          background: 'radial-gradient(circle at 30% 30%, #ffffff, #f0f0f0, #e0e0e0)',
+          boxShadow: '0 0 80px rgba(255, 255, 255, 0.4), inset -15px -15px 30px rgba(0,0,0,0.3), inset 5px 5px 15px rgba(255,255,255,0.2)'
         }}
       >
-        {/* Moon craters */}
-        <div className="absolute top-3 left-4 w-4 h-4 rounded-full bg-gray-400 opacity-40" />
-        <div className="absolute top-8 left-12 w-6 h-6 rounded-full bg-gray-400 opacity-30" />
-        <div className="absolute top-14 left-6 w-3 h-3 rounded-full bg-gray-400 opacity-50" />
-        <div className="absolute top-5 right-5 w-5 h-5 rounded-full bg-gray-400 opacity-35" />
+        {/* Moon craters - more detailed */}
+        <div className="absolute top-4 left-6 w-5 h-5 rounded-full bg-gray-400 opacity-50 shadow-inner" />
+        <div className="absolute top-10 left-16 w-7 h-7 rounded-full bg-gray-500 opacity-40 shadow-inner" />
+        <div className="absolute top-16 left-8 w-4 h-4 rounded-full bg-gray-400 opacity-60 shadow-inner" />
+        <div className="absolute top-6 right-6 w-6 h-6 rounded-full bg-gray-400 opacity-45 shadow-inner" />
+        <div className="absolute bottom-8 left-1/2 w-3 h-3 rounded-full bg-gray-500 opacity-35 shadow-inner" />
       </div>
 
-      {/* Ground */}
-      <div className="absolute bottom-0 left-0 right-0 h-[30%] bg-gradient-to-t from-green-900 via-green-800 to-transparent" />
+      {/* Ground with more detail */}
+      <div className="absolute bottom-0 left-0 right-0 h-[32%]">
+        <div className="absolute inset-0 bg-gradient-to-t from-green-950 via-green-900 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-green-900/20 via-transparent to-green-900/20" />
+        {/* Ground texture */}
+        <div className="absolute bottom-0 left-0 right-0 h-20 opacity-30" style={{
+          backgroundImage: `repeating-linear-gradient(90deg, transparent, transparent 20px, rgba(0,0,0,0.3) 20px, rgba(0,0,0,0.3) 40px)`
+        }} />
+      </div>
 
       {/* Castle - Center Stage */}
       <div 
@@ -337,79 +351,110 @@ const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({ phase, onCo
           step >= 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
         }`}
         style={{
-          filter: castleHealth < 50 ? 'brightness(0.7) saturate(0.7)' : 'none'
+          filter: castleHealth < 50 ? 'brightness(0.75) saturate(0.8)' : 'brightness(1.05)',
+          textShadow: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))'
         }}
       >
         {/* Castle Structure */}
         <div className="relative">
-          {/* Main Castle Body */}
-          <div className="w-32 h-40 bg-gradient-to-b from-gray-600 to-gray-800 rounded-t-lg border-4 border-gray-700">
-            {/* Windows */}
+          {/* Main Castle Body - Enhanced */}
+          <div className="w-36 h-44 bg-gradient-to-b from-gray-500 to-gray-700 rounded-t-xl border-4 border-gray-600 shadow-2xl" style={{ boxShadow: '0 20px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1)' }}>
+            {/* Windows with enhanced lighting */}
             {[0, 1, 2].map(row => (
-              <div key={row} className="flex justify-around mt-4">
+              <div key={row} className="flex justify-around mt-5 px-2">
                 {[0, 1].map(col => (
                   <div 
                     key={col} 
-                    className="w-4 h-6 bg-yellow-400 rounded-sm"
+                    className="w-5 h-7 bg-yellow-300 rounded-sm"
                     style={{
-                      opacity: castleHealth > 30 ? 1 : Math.random() * 0.5,
-                      boxShadow: '0 0 10px rgba(255, 200, 0, 0.8)'
+                      opacity: castleHealth > 30 ? (0.8 + Math.random() * 0.2) : (Math.random() * 0.4),
+                      boxShadow: `0 0 12px rgba(255, 230, 0, 0.9), inset 0 0 4px rgba(255,200,0,0.5)`,
+                      background: castleHealth > 30 ? 'radial-gradient(circle at 30% 30%, #ffff99, #ffeb3b, #ffca28)' : '#999999'
                     }}
                   />
                 ))}
               </div>
             ))}
+            
+            {/* Stone texture lines */}
+            <div className="absolute inset-0 opacity-20" style={{
+              backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(0,0,0,0.2) 30px, rgba(0,0,0,0.2) 31px)`
+            }} />
           </div>
 
-          {/* Castle Towers */}
+          {/* Castle Towers - Enhanced */}
           {[-50, 50].map((offset, i) => (
             <div
               key={i}
-              className="absolute top-[-20px] w-12 h-24 bg-gradient-to-b from-gray-500 to-gray-700 border-4 border-gray-700"
-              style={{ left: offset === -50 ? '-10px' : 'calc(100% - 38px)' }}
+              className="absolute top-[-25px] w-14 h-28 bg-gradient-to-b from-gray-400 to-gray-600 border-4 border-gray-600 rounded-t-lg shadow-xl"
+              style={{ 
+                left: offset === -50 ? '-12px' : 'calc(100% - 42px)',
+                boxShadow: '0 15px 30px rgba(0,0,0,0.5), inset 1px 1px 0 rgba(255,255,255,0.1)'
+              }}
             >
-              {/* Tower Top */}
-              <div className="absolute top-[-10px] left-1/2 -translate-x-1/2 w-16 h-10 bg-red-800 clip-triangle" />
+              {/* Tower Top - Peaked roof */}
+              <div 
+                className="absolute top-[-15px] left-1/2 -translate-x-1/2 w-20 h-14"
+                style={{
+                  background: 'linear-gradient(135deg, #8b4513 0%, #a0522d 50%, #654321 100%)',
+                  clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)',
+                  boxShadow: 'inset -5px 5px 10px rgba(0,0,0,0.4)'
+                }}
+              />
               {/* Tower Window */}
               <div 
-                className="absolute top-8 left-1/2 -translate-x-1/2 w-3 h-4 bg-yellow-400 rounded-sm"
-                style={{ boxShadow: '0 0 8px rgba(255, 200, 0, 0.8)' }}
+                className="absolute top-10 left-1/2 -translate-x-1/2 w-4 h-5 rounded-sm"
+                style={{ 
+                  background: 'radial-gradient(circle at 40% 40%, #ffff99, #ffeb3b)',
+                  boxShadow: '0 0 10px rgba(255, 200, 0, 0.9), inset 0 0 3px rgba(0,0,0,0.2)'
+                }}
               />
+              {/* Tower detail */}
+              <div className="absolute inset-0 opacity-10" style={{
+                backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 25px, rgba(0,0,0,0.3) 25px, rgba(0,0,0,0.3) 26px)`
+              }} />
             </div>
           ))}
 
-          {/* Flag Pole */}
-          <div className="absolute top-[-40px] left-1/2 -translate-x-1/2 w-2 bg-gray-400 transition-all duration-500"
-               style={{ height: flagRaising ? '60px' : '40px' }}>
-            {/* Flag with wave animation */}
+          {/* Flag Pole - Enhanced */}
+          <div className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-3 bg-gradient-to-b from-gray-300 to-gray-500 rounded-full transition-all duration-500 shadow-lg"
+               style={{ 
+                 height: flagRaising ? '70px' : '45px',
+                 boxShadow: '0 5px 15px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.2)'
+               }}>
+            {/* Flag with enhanced wave animation */}
             {flagRaising && (
               <div 
-                className="absolute top-0 left-2 w-20 h-14 transition-all duration-1000 origin-left"
+                className="absolute top-1 left-3 transition-all duration-1000 origin-left shadow-2xl"
                 style={{
-                  background: `linear-gradient(135deg, ${victorColor} 0%, #00cc00 50%, #00ff00 100%)`,
+                  width: '24px',
+                  height: '16px',
+                  background: `linear-gradient(135deg, ${victorColor} 0%, #00d900 50%, #00ff00 100%)`,
                   clipPath: 'polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%)',
-                  transform: `scaleY(${flagHeight / 100}) ${flagHeight >= 100 ? `skewY(${Math.sin(flagWave * Math.PI / 180) * 3}deg)` : ''}`,
-                  boxShadow: `0 0 20px ${victorColor}, 0 0 40px ${victorColor}80`,
-                  filter: 'drop-shadow(2px 4px 6px rgba(0,0,0,0.4))'
+                  transform: `scaleY(${flagHeight / 100}) ${flagHeight >= 100 ? `skewY(${Math.sin(flagWave * Math.PI / 180) * 4}deg)` : ''}`,
+                  boxShadow: `0 0 30px ${victorColor}, 0 0 60px ${victorColor}80, 0 0 90px ${victorColor}40, drop-shadow(3px 5px 10px rgba(0,0,0,0.5))`,
+                  filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.6))'
                 }}
               >
-                {/* Flag texture lines */}
-                <div className="absolute inset-0 opacity-20">
-                  <div className="absolute top-2 left-0 right-0 h-px bg-black" />
-                  <div className="absolute top-6 left-0 right-0 h-px bg-black" />
-                  <div className="absolute top-10 left-0 right-0 h-px bg-black" />
+                {/* Flag texture */}
+                <div className="absolute inset-0 opacity-30">
+                  <div className="absolute top-2 left-0 right-0 h-px bg-black/40" />
+                  <div className="absolute top-5 left-0 right-0 h-px bg-black/30" />
+                  <div className="absolute top-8 left-0 right-0 h-px bg-black/25" />
                 </div>
                 
-                {/* CSUSB Text on Flag */}
-                {flagHeight > 80 && (
-                  <div className="absolute inset-0 flex items-center justify-center">
+                {/* CSUSB Text on Flag - Enhanced */}
+                {flagHeight > 75 && (
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0" style={{ animation: `fadeIn 0.5s ease-out forwards` }}>
                     <div 
-                      className="font-bold text-xs animate-fade-in px-2 py-1 rounded"
+                      className="font-bold text-xs rounded-sm px-1.5"
                       style={{
                         color: '#000000',
-                        textShadow: '0 0 4px rgba(255,255,255,0.5)',
-                        backgroundColor: 'rgba(255,255,255,0.1)',
-                        border: '1px solid rgba(0,0,0,0.3)'
+                        textShadow: '0 0 6px rgba(255,255,255,0.8), 0 1px 2px rgba(0,0,0,0.4)',
+                        backgroundColor: 'rgba(255,255,255,0.15)',
+                        border: '1px solid rgba(0,0,0,0.4)',
+                        letterSpacing: '0.5px',
+                        fontWeight: 'bold'
                       }}
                     >
                       CSUSB
@@ -419,37 +464,51 @@ const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({ phase, onCo
                 
                 {/* Flag edge highlight */}
                 <div 
-                  className="absolute top-0 left-0 w-1 h-full bg-white opacity-30"
-                  style={{ filter: 'blur(1px)' }}
+                  className="absolute top-0 left-0 w-0.5 h-full bg-white opacity-40"
+                  style={{ filter: 'blur(0.5px)' }}
                 />
               </div>
             )}
           </div>
 
-          {/* Castle Gate */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-20 bg-gradient-to-b from-amber-900 to-amber-950 rounded-t-lg border-4 border-amber-950">
-            <div className="w-full h-full flex flex-col items-center justify-center">
-              {/* Gate Details */}
-              <div className="w-1 h-full bg-black opacity-50" />
-              <div className="absolute top-2 left-2 right-2 h-1 bg-black opacity-30" />
-              <div className="absolute bottom-2 left-2 right-2 h-1 bg-black opacity-30" />
+          {/* Castle Gate - Enhanced */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-18 h-24 rounded-t-lg border-4 border-amber-900 shadow-xl" style={{
+            background: 'linear-gradient(to bottom, #8b6914 0%, #6d5511 50%, #5a4409 100%)',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 2px 5px rgba(0,0,0,0.3)'
+          }}>
+            <div className="w-full h-full flex flex-col items-center justify-center relative">
+              {/* Gate door frame */}
+              <div className="absolute inset-2 border-2 border-yellow-900/40 rounded-sm" />
+              {/* Gate center line */}
+              <div className="w-px h-3/4 bg-black opacity-40" />
+              {/* Gate details */}
+              <div className="absolute top-3 left-3 right-3 h-1 bg-black opacity-20 rounded-full" />
+              <div className="absolute bottom-3 left-3 right-3 h-1 bg-black opacity-20 rounded-full" />
+              {/* Door studs */}
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="absolute w-2 h-2 rounded-full bg-yellow-700/50" style={{
+                  left: `${30 + i * 15}%`,
+                  top: `${40 + (i % 2) * 20}%`
+                }} />
+              ))}
             </div>
           </div>
 
-          {/* Castle Health Bar */}
+          {/* Castle Health Bar - Enhanced */}
           {step >= 2 && step <= 4 && (
-            <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-40">
-              <div className="bg-gray-800 rounded-full h-3 overflow-hidden border-2 border-gray-600">
+            <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-44">
+              <div className="bg-gray-900 rounded-full h-4 overflow-hidden border-2 border-gray-700 shadow-lg" style={{ boxShadow: '0 5px 15px rgba(0,0,0,0.5)' }}>
                 <div 
                   className="h-full transition-all duration-300"
                   style={{
                     width: `${castleHealth}%`,
-                    background: castleHealth > 50 ? '#22c55e' : castleHealth > 25 ? '#f59e0b' : '#ef4444'
+                    background: castleHealth > 50 ? 'linear-gradient(90deg, #22c55e, #86efac)' : castleHealth > 25 ? 'linear-gradient(90deg, #f59e0b, #fbbf24)' : 'linear-gradient(90deg, #ef4444, #fca5a5)',
+                    boxShadow: `inset 0 1px 0 rgba(255,255,255,0.2), 0 0 15px ${castleHealth > 50 ? 'rgba(34,197,94,0.4)' : castleHealth > 25 ? 'rgba(245,158,11,0.4)' : 'rgba(239,68,68,0.4)'}`
                   }}
                 />
               </div>
-              <div className="text-center text-white text-xs mt-1 font-mono">
-                Castle: {castleHealth}%
+              <div className="text-center text-white text-xs mt-2 font-mono font-bold" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                Castle Integrity: {Math.max(0, castleHealth)}%
               </div>
             </div>
           )}
@@ -498,46 +557,53 @@ const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({ phase, onCo
         );
       })}
 
-      {/* Projectiles with trails */}
+      {/* Projectiles with trails - enhanced */}
       {projectiles.map(proj => {
         const pos = getProjectilePosition(proj);
         return (
           <React.Fragment key={proj.id}>
-            {/* Projectile trail */}
+            {/* Projectile trail - enhanced */}
             {proj.trail && (
               <div
-                className="absolute rounded-full"
+                className="absolute rounded-full blur-sm"
                 style={{
                   left: `${pos.x}%`,
                   top: `${pos.y}%`,
-                  width: '12px',
-                  height: '12px',
-                  background: `radial-gradient(circle, ${proj.color}40, transparent)`,
+                  width: '16px',
+                  height: '16px',
+                  background: `radial-gradient(circle, ${proj.color}60, ${proj.color}20, transparent)`,
                   transform: 'translate(-50%, -50%)',
-                  opacity: 0.6
+                  opacity: 0.7,
+                  boxShadow: `0 0 20px ${proj.color}50`
                 }}
               />
             )}
-            {/* Projectile core */}
+            {/* Projectile core - enhanced */}
             <div
-              className="absolute w-2 h-2 rounded-full"
+              className="absolute w-3 h-3 rounded-full"
               style={{
                 left: `${pos.x}%`,
                 top: `${pos.y}%`,
                 backgroundColor: proj.color,
-                boxShadow: `0 0 12px ${proj.color}, 0 0 24px ${proj.color}80`,
+                boxShadow: `0 0 15px ${proj.color}, 0 0 30px ${proj.color}99, 0 0 50px ${proj.color}66`,
                 transform: `translate(-50%, -50%) scale(1.5) rotate(${proj.rotation}deg)`,
-                transition: 'transform 0.05s linear'
+                transition: 'transform 0.05s linear',
+                filter: 'drop-shadow(0 0 5px rgba(0,0,0,0.3))'
               }}
             >
-              {/* Inner glow */}
-              <div className="absolute inset-0 rounded-full bg-white opacity-50" style={{ transform: 'scale(0.5)' }} />
+              {/* Inner glow - enhanced */}
+              <div className="absolute inset-0 rounded-full bg-white opacity-60" style={{ transform: 'scale(0.45)' }} />
+              {/* Outer glow layer */}
+              <div className="absolute inset-0 rounded-full opacity-40" style={{ 
+                transform: 'scale(1.8)',
+                background: `radial-gradient(circle, ${proj.color}, transparent)`
+              }} />
             </div>
           </React.Fragment>
         );
       })}
 
-      {/* Explosions - Multi-layered */}
+      {/* Explosions - Multi-layered enhanced */}
       {explosions.map(exp => (
         <div
           key={exp.id}
@@ -548,15 +614,27 @@ const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({ phase, onCo
             transform: 'translate(-50%, -50%)'
           }}
         >
+          {/* Background glow ring */}
+          <div
+            className="absolute rounded-full transition-all duration-200 blur-lg"
+            style={{
+              width: `${50 * exp.scale}px`,
+              height: `${50 * exp.scale}px`,
+              border: `1px solid ${exp.color}`,
+              opacity: (0.6 - exp.scale) * 0.7,
+              boxShadow: `0 0 ${100 * exp.scale}px ${exp.color}`,
+              transform: `translate(-50%, -50%)`
+            }}
+          />
           {/* Outer ring */}
           <div
             className="absolute rounded-full transition-all duration-200"
             style={{
-              width: `${30 * exp.scale}px`,
-              height: `${30 * exp.scale}px`,
-              border: `2px solid ${exp.color}`,
-              opacity: 0.8 - exp.scale,
-              boxShadow: `0 0 ${60 * exp.scale}px ${exp.color}`,
+              width: `${35 * exp.scale}px`,
+              height: `${35 * exp.scale}px`,
+              border: `2.5px solid ${exp.color}`,
+              opacity: 0.9 - exp.scale,
+              boxShadow: `0 0 ${70 * exp.scale}px ${exp.color}, inset 0 0 ${15 * exp.scale}px ${exp.color}40`,
               transform: `translate(-50%, -50%) rotate(${exp.rotation}deg)`
             }}
           />
@@ -564,23 +642,25 @@ const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({ phase, onCo
           <div
             className="absolute rounded-full transition-all duration-200"
             style={{
-              width: `${20 * exp.scale}px`,
-              height: `${20 * exp.scale}px`,
+              width: `${24 * exp.scale}px`,
+              height: `${24 * exp.scale}px`,
               backgroundColor: exp.color,
-              opacity: 1 - exp.scale,
-              boxShadow: `0 0 ${40 * exp.scale}px ${exp.color}`,
-              transform: `translate(-50%, -50%) rotate(${-exp.rotation}deg)`
+              opacity: 0.95 - exp.scale * 1.1,
+              boxShadow: `0 0 ${50 * exp.scale}px ${exp.color}, 0 0 ${25 * exp.scale}px ${exp.color}80`,
+              transform: `translate(-50%, -50%) rotate(${-exp.rotation}deg) scale(${0.8 + Math.sin(exp.rotation * Math.PI / 180) * 0.2})`
             }}
           />
-          {/* Inner core */}
+          {/* Inner core - bright */}
           <div
             className="absolute rounded-full transition-all duration-200"
             style={{
-              width: `${10 * exp.scale}px`,
-              height: `${10 * exp.scale}px`,
+              width: `${12 * exp.scale}px`,
+              height: `${12 * exp.scale}px`,
               backgroundColor: '#ffffff',
-              opacity: 1 - exp.scale * 2,
-              transform: 'translate(-50%, -50%)'
+              opacity: 1.2 - exp.scale * 1.4,
+              boxShadow: `0 0 ${20 * exp.scale}px #ffffff`,
+              transform: 'translate(-50%, -50%)',
+              filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.8))'
             }}
           />
         </div>
@@ -617,40 +697,44 @@ const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({ phase, onCo
         </div>
       )}
 
-      {/* Title Reveal - Enhanced */}
+      {/* Title Reveal - Enhanced with premium styling */}
       {step >= 6 && (
         <div className="absolute bottom-[15%] left-1/2 -translate-x-1/2 text-center animate-auth-form-entrance w-full max-w-4xl px-4">
+          {/* Background glow */}
+          <div className="absolute -inset-20 bg-gradient-to-t from-green-500/20 via-transparent to-transparent rounded-full blur-3xl pointer-events-none" />
+          
           {/* Decorative border top */}
-          <div className="flex items-center justify-center mb-6 animate-fade-in">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-50" />
-            <div className="mx-4 w-3 h-3 rotate-45 border-2 border-green-500" style={{ boxShadow: `0 0 10px ${victorColor}` }} />
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-50" />
+          <div className="flex items-center justify-center mb-8 animate-fade-in">
+            <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-60" />
+            <div className="mx-6 w-4 h-4 rotate-45 border-2 border-green-500" style={{ boxShadow: `0 0 15px ${victorColor}` }} />
+            <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-60" />
           </div>
           
-          {/* Main title with layered effects */}
+          {/* Main title with ultra-premium effects */}
           <h1 
-            className="text-6xl md:text-7xl font-display font-bold mb-2 animate-pulse-slow relative"
+            className="text-6xl md:text-8xl font-display font-black mb-4 animate-pulse-slow relative tracking-wide"
             style={{
               color: victorColor,
               textShadow: `
-                0 0 10px ${victorColor},
                 0 0 20px ${victorColor},
-                0 0 30px ${victorColor},
-                0 0 40px ${victorColor}80,
-                0 0 70px ${victorColor}40,
-                0 4px 8px rgba(0,0,0,0.5)
+                0 0 40px ${victorColor},
+                0 0 60px ${victorColor},
+                0 0 80px ${victorColor}99,
+                0 0 120px ${victorColor}66,
+                0 8px 16px rgba(0,0,0,0.6)
               `,
-              letterSpacing: '0.05em'
+              letterSpacing: '0.08em',
+              fontWeight: 900
             }}
           >
             VulHub LeaderBoard
-            {/* Animated underline */}
+            {/* Animated underline - premium */}
             <div 
-              className="absolute -bottom-2 left-1/2 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent animate-fade-in"
+              className="absolute -bottom-4 left-1/2 h-1.5 bg-gradient-to-r from-transparent via-green-500 to-transparent animate-fade-in rounded-full"
               style={{
-                width: '80%',
+                width: '85%',
                 transform: 'translateX(-50%)',
-                boxShadow: `0 0 10px ${victorColor}`,
+                boxShadow: `0 0 20px ${victorColor}, 0 0 40px ${victorColor}80`,
                 animationDelay: '300ms'
               }}
             />
@@ -658,41 +742,47 @@ const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({ phase, onCo
           
           {/* Subtitle with enhanced styling */}
           <p 
-            className="text-2xl md:text-3xl text-cyan-400 font-mono animate-fade-in mt-6 mb-2" 
+            className="text-3xl md:text-4xl text-cyan-300 font-mono animate-fade-in mt-12 mb-3 font-bold" 
             style={{ 
               animationDelay: '500ms',
-              textShadow: '0 0 10px rgba(34, 211, 238, 0.5), 0 2px 4px rgba(0,0,0,0.5)'
+              textShadow: '0 0 15px rgba(34, 211, 238, 0.7), 0 0 30px rgba(0, 255, 0, 0.2), 0 4px 8px rgba(0,0,0,0.5)',
+              letterSpacing: '0.05em'
             }}
           >
-            by <span className="text-cyan-300 font-bold">CSUSB</span>
+            by <span className="text-cyan-200 font-black" style={{ textShadow: '0 0 20px rgba(34, 211, 238, 0.8)' }}>CSUSB</span>
           </p>
           
           {/* Tagline pills with enhanced design */}
-          <div className="flex justify-center gap-4 mt-8">
+          <div className="flex justify-center gap-5 mt-10 flex-wrap">
             {['Compete', 'Learn', 'Conquer'].map((word, i) => (
               <div
                 key={word}
-                className="px-6 py-2 bg-green-500/10 border-2 border-green-500/40 rounded-full text-green-400 text-sm md:text-base font-mono font-bold animate-fade-in relative overflow-hidden group"
+                className="px-8 py-3 bg-gradient-to-r from-green-500/15 to-cyan-500/15 hover:from-green-500/25 hover:to-cyan-500/25 border-2 border-green-500/50 rounded-full text-green-300 text-base md:text-lg font-mono font-bold animate-fade-in relative overflow-hidden group transition-all duration-300"
                 style={{ 
                   animationDelay: `${700 + (i * 200)}ms`,
-                  boxShadow: `0 0 15px ${victorColor}30, inset 0 0 10px ${victorColor}10`
+                  boxShadow: `0 0 20px ${victorColor}30, inset 0 0 15px ${victorColor}10, 0 5px 15px rgba(0,0,0,0.3)`
                 }}
               >
                 {/* Animated background shimmer */}
                 <div 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-green-500/20 to-transparent animate-pulse"
-                  style={{ animationDuration: '2s', animationDelay: `${i * 0.3}s` }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-green-500/30 to-transparent animate-pulse"
+                  style={{ animationDuration: '2.5s', animationDelay: `${i * 0.3}s` }}
                 />
-                <span className="relative z-10">{word}</span>
+                <span className="relative z-10 flex items-center gap-2">
+                  {i === 0 && '⚔️'}
+                  {i === 1 && '📚'}
+                  {i === 2 && '🏆'}
+                  {word}
+                </span>
               </div>
             ))}
           </div>
           
           {/* Decorative border bottom */}
-          <div className="flex items-center justify-center mt-8 animate-fade-in" style={{ animationDelay: '1s' }}>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-50" />
-            <div className="mx-4 w-2 h-2 bg-green-500 rounded-full" style={{ boxShadow: `0 0 10px ${victorColor}` }} />
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-50" />
+          <div className="flex items-center justify-center mt-12 animate-fade-in" style={{ animationDelay: '1s' }}>
+            <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-60" />
+            <div className="mx-6 w-3 h-3 bg-green-500 rounded-full animate-pulse" style={{ boxShadow: `0 0 15px ${victorColor}` }} />
+            <div className="h-0.5 flex-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-60" />
           </div>
         </div>
       )}

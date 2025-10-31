@@ -100,7 +100,39 @@ export const GradingApi = {
   },
   async grade(submissionId: string, payload: { status: 'approved' | 'rejected'; pointsAwarded: number; feedback?: string }) {
     return apiClient.post('/submissions/' + encodeURIComponent(submissionId) + '/grade', payload);
-  }
+  },
+  async getGradingQueue(status?: string): Promise<Submission[]> {
+    const query = status ? `?status=${status}` : '';
+    return apiClient.get(`/grader/queue${query}`);
+  },
+  async getSubmissionsByStatus(status: 'pending' | 'under_review' | 'approved' | 'rejected' | 'appealed'): Promise<Submission[]> {
+    return apiClient.get(`/submissions?status=${status}`);
+  },
+  async getGraderStats(): Promise<{
+    totalGraded: number;
+    averageTimeMinutes: number;
+    averageQuality: number;
+    todayCount: number;
+  }> {
+    return apiClient.get('/grader/stats');
+  },
+  async submitGrade(submissionId: string, payload: {
+    status: 'approved' | 'rejected' | 'needs_revision';
+    pointsAwarded: number;
+    rubricScores: Record<string, number>;
+    feedback: string;
+  }) {
+    return apiClient.post(`/submissions/${encodeURIComponent(submissionId)}/grade`, payload);
+  },
+  async getAuditLog(submissionId: string): Promise<Array<{
+    graderId: string;
+    graderName: string;
+    action: string;
+    timestamp: Date;
+    details: any;
+  }>> {
+    return apiClient.get(`/submissions/${encodeURIComponent(submissionId)}/audit-log`);
+  },
 };
 
 export interface LeaderboardEntry {
@@ -185,5 +217,11 @@ export const SubmissionApi = {
   },
   async getSubmission(id: string): Promise<Submission> {
     return apiClient.get(`/submissions/${encodeURIComponent(id)}`);
-  }
+  },
+  async listPendingSubmissions(): Promise<Submission[]> {
+    return apiClient.get('/submissions?status=pending');
+  },
+  async getSubmissionsByStatus(status: 'pending' | 'approved' | 'rejected'): Promise<Submission[]> {
+    return apiClient.get(`/submissions?status=${status}`);
+  },
 };
