@@ -316,6 +316,8 @@ The API follows RESTful principles with the following structure:
 
 ## Getting Started
 
+> **🚀 New to the project?** Start with [QUICK_START.md](./QUICK_START.md) for a 10-minute setup guide!
+
 ### Prerequisites
 
 Before running the application, ensure you have:
@@ -326,49 +328,84 @@ Before running the application, ensure you have:
   npm install -g pnpm
   ```
 - **Git** for cloning the repository
-- **PostgreSQL** 14+ (for local database) or Supabase account (cloud PostgreSQL)
+- **PostgreSQL** 14+ (for local database) OR Docker Desktop (for containerized setup)
 - **Redis** (optional, for caching) or use in-memory fallback
 
 ### Installation
 
 #### Option 1: Local Development (Recommended for Testing)
 
+> **💡 For the fastest setup, see [QUICK_START.md](./QUICK_START.md)**
+
 **Step 1: Clone the repository**
-```bash
-git clone https://github.com/des-work/VulHub-LeaderBoard-Web.git
-cd VulHub-LeaderBoard-Web
-```
+   ```bash
+   git clone https://github.com/des-work/VulHub-LeaderBoard-Web.git
+   cd VulHub-LeaderBoard-Web
+   ```
 
 **Step 2: Install dependencies**
-```bash
-pnpm install
-```
+   ```bash
+   pnpm install
+   ```
 
 **Step 3: Set up environment variables**
 
-Frontend (`apps/web/.env.local`):
+**Frontend:** Copy the example file and customize:
+```bash
+cp apps/web/.env.local.example apps/web/.env.local
+```
+
+The example file includes:
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:4010/api/v1
 NODE_ENV=development
 ```
 
-Backend (`apps/api/.env`):
+**Backend:** Copy the example file and customize:
 ```bash
-NODE_ENV=development
-DATABASE_URL=postgresql://user:password@localhost:5432/vulhub
-REDIS_URL=redis://localhost:6380
-JWT_SECRET=your-secret-key-change-this
-TENANT_ID=default-tenant
+cp apps/api/.env.example apps/api/.env
 ```
 
-**Step 4: Run development servers**
+Then update the database connection in `apps/api/.env`:
+- **With Docker Compose** (recommended): Already configured in example
+- **With Local PostgreSQL**: Update `DATABASE_URL` to your local database
+- **Other required vars**: `JWT_SECRET`, `REDIS_HOST`, `REDIS_PORT`, `TENANT_ID`
+
+See [QUICK_START.md](./QUICK_START.md) for detailed environment setup.
+
+**Step 4: Set up the database**
+
+If using Docker Compose:
+```bash
+# Start PostgreSQL and Redis
+pnpm dev:stack
+
+# Wait 10 seconds for services to start
+```
+
+Then set up the database schema:
+```bash
+cd apps/api
+pnpm prisma generate      # Generate Prisma client
+pnpm prisma db push       # Create database tables
+pnpm db:seed              # Load test data (users, challenges, etc.)
+cd ../..
+```
+
+**Step 5: Run development servers**
 ```bash
 # From project root, this starts both frontend and API
 pnpm dev
 ```
 
-Frontend will be available at: **http://localhost:3010**
-API will be available at: **http://localhost:4010/api/v1**
+**Access Points:**
+- Frontend: **http://localhost:3010**
+- API: **http://localhost:4010/api/v1**
+- Health Check: **http://localhost:4010/api/v1/health**
+
+**Test Login Credentials** (after seeding):
+- Email: `admin@example.com`
+- Password: `password123`
 
 #### Option 2: Docker Setup
 
