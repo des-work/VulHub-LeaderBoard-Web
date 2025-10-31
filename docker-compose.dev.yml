@@ -113,7 +113,9 @@ services:
       # Prevent node_modules from being overwritten
       - /usr/src/app/node_modules
     depends_on:
-      api-dev:
+      postgres-dev:
+        condition: service_healthy
+      redis-dev:
         condition: service_healthy
     restart: unless-stopped
     networks:

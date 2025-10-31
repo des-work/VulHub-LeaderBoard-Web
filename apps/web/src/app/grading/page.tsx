@@ -4,14 +4,30 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../../lib/auth/context';
 import { GradingProvider } from '../../lib/grading/context';
 import { GradingDashboard } from '../../components/grading/GradingDashboard';
+import { useRouter } from 'next/navigation';
 
 export default function GradingPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/auth');
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black text-neutral-100 font-body flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-xl text-neutral-300">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
-    if (typeof window !== 'undefined') {
-      window.location.href = '/auth';
-    }
     return null;
   }
 

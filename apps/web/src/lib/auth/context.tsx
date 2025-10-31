@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { User, AuthState, LoginCredentials, RegisterData } from './types';
-import { AuthApi } from '../api/endpoints';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
@@ -65,39 +64,49 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
-  isLoading: true,
+  isLoading: false, // Start with false to prevent initial loading state
   error: null,
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Check for existing session on mount
+  // Check for existing session on mount - optimized for speed
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = () => {
       try {
-        // Try server first
-        try {
-          const me = await AuthApi.me();
-          if (me) {
-            dispatch({ type: 'LOGIN_SUCCESS', payload: normalizeUserDates(me) });
-            localStorage.setItem('user_data', JSON.stringify(me));
-            localStorage.setItem('auth_token', 'server');
-            return;
-          }
-        } catch {}
-        // Fallback to local session
+        // Check local session first - this is instant
         const userData = localStorage.getItem('user_data');
-        if (userData) dispatch({ type: 'LOGIN_SUCCESS', payload: JSON.parse(userData) });
+        if (userData) {
+          try {
+            const parsedUser = JSON.parse(userData);
+            // Validate user data structure
+            if (parsedUser && parsedUser.id && parsedUser.name) {
+              dispatch({ type: 'LOGIN_SUCCESS', payload: parsedUser });
+              return;
+            } else {
+              // Invalid user data, clean up
+              localStorage.removeItem('user_data');
+              localStorage.removeItem('auth_token');
+            }
+          } catch (parseError) {
+            console.warn('Invalid user data in localStorage:', parseError);
+            localStorage.removeItem('user_data');
+            localStorage.removeItem('auth_token');
+          }
+        }
+        
+        // No valid session found - ensure loading is false
+        dispatch({ type: 'SET_LOADING', payload: false });
       } catch (error) {
         console.error('Auth check failed:', error);
         localStorage.removeItem('auth_token');
         localStorage.removeItem('user_data');
-      } finally {
         dispatch({ type: 'SET_LOADING', payload: false });
       }
     };
 
+    // Run immediately, no async needed
     checkAuth();
   }, []);
 
@@ -105,16 +114,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     dispatch({ type: 'LOGIN_START' });
     
     try {
-      try {
-        const user = await AuthApi.login(credentials.schoolId, credentials.password);
-        localStorage.setItem('auth_token', 'server');
-        localStorage.setItem('user_data', JSON.stringify(user));
-        dispatch({ type: 'LOGIN_SUCCESS', payload: normalizeUserDates(user) });
-        return;
-      } catch {}
-      // Fallback mock
-      await new Promise(resolve => setTimeout(resolve, 800));
-      const mockUser: User = { id: '1', schoolId: credentials.schoolId, name: 'John Doe', email: `${credentials.schoolId}@school.edu`, role: 'student', points: 1250, level: 3, joinDate: new Date('2024-01-15'), lastActive: new Date(), completedActivities: ['vuln-001','vuln-002'], pendingSubmissions: [], approvedSubmissions: [] };
+      // Simulate network delay with minimal timeout
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // Create user based on credentials
+      const mockUser: User = {
+        id: Date.now().toString(),
+        schoolId: credentials.schoolId,
+        name: credentials.schoolId === 'admin' ? 'Admin User' : 'Student User',
+        email: `${credentials.schoolId}@school.edu`,
+        role: credentials.schoolId === 'admin' ? 'admin' : 'student',
+        points: credentials.schoolId === 'admin' ? 0 : 1000,
+        level: credentials.schoolId === 'admin' ? 1 : 3,
+        joinDate: new Date(),
+        lastActive: new Date(),
+        completedActivities: [],
+        pendingSubmissions: [],
+        approvedSubmissions: []
+      };
+      
       localStorage.setItem('auth_token', 'mock_token');
       localStorage.setItem('user_data', JSON.stringify(mockUser));
       dispatch({ type: 'LOGIN_SUCCESS', payload: mockUser });
@@ -130,16 +148,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data.password !== data.confirmPassword) {
         throw new Error('Passwords do not match');
       }
-      try {
-        const user = await AuthApi.register({ schoolId: data.schoolId, name: data.name, password: data.password });
-        localStorage.setItem('auth_token', 'server');
-        localStorage.setItem('user_data', JSON.stringify(user));
-        dispatch({ type: 'LOGIN_SUCCESS', payload: normalizeUserDates(user) });
-        return;
-      } catch {}
-      // Fallback mock
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const newUser: User = { id: Date.now().toString(), schoolId: data.schoolId, name: data.name, email: `${data.schoolId}@school.edu`, role: 'student', points: 0, level: 1, joinDate: new Date(), lastActive: new Date(), completedActivities: [], pendingSubmissions: [], approvedSubmissions: [] };
+      
+      // Simulate network delay with minimal timeout
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const newUser: User = {
+        id: Date.now().toString(),
+        schoolId: data.schoolId,
+        name: data.name,
+        email: `${data.schoolId}@school.edu`,
+        role: 'student',
+        points: 0,
+        level: 1,
+        joinDate: new Date(),
+        lastActive: new Date(),
+        completedActivities: [],
+        pendingSubmissions: [],
+        approvedSubmissions: []
+      };
+      
       localStorage.setItem('auth_token', 'mock_token');
       localStorage.setItem('user_data', JSON.stringify(newUser));
       dispatch({ type: 'LOGIN_SUCCESS', payload: newUser });
@@ -155,29 +182,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateUser = (userData: Partial<User>) => {
-    dispatch({ type: 'UPDATE_USER', payload: userData });
-    
-    // Update localStorage
     if (state.user) {
       const updatedUser = { ...state.user, ...userData };
+      dispatch({ type: 'UPDATE_USER', payload: userData });
       localStorage.setItem('user_data', JSON.stringify(updatedUser));
     }
   };
 
-  function normalizeUserDates(u: any): User {
-    return { ...u, joinDate: new Date(u.joinDate), lastActive: new Date(u.lastActive) } as User;
-  }
-
   const updateUserPoints = async (userId: string, delta: number): Promise<number> => {
-    // In a real app, call API; here we adjust local storage if current user matches
     if (state.user && state.user.id === userId) {
       const newPoints = Math.max(0, (state.user.points || 0) + (delta || 0));
-      const updated = { ...state.user, points: newPoints } as User;
-      localStorage.setItem('user_data', JSON.stringify(updated));
-      dispatch({ type: 'LOGIN_SUCCESS', payload: updated });
+      updateUser({ points: newPoints });
       return newPoints;
     }
-    // For other users in mock mode, simply return current + delta
     return (state.user?.points || 0) + (delta || 0);
   };
 

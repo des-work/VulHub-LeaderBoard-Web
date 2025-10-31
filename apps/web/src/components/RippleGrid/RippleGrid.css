@@ -6,6 +6,7 @@
   height: 100%;
   z-index: -1;
   pointer-events: none;
+  opacity: 0.08; /* keep background subtle globally */
 }
 
 .ripple-grid-container canvas {
@@ -18,35 +19,27 @@
 }
 
 /* Matrix-specific styling */
-[data-theme="matrix"] .ripple-grid-container {
-  opacity: 0.8;
-}
-
-[data-theme="cyberpunk"] .ripple-grid-container {
-  opacity: 0.9;
-}
-
-[data-theme="terminal"] .ripple-grid-container {
-  opacity: 0.7;
-}
+[data-theme="matrix"] .ripple-grid-container { opacity: 0.08; }
+[data-theme="cyberpunk"] .ripple-grid-container { opacity: 0.08; }
+[data-theme="terminal"] .ripple-grid-container { opacity: 0.08; }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .ripple-grid-container {
-    opacity: 0.6;
+    opacity: 0.06;
   }
 }
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .ripple-grid-container {
-    opacity: 0.3;
+    opacity: 0.05;
   }
 }
 
 /* High contrast support */
 @media (prefers-contrast: high) {
   .ripple-grid-container {
-    opacity: 0.5;
+    opacity: 0.06;
   }
 }

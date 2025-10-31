@@ -1,351 +1,277 @@
 'use client';
 
-/**
- * New Home Page
- * Clean, modular implementation using the new UI system
- */
-
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Button } from '../lib/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../lib/ui/card';
-import { useThemeValue } from '../lib/theme/context';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../lib/auth/context';
-import { Leaderboard } from '../components/leaderboard/Leaderboard';
-import { SpectacularLeaderboard } from '../components/leaderboard/SpectacularLeaderboard';
-import { SubmissionForm } from '../components/submissions/SubmissionForm';
-import { Trophy, Users, Target, Award, Zap, Shield, Sword, Crown, Medal, Upload, LogOut, BookOpen } from 'lucide-react';
+import { Trophy, Users, Target, Award, Upload, BookOpen, LogOut } from 'lucide-react';
 import RippleGridV2 from '../components/RippleGrid/RippleGridV2';
-import { Activity } from '../lib/auth/types';
 
 export default function HomePage() {
-  const theme = useThemeValue();
-  const { user, isAuthenticated, logout } = useAuth();
-  const [showSubmissionForm, setShowSubmissionForm] = useState(false);
-  const [activities] = useState<Activity[]>([
-    {
-      id: 'vuln-001',
-      name: 'SQL Injection Challenge',
-      description: 'Find and exploit SQL injection vulnerabilities in a web application',
-      points: 100,
-      difficulty: 'beginner',
-      category: 'Web Security',
-      requirements: ['Basic SQL knowledge', 'Web browser'],
-      isActive: true,
-      createdAt: new Date(),
-    },
-    {
-      id: 'vuln-002',
-      name: 'Buffer Overflow Exploit',
-      description: 'Exploit a buffer overflow vulnerability in a C program',
-      points: 200,
-      difficulty: 'intermediate',
-      category: 'Binary Exploitation',
-      requirements: ['C programming', 'Assembly basics', 'GDB'],
-      isActive: true,
-      createdAt: new Date(),
-    },
-    {
-      id: 'vuln-003',
-      name: 'Cryptographic Challenge',
-      description: 'Break weak encryption and implement secure alternatives',
-      points: 150,
-      difficulty: 'intermediate',
-      category: 'Cryptography',
-      requirements: ['Math background', 'Python programming'],
-      isActive: true,
-      createdAt: new Date(),
-    },
-  ]);
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
 
-  // Mock users data - in real app, this would come from your backend
-  const [users] = useState([
-    { id: '1', schoolId: 'CS001', name: 'Neo', email: 'neo@matrix.io', role: 'student' as const, points: 1820, level: 4, joinDate: new Date('2024-01-15'), lastActive: new Date(Date.now() - 2 * 60 * 1000), completedActivities: ['vuln-001','vuln-002'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '2', schoolId: 'CS002', name: 'Trinity', email: 'trinity@matrix.io', role: 'student' as const, points: 1710, level: 4, joinDate: new Date('2024-01-18'), lastActive: new Date(Date.now() - 5 * 60 * 1000), completedActivities: ['vuln-001'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '3', schoolId: 'CS003', name: 'Morpheus', email: 'morpheus@matrix.io', role: 'student' as const, points: 1660, level: 4, joinDate: new Date('2024-01-20'), lastActive: new Date(Date.now() - 35 * 60 * 1000), completedActivities: ['vuln-001'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '4', schoolId: 'CS004', name: 'Oracle', email: 'oracle@matrix.io', role: 'student' as const, points: 1600, level: 3, joinDate: new Date('2024-01-22'), lastActive: new Date(Date.now() - 15 * 60 * 1000), completedActivities: ['vuln-003'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '5', schoolId: 'CS005', name: 'Acid Burn', email: 'acid@hackers.net', role: 'student' as const, points: 1540, level: 3, joinDate: new Date('2024-01-25'), lastActive: new Date(Date.now() - 10 * 60 * 1000), completedActivities: ['vuln-004'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '6', schoolId: 'CS006', name: 'Zero Cool', email: 'zerocool@hackers.net', role: 'student' as const, points: 1490, level: 3, joinDate: new Date('2024-01-28'), lastActive: new Date(Date.now() - 50 * 60 * 1000), completedActivities: ['vuln-001'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '7', schoolId: 'CS007', name: 'Crash Override', email: 'crash@hackers.net', role: 'student' as const, points: 1450, level: 3, joinDate: new Date('2024-02-01'), lastActive: new Date(Date.now() - 70 * 60 * 1000), completedActivities: ['vuln-005'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '8', schoolId: 'CS008', name: 'The Architect', email: 'architect@matrix.io', role: 'student' as const, points: 1425, level: 3, joinDate: new Date('2024-02-05'), lastActive: new Date(Date.now() - 25 * 60 * 1000), completedActivities: ['vuln-002'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '9', schoolId: 'CS009', name: 'Cypher', email: 'cypher@matrix.io', role: 'student' as const, points: 1370, level: 3, joinDate: new Date('2024-02-08'), lastActive: new Date(Date.now() - 5 * 60 * 60 * 1000), completedActivities: ['vuln-001'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '10', schoolId: 'CS010', name: 'Tank', email: 'tank@matrix.io', role: 'student' as const, points: 1330, level: 3, joinDate: new Date('2024-02-11'), lastActive: new Date(Date.now() - 90 * 60 * 1000), completedActivities: ['vuln-006'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '11', schoolId: 'CS011', name: 'Dozer', email: 'dozer@matrix.io', role: 'student' as const, points: 1290, level: 2, joinDate: new Date('2024-02-14'), lastActive: new Date(Date.now() - 40 * 60 * 1000), completedActivities: ['vuln-007'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '12', schoolId: 'CS012', name: 'Root', email: 'root@fsociety.tv', role: 'student' as const, points: 1260, level: 2, joinDate: new Date('2024-02-17'), lastActive: new Date(Date.now() - 20 * 60 * 1000), completedActivities: ['vuln-008'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '13', schoolId: 'CS013', name: 'Elliot Alderson', email: 'elliot@fsociety.tv', role: 'student' as const, points: 1210, level: 2, joinDate: new Date('2024-02-20'), lastActive: new Date(Date.now() - 10 * 60 * 60 * 1000), completedSubmissions: [], completedActivities: ['vuln-009'], pendingSubmissions: [], approvedSubmissions: [] } as any,
-    { id: '14', schoolId: 'CS014', name: 'Darlene', email: 'darlene@fsociety.tv', role: 'student' as const, points: 1185, level: 2, joinDate: new Date('2024-02-22'), lastActive: new Date(Date.now() - 30 * 60 * 1000), completedActivities: ['vuln-010'], pendingSubmissions: [], approvedSubmissions: [] },
-    { id: '15', schoolId: 'CS015', name: 'Lisbeth Salander', email: 'lisbeth@millennium.se', role: 'student' as const, points: 1150, level: 2, joinDate: new Date('2024-02-25'), lastActive: new Date(Date.now() - 120 * 60 * 1000), completedActivities: ['vuln-011'], pendingSubmissions: [], approvedSubmissions: [] },
-  ]);
+  useEffect(() => {
+    // Only redirect if we're sure the user is not authenticated
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/auth');
+    }
+  }, [isAuthenticated, isLoading, router]);
 
-  const handleSubmissionSubmit = (submission: any) => {
-    console.log('New submission:', submission);
-    // In real app, submit to backend
-    setShowSubmissionForm(false);
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-black text-neutral-100 font-body flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4 text-primary">Access Denied</h1>
-          <p className="text-neutral-400 mb-6">Please sign in to access the platform</p>
-          <Link href="/auth">
-            <Button className="btn-professional btn-primary">Go to Sign In</Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading while user data is being fetched
-  if (!user) {
+  // Show loading only during initial auth check
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-black text-neutral-100 font-body flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-xl text-neutral-300">Loading your dashboard...</p>
+          <p className="text-xl text-neutral-300">Loading...</p>
         </div>
       </div>
     );
   }
 
+  // If not authenticated, don't render anything (redirect will happen)
+  if (!isAuthenticated || !user) {
+    return null;
+  }
+
+  const handleLogout = () => {
+    logout();
+    router.replace('/auth');
+  };
+
   return (
-    <div className="min-h-screen bg-black text-neutral-100 font-body">
-      {/* OGL RippleGrid Background */}
+    <div className="min-h-screen bg-black text-neutral-100 font-body relative">
+      {/* RippleGrid Background */}
       <div className="fixed inset-0 z-0">
         <RippleGridV2
           enableRainbow={false}
-          gridColor="#a855f7" // Purple grid
-          rippleIntensity={0.05}
+          gridColor="#00ff00"
+          rippleIntensity={0.03}
           gridSize={10}
-          gridThickness={15}
+          gridThickness={12}
           fadeDistance={1.5}
-          vignetteStrength={2.0}
-          glowIntensity={0.1}
-          opacity={0.3} // Visible but not overwhelming
+          vignetteStrength={1.6}
+          glowIntensity={0.08}
+          opacity={0.08}
           gridRotation={0}
           mouseInteraction={true}
           mouseInteractionRadius={1.2}
         />
       </div>
-      
-      {/* Clean Background - No Green Effects */}
-      <div className="fixed inset-0 bg-black" />
-      
-      <div className="relative z-10">
-        {/* Header */}
-        <header className="border-b border-neutral-700/30 bg-black/90 backdrop-blur-sm">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              {/* Logo */}
-        <div className="flex items-center space-x-3">
-          <div className="professional-glow">
-            <Trophy className="h-8 w-8 text-primary" />
-          </div>
-          <h1 className="text-2xl font-bold text-primary font-display professional-glow">
-            VulHub Scoreboard
-          </h1>
-        </div>
 
-              {/* Navigation */}
-              <nav className="flex items-center space-x-4">
-                <Button variant="outline" size="sm" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50" onClick={() => window.location.href = '/community'}>
-                  <Users className="h-4 w-4 mr-2" />
-                  Community
-                </Button>
-                <Button variant="outline" size="sm" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50" onClick={() => window.location.href = '/challenges'}>
-                  <Target className="h-4 w-4 mr-2" />
-                  Challenges
-                </Button>
-                <Button variant="outline" size="sm" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50" onClick={() => window.location.href = '/badges'}>
-                  <Award className="h-4 w-4 mr-2" />
-                  Badges
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50"
-                  onClick={() => setShowSubmissionForm(true)}
-                >
-                  <Upload className="h-4 w-4 mr-2" />
-                  Submit
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50"
-                  onClick={() => window.location.href = '/resources'}
-                >
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  Resources
-                </Button>
-                <Button variant="outline" size="sm" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50" onClick={() => window.location.href = '/profile'}>
-                  <Users className="h-4 w-4 mr-2" />
-                  Profile
-                </Button>
-                <div className="flex items-center space-x-2 px-3 py-2 bg-neutral-800/50 border border-neutral-600/30 rounded">
-                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-primary font-mono font-bold text-xs">
-                    {user?.name.split(' ').map(n => n[0]).join('')}
-                  </div>
-                  <div className="text-xs">
-                    <div className="text-primary font-mono font-bold">{user?.name}</div>
-                    <div className="text-neutral-300 font-mono">{user?.points} pts</div>
-                  </div>
+      {/* Header */}
+      <header className="sticky top-0 layer-header header-surface">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center matrix-glow">
+                <Trophy className="h-6 w-6 text-black" />
+              </div>
+              <h1 className="text-2xl font-display font-bold text-matrix-glow">VulHub Scoreboard</h1>
+            </div>
+            
+            <nav className="flex items-center space-x-4">
+              <button 
+                className="matrix-button matrix-button-outline"
+                onClick={() => router.push('/community')}
+              >
+                <Users className="h-4 w-4 mr-2" />
+                Community
+              </button>
+              <button 
+                className="matrix-button matrix-button-outline"
+                onClick={() => router.push('/challenges')}
+              >
+                <Target className="h-4 w-4 mr-2" />
+                Challenges
+              </button>
+              <button 
+                className="matrix-button matrix-button-outline"
+                onClick={() => router.push('/badges')}
+              >
+                <Award className="h-4 w-4 mr-2" />
+                Badges
+              </button>
+              <button
+                className="matrix-button matrix-button-outline"
+                onClick={() => router.push('/submissions')}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Submissions
+              </button>
+              <button
+                className="matrix-button matrix-button-outline"
+                onClick={() => router.push('/resources')}
+              >
+                <BookOpen className="h-4 w-4 mr-2" />
+                Resources
+              </button>
+              <button 
+                className="matrix-button matrix-button-outline"
+                onClick={() => router.push('/profile')}
+              >
+                <Users className="h-4 w-4 mr-2" />
+                Profile
+              </button>
+              
+              <div className="flex items-center space-x-3 pl-4 border-l border-matrix">
+                <div className="text-right">
+                  <div className="text-sm font-medium text-bright">{user.name}</div>
+                  <div className="text-xs text-matrix">{user.points} pts</div>
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50"
-                  onClick={logout}
+                <button 
+                  className="matrix-button matrix-button-outline"
+                  onClick={handleLogout}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
-                </Button>
-              </nav>
-            </div>
-          </div>
-        </header>
-
-        {/* Spectacular Live Leaderboard Section - The Star of the Show */}
-        <section className="py-12">
-          <div className="container mx-auto px-4">
-            <SpectacularLeaderboard
-              users={users}
-              currentUser={user}
-              title="Live Rankings"
-              showLiveIndicator={true}
-            />
-          </div>
-        </section>
-
-        {/* Hero Section */}
-        <section className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              {/* Main Headlines */}
-        <h1 className="text-6xl font-bold text-primary font-display mb-6 professional-glow fade-in">
-          Master Cybersecurity
-        </h1>
-        <h2 className="text-4xl font-bold text-secondary font-display mb-8 subtle-glow slide-up">
-          Through Competition
-        </h2>
-              
-              <p className="text-xl text-neutral-300 mb-12 max-w-4xl mx-auto font-body leading-relaxed">
-                Join the ultimate cybersecurity learning platform where students compete, 
-                learn, and grow through real-world vulnerability challenges. 
-                Climb the rankings and prove your skills in the digital battlefield.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-                <Button className="btn-professional btn-primary text-lg px-8 py-4 hover-lift">
-                  <Zap className="h-6 w-6 mr-3" />
-                  Start Competing
-                </Button>
-                <Button className="btn-professional btn-secondary text-lg px-8 py-4 hover-lift">
-                  <Trophy className="h-6 w-6 mr-3" />
-                  View Rankings
-                </Button>
+                </button>
               </div>
-            </div>
-
-            {/* Feature Cards */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <Card variant="matrix" hover glow className="text-center">
-                <CardContent className="p-6">
-                  <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
-                    <Shield className="h-8 w-8 text-green-400" />
-                  </div>
-                  <h3 className="text-xl font-bold text-green-400 font-mono mb-3">
-                    COMPETITIVE LEARNING
-                  </h3>
-                  <p className="text-gray-300 font-mono text-sm leading-relaxed">
-                    Compete with fellow hackers on real vulnerability challenges 
-                    and climb the scoreboards to prove your skills.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card variant="matrix" hover glow className="text-center">
-                <CardContent className="p-6">
-                  <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
-                    <Users className="h-8 w-8 text-green-400" />
-                  </div>
-                  <h3 className="text-xl font-bold text-green-400 font-mono mb-3">
-                    COMMUNITY DRIVEN
-                  </h3>
-                  <p className="text-gray-300 font-mono text-sm leading-relaxed">
-                    Learn from and collaborate with a community of cybersecurity 
-                    enthusiasts and experienced hackers.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card variant="matrix" hover glow className="text-center">
-                <CardContent className="p-6">
-                  <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
-                    <Sword className="h-8 w-8 text-green-400" />
-                  </div>
-                  <h3 className="text-xl font-bold text-green-400 font-mono mb-3">
-                    REAL CHALLENGES
-                  </h3>
-                  <p className="text-gray-300 font-mono text-sm leading-relaxed">
-                    Practice on real-world vulnerabilities and hone your 
-                    practical hacking skills in a controlled environment.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card variant="matrix" hover glow className="text-center">
-                <CardContent className="p-6">
-                  <div className="mx-auto w-16 h-16 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
-                    <Award className="h-8 w-8 text-green-400" />
-                  </div>
-                  <h3 className="text-xl font-bold text-green-400 font-mono mb-3">
-                    ACHIEVEMENT SYSTEM
-                  </h3>
-                  <p className="text-gray-300 font-mono text-sm leading-relaxed">
-                    Earn badges and achievements as you progress through 
-                    different skill levels and complete challenges.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="bg-black border-t border-green-500/30 py-12">
-          <div className="container mx-auto px-4">
-            <div className="text-center">
-              <div className="flex items-center justify-center space-x-3 mb-4">
-                <div className="text-shadow-[0_0_10px_rgba(0,255,0,0.5)]">
-                  <Trophy className="h-6 w-6 text-green-400" />
-                </div>
-                <span className="text-xl font-bold text-green-400 font-mono">
-                  VulHub Scoreboard
-                </span>
-              </div>
-              <p className="text-gray-400 font-mono text-sm">
-                © 2025 CSUSB Cybersecurity Program. All rights reserved.
-              </p>
-            </div>
-          </div>
-        </footer>
-      </div>
-
-      {/* Submission Form Modal */}
-      {showSubmissionForm && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <SubmissionForm
-              activities={activities}
-              onSubmit={handleSubmissionSubmit}
-              onCancel={() => setShowSubmissionForm(false)}
-            />
+            </nav>
           </div>
         </div>
-      )}
+      </header>
+
+      {/* Main Content */}
+      <main className="layer-content container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Leaderboard */}
+          <div className="lg:col-span-2">
+            <div className="matrix-card hover-lift">
+              <div className="matrix-card-header">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Trophy className="h-5 w-5 text-matrix" />
+                    <h2 className="text-xl font-display font-bold text-matrix">Live Rankings</h2>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full matrix-pulse" />
+                    <span className="text-sm text-muted">LIVE</span>
+                  </div>
+                </div>
+                <p className="text-sm text-muted mt-1">Top 15 Players</p>
+              </div>
+              <div className="matrix-card-content">
+                <div className="space-y-2">
+                  {[
+                    { name: 'NeoYOU', points: 1820, level: 4, status: 'fire' },
+                    { name: 'Trinity', points: 1710, level: 4, status: 'fire' },
+                    { name: 'Morpheus', points: 1660, level: 4, status: 'close' },
+                    { name: 'Oracle', points: 1600, level: 3, status: 'normal' },
+                    { name: 'Acid Burn', points: 1540, level: 3, status: 'normal' },
+                    { name: 'Zero Cool', points: 1490, level: 3, status: 'close' },
+                    { name: 'Crash Override', points: 1450, level: 3, status: 'close' },
+                    { name: 'The Architect', points: 1425, level: 3, status: 'close' },
+                    { name: 'Cypher', points: 1370, level: 3, status: 'normal' },
+                    { name: 'Tank', points: 1330, level: 3, status: 'close' },
+                    { name: 'Dozer', points: 1290, level: 2, status: 'close' },
+                    { name: 'Root', points: 1260, level: 2, status: 'close' },
+                    { name: 'Elliot Alderson', points: 1210, level: 2, status: 'close' },
+                    { name: 'Darlene', points: 1185, level: 2, status: 'close' },
+                    { name: 'Lisbeth Salander', points: 1150, level: 2, status: 'close' }
+                  ].map((player, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 rounded-lg row-surface hover-lift-subtle">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                          <span className="text-sm font-bold text-matrix">#{index + 1}</span>
+                        </div>
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-purple-500 rounded-full flex items-center justify-center">
+                          <span className="text-sm font-bold text-white">{player.name.charAt(0)}</span>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-bright">{player.name}</h3>
+                          <p className="text-sm text-muted">Level {player.level} • {Math.floor(Math.random() * 3) + 1} completed</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {player.status === 'fire' && (
+                          <div className="flex items-center space-x-1 bg-red-500/20 px-2 py-1 rounded">
+                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                            <span className="text-xs text-red-400">Fire</span>
+                          </div>
+                        )}
+                        {player.status === 'close' && (
+                          <div className="flex items-center space-x-1 bg-yellow-500/20 px-2 py-1 rounded">
+                            <div className="w-2 h-2 bg-yellow-500 rounded-full" />
+                            <span className="text-xs text-yellow-400">Close</span>
+                          </div>
+                        )}
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-matrix">{player.points.toLocaleString()}</div>
+                          <div className="text-xs text-muted">points</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Welcome Section */}
+          <div className="space-y-6">
+            <div className="matrix-card hover-lift">
+              <div className="matrix-card-header">
+                <h2 className="text-xl font-display font-bold text-matrix">Welcome Back!</h2>
+              </div>
+              <div className="matrix-card-content">
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-primary to-purple-500 rounded-full flex items-center justify-center mx-auto mb-3 matrix-glow">
+                      <span className="text-2xl font-bold text-white">{user.name.charAt(0)}</span>
+                    </div>
+                    <h3 className="text-xl font-semibold text-bright">{user.name}</h3>
+                    <p className="text-sm text-muted">{user.points} points • Level {user.role === 'admin' ? 'Admin' : 'Student'}</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <button 
+                      className="w-full matrix-button matrix-button-primary" 
+                      onClick={() => router.push('/challenges')}
+                    >
+                      <Target className="h-4 w-4 mr-2" />
+                      Start Competing
+                    </button>
+                    <button 
+                      className="w-full matrix-button matrix-button-outline" 
+                      onClick={() => router.push('/community')}
+                    >
+                      <Users className="h-4 w-4 mr-2" />
+                      Join Community
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="matrix-card hover-lift">
+              <div className="matrix-card-header">
+                <h2 className="text-xl font-display font-bold text-matrix">Quick Stats</h2>
+              </div>
+              <div className="matrix-card-content">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center rounded-lg p-3 row-surface hover-lift-subtle">
+                    <div className="text-2xl font-bold text-matrix">{user.points}</div>
+                    <div className="text-sm text-muted">Points</div>
+                  </div>
+                  <div className="text-center rounded-lg p-3 row-surface hover-lift-subtle">
+                    <div className="text-2xl font-bold text-matrix">0</div>
+                    <div className="text-sm text-muted">Challenges</div>
+                  </div>
+                  <div className="text-center rounded-lg p-3 row-surface hover-lift-subtle">
+                    <div className="text-2xl font-bold text-matrix">0</div>
+                    <div className="text-sm text-muted">Badges</div>
+                  </div>
+                  <div className="text-center rounded-lg p-3 row-surface hover-lift-subtle">
+                    <div className="text-2xl font-bold text-matrix">1</div>
+                    <div className="text-sm text-muted">Level</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

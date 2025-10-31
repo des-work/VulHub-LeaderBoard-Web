@@ -2,71 +2,91 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../lib/auth/context';
-import { LoginForm } from '../../components/auth/LoginForm';
-import { RegisterForm } from '../../components/auth/RegisterForm';
-import { TutorialModal } from '../../components/tutorial/TutorialModal';
-import RippleGridV2 from '../../components/RippleGrid/RippleGridV2';
 import { useRouter } from 'next/navigation';
 
 export default function AuthPage() {
-  const { isAuthenticated, isLoading } = useAuth();
-  const [isLogin, setIsLogin] = useState(true);
-  const [showTutorial, setShowTutorial] = useState(false);
+  const { isAuthenticated, isLoading, login, register } = useAuth();
   const router = useRouter();
+  const [isLogin, setIsLogin] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
+    // If already authenticated, redirect to home
     if (isAuthenticated) {
-      // Check if user has seen tutorial
-      const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
-      if (!hasSeenTutorial) {
-        setShowTutorial(true);
-      } else {
-        // Redirect to home page immediately
-        router.replace('/');
-      }
+      router.replace('/');
     }
   }, [isAuthenticated, router]);
 
-  const handleTutorialComplete = () => {
-    localStorage.setItem('hasSeenTutorial', 'true');
-    setShowTutorial(false);
-    router.push('/');
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+
+    const formData = new FormData(e.currentTarget);
+    const schoolId = formData.get('schoolId') as string;
+    const password = formData.get('password') as string;
+
+    if (!schoolId || !password) {
+      setError('Please enter both school ID and password');
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      await login({ schoolId, password });
+      // Redirect will happen automatically via useEffect
+    } catch (error) {
+      setError('Login failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-black text-green-400 font-mono flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-green-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-xl">Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
 
+    const formData = new FormData(e.currentTarget);
+    const schoolId = formData.get('schoolId') as string;
+    const name = formData.get('name') as string;
+    const password = formData.get('password') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!schoolId || !name || !password) {
+      setError('Please fill in all fields');
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      await register({ schoolId, name, password, confirmPassword });
+      // Redirect will happen automatically via useEffect
+    } catch (error) {
+      setError('Registration failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Don't show anything if already authenticated (redirect will happen)
   if (isAuthenticated) {
-    // Don't render anything while redirecting
     return null;
   }
 
   return (
     <div className="min-h-screen bg-black text-green-400 font-mono relative">
-      {/* RippleGrid Background */}
+      {/* Animated Background */}
       <div className="fixed inset-0 z-0">
-        <RippleGridV2
-          enableRainbow={false}
-          gridColor="#00ff00"
-          rippleIntensity={0.05}
-          gridSize={10}
-          gridThickness={15}
-          fadeDistance={1.5}
-          vignetteStrength={2.0}
-          glowIntensity={0.1}
-          opacity={0.3}
-          gridRotation={0}
-          mouseInteraction={true}
-          mouseInteractionRadius={1.2}
-        />
+        <div className="absolute inset-0 bg-gradient-to-br from-green-900/20 via-transparent to-green-800/20"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,0,0.1),transparent_50%)]"></div>
       </div>
 
       {/* Content */}
@@ -100,11 +120,149 @@ export default function AuthPage() {
           </div>
 
           {/* Auth Form */}
-          {isLogin ? (
-            <LoginForm onSwitchToRegister={() => setIsLogin(false)} />
-          ) : (
-            <RegisterForm onSwitchToLogin={() => setIsLogin(true)} />
-          )}
+          <div className="bg-black/50 backdrop-blur-sm border border-green-500/30 rounded-lg p-6">
+            {isLogin ? (
+              <form onSubmit={handleLogin} className="space-y-4">
+                <h2 className="text-2xl font-bold text-green-400 mb-6 text-center">Sign In</h2>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    School ID
+                  </label>
+                  <input
+                    type="text"
+                    name="schoolId"
+                    required
+                    disabled={isSubmitting}
+                    className="w-full px-3 py-2 bg-black/50 border border-green-500/50 rounded text-green-400 placeholder-gray-500 focus:outline-none focus:border-green-400 disabled:opacity-50"
+                    placeholder="Enter your school ID"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    required
+                    disabled={isSubmitting}
+                    className="w-full px-3 py-2 bg-black/50 border border-green-500/50 rounded text-green-400 placeholder-gray-500 focus:outline-none focus:border-green-400 disabled:opacity-50"
+                    placeholder="Enter your password"
+                  />
+                </div>
+
+                {error && (
+                  <div className="text-red-400 text-sm text-center">{error}</div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-green-500 text-black py-2 px-4 rounded font-mono font-bold hover:bg-green-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'Signing In...' : 'Sign In'}
+                </button>
+
+                <p className="text-center text-sm text-gray-400">
+                  Don't have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setIsLogin(false)}
+                    disabled={isSubmitting}
+                    className="text-green-400 hover:text-green-300 underline disabled:opacity-50"
+                  >
+                    Sign Up
+                  </button>
+                </p>
+              </form>
+            ) : (
+              <form onSubmit={handleRegister} className="space-y-4">
+                <h2 className="text-2xl font-bold text-green-400 mb-6 text-center">Sign Up</h2>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    disabled={isSubmitting}
+                    className="w-full px-3 py-2 bg-black/50 border border-green-500/50 rounded text-green-400 placeholder-gray-500 focus:outline-none focus:border-green-400 disabled:opacity-50"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    School ID
+                  </label>
+                  <input
+                    type="text"
+                    name="schoolId"
+                    required
+                    disabled={isSubmitting}
+                    className="w-full px-3 py-2 bg-black/50 border border-green-500/50 rounded text-green-400 placeholder-gray-500 focus:outline-none focus:border-green-400 disabled:opacity-50"
+                    placeholder="Enter your school ID"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    required
+                    disabled={isSubmitting}
+                    className="w-full px-3 py-2 bg-black/50 border border-green-500/50 rounded text-green-400 placeholder-gray-500 focus:outline-none focus:border-green-400 disabled:opacity-50"
+                    placeholder="Create a password"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    required
+                    disabled={isSubmitting}
+                    className="w-full px-3 py-2 bg-black/50 border border-green-500/50 rounded text-green-400 placeholder-gray-500 focus:outline-none focus:border-green-400 disabled:opacity-50"
+                    placeholder="Confirm your password"
+                  />
+                </div>
+
+                {error && (
+                  <div className="text-red-400 text-sm text-center">{error}</div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-green-500 text-black py-2 px-4 rounded font-mono font-bold hover:bg-green-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'Creating Account...' : 'Sign Up'}
+                </button>
+
+                <p className="text-center text-sm text-gray-400">
+                  Already have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setIsLogin(true)}
+                    disabled={isSubmitting}
+                    className="text-green-400 hover:text-green-300 underline disabled:opacity-50"
+                  >
+                    Sign In
+                  </button>
+                </p>
+              </form>
+            )}
+          </div>
 
           {/* Features */}
           <div className="mt-8 text-center">
@@ -132,13 +290,6 @@ export default function AuthPage() {
           </div>
         </div>
       </div>
-
-      {/* Tutorial Modal */}
-      <TutorialModal
-        isOpen={showTutorial}
-        onClose={() => setShowTutorial(false)}
-        onComplete={handleTutorialComplete}
-      />
     </div>
   );
 }

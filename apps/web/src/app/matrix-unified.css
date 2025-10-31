@@ -1,0 +1,348 @@
+/**
+ * VulHub Matrix/Cyberpunk Theme - Unified Design System
+ * Single source of truth for all styling
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   COLOR SYSTEM - Matrix Green & Cyberpunk
+   ============================================ */
+:root {
+  /* Primary - Matrix Green (vibrant) */
+  --color-primary-50: 240 255 244;
+  --color-primary-100: 220 252 231;
+  --color-primary-200: 187 247 208;
+  --color-primary-300: 134 239 172;
+  --color-primary-400: 74 222 128;
+  --color-primary-500: 0 255 0;        /* Main Matrix Green */
+  --color-primary-600: 22 163 74;
+  --color-primary-700: 21 128 61;
+  --color-primary-800: 22 101 52;
+  --color-primary-900: 20 83 45;
+  --color-primary-950: 5 46 22;
+  
+  /* Secondary - Cyberpunk Accent Colors */
+  --color-secondary-500: 236 72 153;   /* Pink */
+  --color-accent-cyan: 0 255 255;      /* Cyan */
+  --color-accent-purple: 168 85 247;   /* Purple */
+  
+  /* Neutral - High Contrast Grayscale */
+  --color-neutral-50: 250 250 250;
+  --color-neutral-100: 240 240 240;
+  --color-neutral-200: 220 220 220;
+  --color-neutral-300: 200 200 200;
+  --color-neutral-400: 160 160 160;
+  --color-neutral-500: 120 120 120;
+  --color-neutral-600: 90 90 90;
+  --color-neutral-700: 70 70 70;
+  --color-neutral-800: 40 40 40;
+  --color-neutral-900: 20 20 20;
+  --color-neutral-950: 10 10 10;
+  
+  /* Semantic Colors */
+  --color-success: 0 255 0;
+  --color-warning: 255 255 0;
+  --color-error: 255 0 0;
+  --color-info: 0 128 255;
+  
+  /* Font System */
+  --font-mono: 'Courier New', 'Monaco', 'Consolas', monospace;
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ============================================
+   BASE LAYER - Background & Body
+   ============================================ */
+body {
+  background-color: #000000;
+  color: rgb(var(--color-neutral-100));
+  font-family: var(--font-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   SURFACE SYSTEM - Layered Backgrounds
+   ============================================ */
+[data-app-shell] .surface-0 {
+  background-color: rgba(15, 15, 15, 0.95);
+  box-shadow: none;
+}
+
+[data-app-shell] .surface-1 {
+  background-color: rgba(26, 26, 26, 0.98);
+  border: 1px solid rgba(var(--color-neutral-700), 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+[data-app-shell] .surface-2 {
+  background-color: rgba(30, 30, 30, 0.98);
+  border: 1px solid rgba(var(--color-neutral-600), 0.5);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+[data-app-shell] .surface-3 {
+  background-color: rgba(35, 35, 35, 0.98);
+  border: 1px solid rgba(var(--color-neutral-500), 0.5);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* Row/List Item Surfaces */
+[data-app-shell] .row-surface {
+  background-color: rgba(25, 25, 25, 0.98);
+  border: 1px solid rgba(var(--color-neutral-600), 0.35);
+  transition: all 0.2s ease;
+}
+
+[data-app-shell] .row-surface:hover {
+  background-color: rgba(30, 30, 30, 0.98);
+  border-color: rgba(var(--color-primary-500), 0.3);
+  transform: translateY(-1px);
+}
+
+/* Header Surface */
+[data-app-shell] .header-surface {
+  background-color: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(var(--color-primary-500), 0.3);
+  box-shadow: 0 4px 24px rgba(0, 255, 0, 0.1);
+}
+
+/* ============================================
+   CARD SYSTEM - Depth & Elevation
+   ============================================ */
+.matrix-card {
+  background-color: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(var(--color-primary-500), 0.2);
+  border-radius: 0.75rem;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 0, 0.1),
+    0 8px 32px rgba(0, 0, 0, 0.6);
+  transition: all 0.3s ease;
+}
+
+.matrix-card:hover {
+  border-color: rgba(var(--color-primary-500), 0.4);
+  box-shadow: 
+    0 0 30px rgba(0, 255, 0, 0.15),
+    0 12px 40px rgba(0, 0, 0, 0.7);
+  transform: translateY(-2px);
+}
+
+.matrix-card-header {
+  border-bottom: 1px solid rgba(var(--color-neutral-700), 0.5);
+  padding: 1.5rem;
+}
+
+.matrix-card-content {
+  padding: 1.5rem;
+}
+
+/* ============================================
+   TYPOGRAPHY - Text Colors & Styles
+   ============================================ */
+.text-matrix {
+  color: rgb(var(--color-primary-500));
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.text-matrix-glow {
+  color: rgb(var(--color-primary-500));
+  text-shadow: 
+    0 0 10px rgba(0, 255, 0, 0.5),
+    0 0 20px rgba(0, 255, 0, 0.3),
+    0 0 30px rgba(0, 255, 0, 0.1);
+}
+
+.text-bright {
+  color: rgb(var(--color-neutral-100));
+}
+
+.text-muted {
+  color: rgb(var(--color-neutral-400));
+}
+
+.text-dim {
+  color: rgb(var(--color-neutral-500));
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+/* ============================================
+   BUTTON SYSTEM - Interactive Elements
+   ============================================ */
+.matrix-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.matrix-button-primary {
+  background-color: rgb(var(--color-primary-500));
+  color: #000000;
+  border-color: rgb(var(--color-primary-500));
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+.matrix-button-primary:hover {
+  background-color: rgb(var(--color-primary-400));
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+.matrix-button-outline {
+  background-color: transparent;
+  color: rgb(var(--color-neutral-300));
+  border-color: rgba(var(--color-neutral-600), 0.5);
+}
+
+.matrix-button-outline:hover {
+  background-color: rgba(var(--color-neutral-800), 0.5);
+  border-color: rgba(var(--color-primary-500), 0.5);
+  color: rgb(var(--color-primary-500));
+}
+
+/* ============================================
+   EFFECTS - Glows, Shadows, Animations
+   ============================================ */
+.matrix-glow {
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+.matrix-glow-strong {
+  box-shadow: 
+    0 0 20px rgba(0, 255, 0, 0.5),
+    0 0 40px rgba(0, 255, 0, 0.3),
+    0 0 60px rgba(0, 255, 0, 0.1);
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.hover-lift-subtle {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift-subtle:hover {
+  transform: translateY(-1px);
+}
+
+/* Pulse animation for live indicators */
+@keyframes matrix-pulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+  }
+}
+
+.matrix-pulse {
+  animation: matrix-pulse 2s ease-in-out infinite;
+}
+
+/* ============================================
+   Z-INDEX SYSTEM - Layering
+   ============================================ */
+.layer-background { z-index: 0; }
+.layer-content { z-index: 10; }
+.layer-card { z-index: 15; }
+.layer-header { z-index: 30; }
+.layer-modal { z-index: 50; }
+.layer-tooltip { z-index: 60; }
+
+/* ============================================
+   SCROLLBAR - Styled
+   ============================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--color-primary-500), 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--color-primary-500), 0.5);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.backdrop-blur-strong {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.border-matrix {
+  border-color: rgba(var(--color-primary-500), 0.3);
+}
+
+.border-matrix-bright {
+  border-color: rgba(var(--color-primary-500), 0.6);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+@media (max-width: 768px) {
+  .matrix-card {
+    border-radius: 0.5rem;
+  }
+  
+  .matrix-card-header,
+  .matrix-card-content {
+    padding: 1rem;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus styles for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid rgb(var(--color-primary-500));
+  outline-offset: 2px;
+}
+

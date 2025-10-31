@@ -1,14 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { ThemeProvider } from '../lib/theme/context';
 import { AuthProvider } from '../lib/auth/context';
-import { CSSProvider } from '../components/CSSProvider';
 import { ErrorBoundary } from '../components/common/ErrorBoundary';
-import { AnimationProvider } from '../components/AnimationProvider';
-import { loadFonts } from '../lib/fonts/fonts';
-import './globals.css';
-import './clean.css';
-import './spectacular.css';
+import './matrix-unified.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,23 +21,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <CSSProvider showDebugPanel={true} enableFallback={true} enableDebugging={true}>
-          <AuthProvider>
-            <ThemeProvider defaultTheme="matrix">
-              <AnimationProvider>
-                <ErrorBoundary>
-                  {children}
-                </ErrorBoundary>
-              </AnimationProvider>
-            </ThemeProvider>
-          </AuthProvider>
-        </CSSProvider>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(${loadFonts.toString()})()`,
-          }}
-        />
+      <body className={inter.className} data-app-shell data-theme="matrix">
+        <AuthProvider>
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
+        </AuthProvider>
       </body>
     </html>
   );

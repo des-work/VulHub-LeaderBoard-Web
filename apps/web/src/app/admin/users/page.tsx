@@ -1,12 +1,14 @@
 "use client";
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { MOCK_USERS } from '../../../lib/users/mock';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../lib/ui/card';
 import { Button } from '../../../lib/ui/button';
 import { Search, User } from 'lucide-react';
 
 export default function AdminUsersPage() {
+  const router = useRouter();
   const users = MOCK_USERS;
   return (
     <div className="min-h-screen bg-black text-neutral-100 font-body">
@@ -35,8 +37,8 @@ export default function AdminUsersPage() {
                       <td className="py-2 pr-4 font-mono">{u.points.toLocaleString()}</td>
                       <td className="py-2 pr-4">{u.level}</td>
                       <td className="py-2 pr-4 flex gap-2">
-                        <Button size="sm" className="btn-professional btn-primary" onClick={() => window.location.href = '/grading'}>Grade</Button>
-                        <Button size="sm" variant="outline" className="border-neutral-600/50" onClick={() => window.location.href = '/profile'}><User className="h-4 w-4 mr-1"/> Profile</Button>
+                        <Button size="sm" className="btn-professional btn-primary" onClick={() => router.push('/grading')}>Grade</Button>
+                        <Button size="sm" variant="outline" className="border-neutral-600/50" onClick={() => router.push('/profile')}><User className="h-4 w-4 mr-1"/> Profile</Button>
                       </td>
                     </tr>
                   ))}

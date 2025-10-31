@@ -1,121 +1,104 @@
 "use client";
 
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { useAuth } from '../../lib/auth/context';
-import { useGrading } from '../../lib/grading/context';
-import { Card, CardContent, CardHeader, CardTitle } from '../../lib/ui/card';
-import { evaluateBadges } from '../../lib/badges/evaluator';
-import { badgeCatalog } from '../../lib/badges/catalog';
-import { challengeCatalog } from '../../lib/challenges/catalog';
-import { EditProfileModal } from '../../components/profile/EditProfileModal';
-import { SubmissionsTable } from '../../components/submissions/SubmissionsTable';
+import { useRouter } from 'next/navigation';
+import { User, Settings, Award, Target, ArrowLeft } from 'lucide-react';
 
 export default function ProfilePage() {
-  const { user } = useAuth();
-  const [editing, setEditing] = useState(false);
-  const { submissions } = useGrading();
+  const { user, logout } = useAuth();
+  const router = useRouter();
 
-  if (!user) return null;
-
-  const mySubs = submissions.filter(s => s.userId === user.id);
-
-  const badgeProgress = useMemo(() => evaluateBadges(user.points, mySubs, badgeCatalog, challengeCatalog), [user.points, mySubs]);
-
-  const completedByCategory = useMemo(() => {
-    const map: Record<string, number> = {};
-    for (const s of mySubs.filter(s => s.status === 'approved')) {
-      const ch = challengeCatalog.challenges.find(c => c.title === s.activityName || c.cve === s.activityName);
-      if (ch) map[ch.category] = (map[ch.category] || 0) + 1;
-    }
-    return map;
-  }, [mySubs]);
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-black text-neutral-100 font-body flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-xl text-neutral-300">Redirecting to sign in...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-black text-neutral-100 font-body">
-      <div className="container mx-auto px-4 py-10 space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-purple-300 font-display flex items-center justify-between">
-              <span className="flex items-center gap-3">
-                {user.avatar ? (
-                  <img src={user.avatar} alt="avatar" className="w-10 h-10 rounded-full border border-neutral-700" />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-sm">
-                    {user.name.split(' ').map(n=>n[0]).join('')}
-                  </div>
-                )}
-                {user.name}
-              </span>
-              <button onClick={() => setEditing(true)} className="text-sm px-3 py-1 rounded border border-neutral-600/50 hover:bg-neutral-800/50">Edit Profile</button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid md:grid-cols-3 gap-6">
-            <div>
-              <div className="text-neutral-400">Points</div>
-              <div className="text-3xl font-mono text-purple-300">{user.points.toLocaleString()}</div>
-            </div>
-            <div>
-              <div className="text-neutral-400">Level</div>
-              <div className="text-3xl font-mono text-purple-300">{user.level}</div>
-            </div>
-            <div>
-              <div className="text-neutral-400">Joined</div>
-              <div className="text-3xl font-mono text-purple-300">{new Date(user.joinDate).toLocaleDateString()}</div>
-            </div>
-          </CardContent>
-        </Card>
+    <div className="min-h-screen bg-black text-neutral-100 font-body layer-content">
+      <div className="container mx-auto px-4 py-12">
+        {/* Back Button */}
+        <button 
+          onClick={() => router.push('/')}
+          className="matrix-button matrix-button-outline mb-6"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Home
+        </button>
 
-        {user.bio && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-purple-300 font-display">Bio</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-neutral-300 whitespace-pre-wrap">{user.bio}</p>
-            </CardContent>
-          </Card>
-        )}
+        <div className="mb-8">
+          <h1 className="text-4xl font-display font-bold text-matrix-glow">Profile</h1>
+          <p className="text-muted mt-2">Manage your account and view your progress</p>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-purple-300 font-display">Progress by Category</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {Object.keys(completedByCategory).length === 0 ? (
-              <div className="text-neutral-400">No approved submissions yet.</div>
-            ) : (
-              <div className="grid md:grid-cols-3 gap-4">
-                {Object.entries(completedByCategory).map(([cat, n]) => (
-                  <div key={cat} className="bg-neutral-900 border border-neutral-800 rounded p-3">
-                    <div className="text-neutral-400 text-sm">{cat}</div>
-                    <div className="text-2xl font-mono text-purple-200">{n}</div>
-                  </div>
-                ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* User Info */}
+          <div className="matrix-card hover-lift">
+            <div className="matrix-card-header">
+              <h2 className="text-xl font-display font-bold text-matrix flex items-center">
+                <User className="h-5 w-5 mr-2" />
+                User Information
+              </h2>
+            </div>
+            <div className="matrix-card-content">
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-muted block mb-1">Name</label>
+                  <p className="text-bright font-medium">{user.name}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-muted block mb-1">School ID</label>
+                  <p className="text-bright font-medium">{user.schoolId}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-muted block mb-1">Points</label>
+                  <p className="text-matrix-glow text-2xl font-bold">{user.points || 0}</p>
+                </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </div>
+          </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-purple-300 font-display">Unlocked Badges</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-3">
-            {badgeProgress.unlocked.length === 0 ? (
-              <div className="text-neutral-400">No badges unlocked yet.</div>
-            ) : (
-              badgeProgress.unlocked.map(b => (
-                <span key={b.id} className="inline-flex items-center px-3 py-2 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/30">
-                  {b.name}
-                </span>
-              ))
-            )}
-          </CardContent>
-        </Card>
-
-        <SubmissionsTable submissions={mySubs as any} title="Your Submissions" />
+          {/* Quick Actions */}
+          <div className="matrix-card hover-lift">
+            <div className="matrix-card-header">
+              <h2 className="text-xl font-display font-bold text-matrix flex items-center">
+                <Settings className="h-5 w-5 mr-2" />
+                Quick Actions
+              </h2>
+            </div>
+            <div className="matrix-card-content">
+              <div className="space-y-3">
+                <button 
+                  className="w-full matrix-button matrix-button-outline"
+                  onClick={() => router.push('/badges')}
+                >
+                  <Award className="h-4 w-4 mr-2" />
+                  View Badges
+                </button>
+                <button 
+                  className="w-full matrix-button matrix-button-outline"
+                  onClick={() => router.push('/challenges')}
+                >
+                  <Target className="h-4 w-4 mr-2" />
+                  View Challenges
+                </button>
+                <button 
+                  className="w-full matrix-button matrix-button-outline text-red-400 hover:text-red-300 hover:border-red-500/50"
+                  onClick={logout}
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <EditProfileModal open={editing} onClose={() => setEditing(false)} />
     </div>
   );
 }

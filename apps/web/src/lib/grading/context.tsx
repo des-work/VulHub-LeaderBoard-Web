@@ -81,10 +81,15 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const init = async () => {
       dispatch({ type: 'LOAD_START' });
       try {
-        const list = await GradingApi.listSubmissions();
+        // Try server with timeout
+        const list = await Promise.race([
+          GradingApi.listSubmissions(),
+          new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), 2000))
+        ]);
         persistServer(list);
         dispatch({ type: 'LOAD_SUCCESS', payload: list });
-      } catch {
+      } catch (error) {
+        console.warn('Server submissions load failed, using local storage:', error);
         const data = loadFromStorage();
         dispatch({ type: 'LOAD_SUCCESS', payload: data });
       }

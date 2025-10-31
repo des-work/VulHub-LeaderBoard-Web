@@ -16,7 +16,7 @@ COPY packages/schema/package.json ./packages/schema/
 COPY packages/utils/package.json ./packages/utils/
 COPY packages/config/package.json ./packages/config/
 
-# Install all dependencies
+# Install all dependencies (including dev dependencies for development)
 RUN pnpm install --frozen-lockfile
 
 # Copy source code
