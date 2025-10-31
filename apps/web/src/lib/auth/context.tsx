@@ -141,6 +141,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Start automatic refresh
         tokenManagerRef.current.start();
       }
+    } else {
+      // Stop token manager if user logs out
+      if (tokenManagerRef.current) {
+        tokenManagerRef.current.stop();
+        tokenManagerRef.current = null;
+      }
     }
 
     // Cleanup on unmount or when user logs out

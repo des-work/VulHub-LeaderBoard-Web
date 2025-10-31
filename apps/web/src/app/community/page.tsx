@@ -19,6 +19,8 @@ export default function CommunityPage() {
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<Array<{type: 'system' | 'user' | 'result', content: string | React.ReactNode}>>([]);
   const [isTyping, setIsTyping] = useState(true);
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [typedText, setTypedText] = useState('');
   const [currentView, setCurrentView] = useState<'welcome' | 'search' | 'category' | 'thread'>('welcome');
   const [selectedCategory, setSelectedCategory] = useState<CategoryInfo | null>(null);
   const [selectedVuln, setSelectedVuln] = useState<VulnerabilityInfo | null>(null);
@@ -34,47 +36,30 @@ export default function CommunityPage() {
 
 What knowledge do you seek?`;
 
-  // Typing animation effect
+  // Dramatic typing animation effect
   useEffect(() => {
-    if (currentView === 'welcome' && isTyping) {
-      const lines = welcomeMessage.split('\n');
-      let lineIndex = 0;
-      let charIndex = 0;
-
+    if (currentView === 'welcome' && isTyping && showWelcome) {
+      const fullText = welcomeMessage;
+      let currentIndex = 0;
+      
       const typeInterval = setInterval(() => {
-        if (lineIndex < lines.length) {
-          if (charIndex < lines[lineIndex].length) {
-            const currentHistory = history.slice();
-            const lastEntry = currentHistory[currentHistory.length - 1];
-            
-            if (!lastEntry || lastEntry.type !== 'system') {
-              currentHistory.push({ type: 'system', content: lines[lineIndex][charIndex] });
-            } else {
-              lastEntry.content = (lastEntry.content as string) + lines[lineIndex][charIndex];
-            }
-            
-            setHistory(currentHistory);
-            charIndex++;
-          } else {
-            // Move to next line
-            const currentHistory = history.slice();
-            const lastEntry = currentHistory[currentHistory.length - 1];
-            if (lastEntry) {
-              lastEntry.content = (lastEntry.content as string) + '\n';
-            }
-            setHistory(currentHistory);
-            lineIndex++;
-            charIndex = 0;
-          }
+        if (currentIndex < fullText.length) {
+          setTypedText(fullText.substring(0, currentIndex + 1));
+          currentIndex++;
         } else {
           clearInterval(typeInterval);
           setIsTyping(false);
+          // After typing completes, add to history and hide welcome screen
+          setTimeout(() => {
+            setHistory([{ type: 'system', content: fullText }]);
+            setShowWelcome(false);
+          }, 800);
         }
       }, 30);
 
       return () => clearInterval(typeInterval);
     }
-  }, [currentView]);
+  }, [currentView, isTyping, showWelcome, welcomeMessage]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -85,10 +70,23 @@ What knowledge do you seek?`;
 
   // Focus input on load
   useEffect(() => {
-    if (!isTyping) {
+    if (!isTyping && !showWelcome) {
       inputRef.current?.focus();
     }
-  }, [isTyping]);
+  }, [isTyping, showWelcome]);
+
+  // Handle keyboard to dismiss welcome screen
+  useEffect(() => {
+    if (!isTyping && showWelcome) {
+      const handleKeyPress = () => {
+        setHistory([{ type: 'system', content: welcomeMessage }]);
+        setShowWelcome(false);
+      };
+      
+      window.addEventListener('keydown', handleKeyPress);
+      return () => window.removeEventListener('keydown', handleKeyPress);
+    }
+  }, [isTyping, showWelcome, welcomeMessage]);
 
   const handleCommand = (cmd: string) => {
     const trimmedCmd = cmd.trim().toLowerCase();
@@ -116,14 +114,18 @@ What knowledge do you seek?`;
     if (trimmedCmd === 'clear') {
       setHistory([]);
       setCurrentView('welcome');
-      setIsTyping(false);
+      setIsTyping(true);
+      setShowWelcome(true);
+      setTypedText('');
       return;
     }
 
     if (trimmedCmd === 'back') {
       setHistory([]);
       setCurrentView('welcome');
-      setIsTyping(false);
+      setIsTyping(true);
+      setShowWelcome(true);
+      setTypedText('');
       setSelectedCategory(null);
       setSelectedVuln(null);
       return;
@@ -269,8 +271,53 @@ What knowledge do you seek?`;
       {/* Vignette */}
       <div className="fixed inset-0 vignette pointer-events-none" />
 
-      {/* Header */}
-      <div className="relative z-10 border-b border-matrix/30 bg-black/90 backdrop-blur-sm">
+      {/* Dramatic Welcome Screen Overlay */}
+      {showWelcome && (
+        <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
+          <div className="max-w-4xl w-full px-8">
+            <div className="text-center space-y-8">
+              {/* Animated border effect */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-matrix via-cyan-400 to-matrix opacity-20 blur-xl animate-pulse" />
+                
+                <div className="relative bg-black/90 border-2 border-matrix/50 rounded-lg p-12 shadow-2xl shadow-matrix/30">
+                  {/* Typing text with dramatic styling */}
+                  <pre className="text-matrix text-left whitespace-pre-wrap font-mono leading-relaxed">
+                    {typedText.split('\n').map((line, idx) => {
+                      // Make "What knowledge do you seek?" extra dramatic
+                      if (line.includes('What knowledge do you seek?')) {
+                        return (
+                          <div key={idx} className="mt-8 mb-4">
+                            <div className="text-4xl md:text-6xl font-bold text-center bg-gradient-to-r from-matrix via-cyan-400 to-matrix bg-clip-text text-transparent animate-pulse leading-tight py-4">
+                              {line}
+                            </div>
+                          </div>
+                        );
+                      }
+                      return <div key={idx} className={line.startsWith('>') ? 'text-cyan-400 text-lg' : 'text-matrix text-lg'}>{line || '\u00A0'}</div>;
+                    })}
+                  </pre>
+                  
+                  {/* Blinking cursor */}
+                  {isTyping && (
+                    <span className="inline-block w-3 h-6 bg-matrix animate-pulse ml-1" />
+                  )}
+                </div>
+              </div>
+              
+              {/* Subtle hint at bottom */}
+              {!isTyping && (
+                <div className="text-matrix/50 text-sm animate-pulse">
+                  Press any key to continue...
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Header - Hidden during welcome */}
+      <div className={`relative z-10 border-b border-matrix/30 bg-black/90 backdrop-blur-sm transition-opacity duration-500 ${showWelcome ? 'opacity-0' : 'opacity-100'}`}>
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -296,8 +343,8 @@ What knowledge do you seek?`;
         </div>
       </div>
 
-      {/* Terminal Window */}
-      <div className="relative z-10 container mx-auto px-4 py-6">
+      {/* Terminal Window - Hidden during welcome */}
+      <div className={`relative z-10 container mx-auto px-4 py-6 transition-opacity duration-500 ${showWelcome ? 'opacity-0' : 'opacity-100'}`}>
         <div className="matrix-card border-2 border-matrix/50 shadow-cyber-lg">
           {/* Terminal Header */}
           <div className="bg-neutral-900/90 border-b border-matrix/30 px-4 py-2 flex items-center justify-between">

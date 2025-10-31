@@ -1,1 +1,1 @@
-web: pnpm --filter @vulhub/web start
+web: cd apps/api && pnpm install && pnpm exec nest start
