@@ -1,348 +1,458 @@
 /**
  * VulHub Matrix/Cyberpunk Theme - Unified Design System
- * Single source of truth for all styling
+ * 
+ * This file imports the modular design system and defines
+ * component-level styles built on design tokens.
+ * 
+ * To customize aesthetics, edit files in /src/styles/:
+ * - design-tokens.css (colors, spacing, timing)
+ * - typography.css (fonts, sizes, text styles)
+ * - animations.css (motion, transitions)
+ * - effects.css (glows, shadows, filters)
  */
 
+/* Tailwind Base */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ============================================
-   COLOR SYSTEM - Matrix Green & Cyberpunk
-   ============================================ */
-:root {
-  /* Primary - Matrix Green (vibrant) */
-  --color-primary-50: 240 255 244;
-  --color-primary-100: 220 252 231;
-  --color-primary-200: 187 247 208;
-  --color-primary-300: 134 239 172;
-  --color-primary-400: 74 222 128;
-  --color-primary-500: 0 255 0;        /* Main Matrix Green */
-  --color-primary-600: 22 163 74;
-  --color-primary-700: 21 128 61;
-  --color-primary-800: 22 101 52;
-  --color-primary-900: 20 83 45;
-  --color-primary-950: 5 46 22;
-  
-  /* Secondary - Cyberpunk Accent Colors */
-  --color-secondary-500: 236 72 153;   /* Pink */
-  --color-accent-cyan: 0 255 255;      /* Cyan */
-  --color-accent-purple: 168 85 247;   /* Purple */
-  
-  /* Neutral - High Contrast Grayscale */
-  --color-neutral-50: 250 250 250;
-  --color-neutral-100: 240 240 240;
-  --color-neutral-200: 220 220 220;
-  --color-neutral-300: 200 200 200;
-  --color-neutral-400: 160 160 160;
-  --color-neutral-500: 120 120 120;
-  --color-neutral-600: 90 90 90;
-  --color-neutral-700: 70 70 70;
-  --color-neutral-800: 40 40 40;
-  --color-neutral-900: 20 20 20;
-  --color-neutral-950: 10 10 10;
-  
-  /* Semantic Colors */
-  --color-success: 0 255 0;
-  --color-warning: 255 255 0;
-  --color-error: 255 0 0;
-  --color-info: 0 128 255;
-  
-  /* Font System */
-  --font-mono: 'Courier New', 'Monaco', 'Consolas', monospace;
-  --font-display: 'Space Grotesk', 'Inter', sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-}
+/* Import Modular Design System */
+@import '../styles/design-tokens.css';
+@import '../styles/typography.css';
+@import '../styles/spacing.css';
+@import '../styles/animations.css';
+@import '../styles/effects.css';
+
 
 /* ============================================
-   BASE LAYER - Background & Body
+   BASE LAYER - Reset & Body
    ============================================ */
+
 body {
-  background-color: #000000;
-  color: rgb(var(--color-neutral-100));
-  font-family: var(--font-body);
-  line-height: 1.6;
+  background-color: rgb(var(--color-bg-primary));
+  color: rgb(var(--color-text-secondary));
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ============================================
-   SURFACE SYSTEM - Layered Backgrounds
-   ============================================ */
-[data-app-shell] .surface-0 {
-  background-color: rgba(15, 15, 15, 0.95);
-  box-shadow: none;
-}
-
-[data-app-shell] .surface-1 {
-  background-color: rgba(26, 26, 26, 0.98);
-  border: 1px solid rgba(var(--color-neutral-700), 0.4);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-[data-app-shell] .surface-2 {
-  background-color: rgba(30, 30, 30, 0.98);
-  border: 1px solid rgba(var(--color-neutral-600), 0.5);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-}
-
-[data-app-shell] .surface-3 {
-  background-color: rgba(35, 35, 35, 0.98);
-  border: 1px solid rgba(var(--color-neutral-500), 0.5);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
-}
-
-/* Row/List Item Surfaces */
-[data-app-shell] .row-surface {
-  background-color: rgba(25, 25, 25, 0.98);
-  border: 1px solid rgba(var(--color-neutral-600), 0.35);
-  transition: all 0.2s ease;
-}
-
-[data-app-shell] .row-surface:hover {
-  background-color: rgba(30, 30, 30, 0.98);
-  border-color: rgba(var(--color-primary-500), 0.3);
-  transform: translateY(-1px);
-}
-
-/* Header Surface */
-[data-app-shell] .header-surface {
-  background-color: rgba(0, 0, 0, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(var(--color-primary-500), 0.3);
-  box-shadow: 0 4px 24px rgba(0, 255, 0, 0.1);
-}
 
 /* ============================================
-   CARD SYSTEM - Depth & Elevation
+   LAYOUT SYSTEM - Layers & Surfaces
    ============================================ */
+
+/* Layer System for Z-Index Management */
+.layer-background {
+  z-index: var(--z-base);
+  position: relative;
+}
+
+.layer-content {
+  z-index: calc(var(--z-base) + 10);
+  position: relative;
+}
+
+.layer-header {
+  z-index: var(--z-sticky);
+  position: relative;
+}
+
+/* Header Surface - Sticky navigation */
+.header-surface {
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--color-bg-secondary)),
+    rgb(var(--color-bg-primary) / 0.95)
+  );
+  border-bottom: var(--border-width-thin) solid rgb(var(--color-matrix-500) / 0.2);
+  backdrop-filter: blur(var(--blur-lg));
+  box-shadow: var(--shadow-cyber-md);
+}
+
+/* Row/List Surface - For list items, table rows */
+.row-surface {
+  background-color: rgb(var(--color-bg-tertiary) / 0.5);
+  border: var(--border-width-thin) solid rgb(var(--color-neutral-700) / 0.3);
+  border-radius: var(--radius-md);
+  transition: background-color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.row-surface:hover {
+  background-color: rgb(var(--color-bg-tertiary) / 0.7);
+  border-color: rgb(var(--color-matrix-500) / 0.4);
+  box-shadow: var(--shadow-cyber-sm);
+}
+
+
+/* ============================================
+   CARD SYSTEM - Primary component structure
+   ============================================ */
+
 .matrix-card {
-  background-color: rgba(20, 20, 20, 0.95);
-  border: 1px solid rgba(var(--color-primary-500), 0.2);
-  border-radius: 0.75rem;
-  box-shadow: 
-    0 0 20px rgba(0, 255, 0, 0.1),
-    0 8px 32px rgba(0, 0, 0, 0.6);
-  transition: all 0.3s ease;
-}
-
-.matrix-card:hover {
-  border-color: rgba(var(--color-primary-500), 0.4);
-  box-shadow: 
-    0 0 30px rgba(0, 255, 0, 0.15),
-    0 12px 40px rgba(0, 0, 0, 0.7);
-  transform: translateY(-2px);
+  background: linear-gradient(
+    145deg,
+    rgb(var(--color-bg-tertiary) / 0.95),
+    rgb(var(--color-bg-secondary) / 0.9)
+  );
+  border: var(--border-width-thin) solid rgb(var(--color-matrix-500) / 0.2);
+  border-radius: var(--card-radius);
+  padding: var(--card-padding);
+  box-shadow: var(--shadow-cyber-md);
+  transition: transform var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out),
+              border-color var(--duration-normal) var(--ease-out);
 }
 
 .matrix-card-header {
-  border-bottom: 1px solid rgba(var(--color-neutral-700), 0.5);
-  padding: 1.5rem;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: var(--border-width-thin) solid rgb(var(--color-matrix-500) / 0.15);
 }
 
 .matrix-card-content {
-  padding: 1.5rem;
+  /* No additional styling needed, inherits from parent */
 }
+
+/* Card Hover Effect */
+.matrix-card.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-cyber-lg);
+  border-color: rgb(var(--color-matrix-500) / 0.4);
+}
+
 
 /* ============================================
-   TYPOGRAPHY - Text Colors & Styles
+   BUTTON SYSTEM - All button variations
    ============================================ */
-.text-matrix {
-  color: rgb(var(--color-primary-500));
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
-}
 
-.text-matrix-glow {
-  color: rgb(var(--color-primary-500));
-  text-shadow: 
-    0 0 10px rgba(0, 255, 0, 0.5),
-    0 0 20px rgba(0, 255, 0, 0.3),
-    0 0 30px rgba(0, 255, 0, 0.1);
-}
-
-.text-bright {
-  color: rgb(var(--color-neutral-100));
-}
-
-.text-muted {
-  color: rgb(var(--color-neutral-400));
-}
-
-.text-dim {
-  color: rgb(var(--color-neutral-500));
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-}
-
-/* ============================================
-   BUTTON SYSTEM - Interactive Elements
-   ============================================ */
 .matrix-button {
+  /* Base Button Styles */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.625rem 1.25rem;
-  border-radius: 0.5rem;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
+  height: var(--button-height-md);
+  padding-left: var(--button-padding-x);
+  padding-right: var(--button-padding-x);
+  padding-top: var(--button-padding-y);
+  padding-bottom: var(--button-padding-y);
+  
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  
+  background-color: rgb(var(--color-bg-tertiary));
+  color: rgb(var(--color-text-primary));
+  border: var(--border-width-normal) solid rgb(var(--color-matrix-500) / 0.3);
+  border-radius: var(--radius-md);
+  
   cursor: pointer;
-  border: 1px solid transparent;
+  transition: all var(--duration-normal) var(--ease-out);
+  
+  /* Remove default button styles */
+  appearance: none;
+  outline: none;
 }
 
+.matrix-button:hover {
+  background-color: rgb(var(--color-bg-tertiary) / 1.2);
+  border-color: rgb(var(--color-matrix-500) / 0.6);
+  box-shadow: var(--glow-sm);
+  transform: translateY(-1px);
+}
+
+.matrix-button:active {
+  transform: translateY(0);
+}
+
+.matrix-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary Button - Full matrix green */
 .matrix-button-primary {
-  background-color: rgb(var(--color-primary-500));
-  color: #000000;
-  border-color: rgb(var(--color-primary-500));
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+  background: linear-gradient(
+    135deg,
+    rgb(var(--color-matrix-600)),
+    rgb(var(--color-matrix-500))
+  );
+  color: rgb(0 0 0);
+  border-color: rgb(var(--color-matrix-400));
+  box-shadow: var(--glow-sm);
 }
 
 .matrix-button-primary:hover {
-  background-color: rgb(var(--color-primary-400));
-  box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
-  transform: translateY(-1px);
-}
-
-.matrix-button-outline {
-  background-color: transparent;
-  color: rgb(var(--color-neutral-300));
-  border-color: rgba(var(--color-neutral-600), 0.5);
-}
-
-.matrix-button-outline:hover {
-  background-color: rgba(var(--color-neutral-800), 0.5);
-  border-color: rgba(var(--color-primary-500), 0.5);
-  color: rgb(var(--color-primary-500));
-}
-
-/* ============================================
-   EFFECTS - Glows, Shadows, Animations
-   ============================================ */
-.matrix-glow {
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-}
-
-.matrix-glow-strong {
-  box-shadow: 
-    0 0 20px rgba(0, 255, 0, 0.5),
-    0 0 40px rgba(0, 255, 0, 0.3),
-    0 0 60px rgba(0, 255, 0, 0.1);
-}
-
-.hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.hover-lift:hover {
+  background: linear-gradient(
+    135deg,
+    rgb(var(--color-matrix-500)),
+    rgb(var(--color-matrix-400))
+  );
+  box-shadow: var(--glow-md);
   transform: translateY(-2px);
 }
 
-.hover-lift-subtle {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* Outline Button - Transparent with border */
+.matrix-button-outline {
+  background-color: transparent;
+  border-color: rgb(var(--color-matrix-500) / 0.5);
+  color: rgb(var(--color-matrix-400));
 }
 
-.hover-lift-subtle:hover {
-  transform: translateY(-1px);
+.matrix-button-outline:hover {
+  background-color: rgb(var(--color-matrix-500) / 0.1);
+  border-color: rgb(var(--color-matrix-500));
+  box-shadow: var(--glow-sm);
 }
 
-/* Pulse animation for live indicators */
-@keyframes matrix-pulse {
-  0%, 100% {
-    opacity: 1;
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-  }
-  50% {
-    opacity: 0.6;
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
-  }
+/* Ghost Button - Minimal styling */
+.matrix-button-ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: rgb(var(--color-text-secondary));
 }
 
-.matrix-pulse {
-  animation: matrix-pulse 2s ease-in-out infinite;
+.matrix-button-ghost:hover {
+  background-color: rgb(var(--color-bg-tertiary) / 0.5);
+  color: rgb(var(--color-matrix-400));
 }
+
+/* Danger/Delete Button */
+.matrix-button-danger {
+  background-color: rgb(var(--color-error) / 0.1);
+  border-color: rgb(var(--color-error) / 0.5);
+  color: rgb(var(--color-error));
+}
+
+.matrix-button-danger:hover {
+  background-color: rgb(var(--color-error) / 0.2);
+  border-color: rgb(var(--color-error));
+  box-shadow: 0 0 8px rgb(var(--color-error) / 0.3);
+}
+
 
 /* ============================================
-   Z-INDEX SYSTEM - Layering
+   INPUT SYSTEM - Forms & Text Fields
    ============================================ */
-.layer-background { z-index: 0; }
-.layer-content { z-index: 10; }
-.layer-card { z-index: 15; }
-.layer-header { z-index: 30; }
-.layer-modal { z-index: 50; }
-.layer-tooltip { z-index: 60; }
+
+.matrix-input,
+input[type="text"].matrix-input,
+input[type="email"].matrix-input,
+input[type="password"].matrix-input,
+input[type="search"].matrix-input,
+textarea.matrix-input,
+select.matrix-input {
+  width: 100%;
+  height: var(--input-height);
+  padding: var(--input-padding-y) var(--input-padding-x);
+  
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  color: rgb(var(--color-text-primary));
+  
+  background-color: rgb(var(--color-bg-secondary) / 0.5);
+  border: var(--input-border-width) solid rgb(var(--color-matrix-500) / 0.3);
+  border-radius: var(--input-radius);
+  
+  transition: border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out);
+  
+  outline: none;
+}
+
+.matrix-input:focus {
+  background-color: rgb(var(--color-bg-secondary));
+  border-color: rgb(var(--color-matrix-500));
+  box-shadow: 0 0 0 1px rgb(var(--color-matrix-500) / 0.3);
+}
+
+.matrix-input::placeholder {
+  color: rgb(var(--color-text-tertiary));
+}
+
+textarea.matrix-input {
+  height: auto;
+  min-height: 100px;
+  resize: vertical;
+}
+
 
 /* ============================================
-   SCROLLBAR - Styled
+   BADGE/TAG SYSTEM
    ============================================ */
+
+.matrix-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  
+  background-color: rgb(var(--color-matrix-500) / 0.1);
+  color: rgb(var(--color-matrix-400));
+  border: var(--border-width-thin) solid rgb(var(--color-matrix-500) / 0.3);
+  border-radius: var(--radius-full);
+}
+
+.matrix-badge-success {
+  background-color: rgb(var(--color-success) / 0.1);
+  color: rgb(var(--color-success));
+  border-color: rgb(var(--color-success) / 0.3);
+}
+
+.matrix-badge-warning {
+  background-color: rgb(var(--color-warning) / 0.1);
+  color: rgb(var(--color-warning));
+  border-color: rgb(var(--color-warning) / 0.3);
+}
+
+.matrix-badge-error {
+  background-color: rgb(var(--color-error) / 0.1);
+  color: rgb(var(--color-error));
+  border-color: rgb(var(--color-error) / 0.3);
+}
+
+
+/* ============================================
+   MODAL/OVERLAY SYSTEM
+   ============================================ */
+
+.matrix-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(var(--color-bg-overlay) / var(--modal-backdrop-opacity));
+  backdrop-filter: blur(var(--modal-backdrop-blur));
+  z-index: var(--z-modal-backdrop);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.matrix-modal {
+  width: 100%;
+  max-width: var(--modal-max-width);
+  max-height: 90vh;
+  overflow-y: auto;
+  
+  background: linear-gradient(
+    145deg,
+    rgb(var(--color-bg-tertiary)),
+    rgb(var(--color-bg-secondary))
+  );
+  border: var(--border-width-normal) solid rgb(var(--color-matrix-500) / 0.3);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl), var(--glow-lg);
+  
+  z-index: var(--z-modal);
+}
+
+
+/* ============================================
+   UTILITY CLASSES - Common patterns
+   ============================================ */
+
+/* Container Widths */
+.container-narrow {
+  max-width: var(--content-narrow);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container-normal {
+  max-width: var(--content-normal);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container-wide {
+  max-width: var(--content-wide);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Dividers */
+.matrix-divider {
+  height: var(--border-width-thin);
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgb(var(--color-matrix-500) / 0.3),
+    transparent
+  );
+  border: none;
+  margin: var(--space-8) 0;
+}
+
+/* Focus Ring */
+.focus-ring:focus {
+  outline: 2px solid rgb(var(--color-matrix-500));
+  outline-offset: 2px;
+}
+
+/* Scrollbar Styling (Webkit browsers) */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgb(var(--color-bg-secondary));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(var(--color-primary-500), 0.3);
-  border-radius: 4px;
+  background: rgb(var(--color-matrix-500) / 0.3);
+  border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(var(--color-primary-500), 0.5);
+  background: rgb(var(--color-matrix-500) / 0.5);
 }
+
 
 /* ============================================
-   UTILITY CLASSES
+   RESPONSIVE UTILITIES
    ============================================ */
-.backdrop-blur-strong {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
 
-.border-matrix {
-  border-color: rgba(var(--color-primary-500), 0.3);
-}
-
-.border-matrix-bright {
-  border-color: rgba(var(--color-primary-500), 0.6);
-}
-
-/* ============================================
-   RESPONSIVE ADJUSTMENTS
-   ============================================ */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .matrix-card {
-    border-radius: 0.5rem;
+    padding: var(--space-4);
   }
   
-  .matrix-card-header,
-  .matrix-card-content {
-    padding: 1rem;
+  .matrix-button {
+    height: var(--button-height-lg);
+    font-size: var(--font-size-base);
   }
 }
+
 
 /* ============================================
-   ACCESSIBILITY
+   PRINT STYLES
    ============================================ */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .matrix-card {
+    border: 1px solid black;
+    box-shadow: none;
+  }
+  
+  .matrix-button {
+    border: 1px solid black;
   }
 }
-
-/* Focus styles for keyboard navigation */
-*:focus-visible {
-  outline: 2px solid rgb(var(--color-primary-500));
-  outline-offset: 2px;
-}
-

@@ -1,318 +1,384 @@
-"use client";
+'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { ForumProvider, useForum } from '../../lib/forum/context';
-import { ForumSearchFilters, ChallengeTag } from '../../lib/forum/types';
-import { Plus, Tag, MessageCircle, ThumbsUp, ArrowBigUp, ArrowLeft, Search, Flame, Swords } from 'lucide-react';
-import { challengeCatalog } from '../../lib/challenges/catalog';
-
-const TagChip: React.FC<{ tag: ChallengeTag, onRemove?: () => void }> = ({ tag, onRemove }) => (
-  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-500/10 text-purple-300 border border-purple-500/30 mr-2 mb-2">
-    <Tag className="h-3 w-3 mr-1"/>{tag.label}
-    {onRemove && <button onClick={onRemove} className="ml-1 text-muted">✕</button>}
-  </span>
-);
-
-const ThreadCard: React.FC<{ id: string; title: string; body: string; tags: ChallengeTag[]; likes: number; upvotes: number; comments: number; onOpen: () => void; }>
-= ({ id, title, body, tags, likes, upvotes, comments, onOpen }) => (
-  <div key={id} className="matrix-card hover-lift cursor-pointer" onClick={onOpen}>
-    <div className="p-4">
-      <div className="flex items-start justify-between">
-        <div>
-          <h3 className="text-xl font-display text-matrix mb-1">{title}</h3>
-          <p className="text-muted text-sm line-clamp-2">{body}</p>
-          <div className="mt-2">{tags.map(t => <TagChip key={t.id} tag={t} />)}</div>
-        </div>
-        <div className="text-right text-sm text-muted min-w-[160px]">
-          <div className="flex items-center justify-end gap-3">
-            <span className="inline-flex items-center"><ArrowBigUp className="h-4 w-4 mr-1"/> {upvotes}</span>
-            <span className="inline-flex items-center"><ThumbsUp className="h-4 w-4 mr-1"/> {likes}</span>
-            <span className="inline-flex items-center"><MessageCircle className="h-4 w-4 mr-1"/> {comments}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const TopicList: React.FC<{ onOpen: (id: string) => void, onNew: () => void }> = ({ onOpen, onNew }) => {
-  const router = useRouter();
-  const { topics, search } = useForum();
-  const [filters, setFilters] = useState<ForumSearchFilters>({});
-  const [env, setEnv] = useState<string>('all');
-
-  const environments = useMemo(() => {
-    const tags = new Set<string>();
-    challengeCatalog.challenges.forEach(c => tags.add(c.vulhub.path));
-    return ['all', ...Array.from(tags).sort()];
-  }, []);
-
-  const list = useMemo(() => {
-    const tagIds = env === 'all' ? undefined : [env];
-    return search({ ...filters, tagIds });
-  }, [topics, filters, env, search]);
-
-  return (
-    <div className="grid lg:grid-cols-4 gap-6">
-      {/* Environments sidebar */}
-      <div className="lg:col-span-1 space-y-3">
-        <button 
-          onClick={() => router.push('/')}
-          className="matrix-button matrix-button-outline w-full mb-4"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Home
-        </button>
-
-        <div className="matrix-card">
-          <div className="matrix-card-header">
-            <h2 className="text-xl font-display font-bold text-matrix">Environments</h2>
-          </div>
-          <div className="matrix-card-content space-y-2 max-h-[60vh] overflow-y-auto">
-            {environments.map(e => (
-              <button 
-                key={e} 
-                className={`w-full text-left px-3 py-2 rounded border transition-colors ${env===e?'border-matrix bg-matrix/10 text-matrix':'border-neutral-700 hover:bg-neutral-800/50 text-bright'}`} 
-                onClick={() => setEnv(e)}
-              >
-                {e}
-              </button>
-            ))}
-          </div>
-        </div>
-        <button className="matrix-button matrix-button-primary w-full" onClick={onNew}>
-          <Plus className="h-4 w-4 mr-2"/> New Topic
-        </button>
-      </div>
-
-      {/* Threads */}
-      <div className="lg:col-span-3 space-y-4">
-        <div className="matrix-card">
-          <div className="matrix-card-header">
-            <h2 className="text-xl font-display font-bold text-matrix">Community Forum</h2>
-          </div>
-          <div className="matrix-card-content">
-            <div className="flex flex-col md:flex-row gap-3">
-              <input
-                placeholder="Search topics (text or tag)"
-                className="flex-1 bg-neutral-900/50 border border-matrix/30 rounded px-3 py-2 text-bright focus:border-matrix focus:ring-1 focus:ring-matrix"
-                value={filters.q ?? ''}
-                onChange={e => setFilters(f => ({ ...f, q: e.target.value }))}
-              />
-            </div>
-          </div>
-        </div>
-
-        {list.map(t => (
-          <ThreadCard
-            key={t.id}
-            id={t.id}
-            title={t.title}
-            body={t.content}
-            tags={t.tags}
-            likes={t.votes.likers.length}
-            upvotes={t.votes.upvoters.length}
-            comments={t.commentCount}
-            onOpen={() => onOpen(t.id)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const TopicView: React.FC<{ id: string, onBack: () => void }> = ({ id, onBack }) => {
-  const { topics, commentsByTopic, addComment, toggleLikeTopic, toggleUpvoteTopic, toggleLikeComment, toggleUpvoteComment } = useForum();
-  const topic = topics.find(t => t.id === id);
-  const comments = commentsByTopic(id);
-  const [commentText, setCommentText] = useState('');
-  const [tagInput, setTagInput] = useState('');
-  const [tags, setTags] = useState<ChallengeTag[]>([]);
-
-  if (!topic) return null;
-
-  const addTag = () => {
-    const v = tagInput.trim();
-    if (!v) return;
-    const tag: ChallengeTag = { id: v, label: v, url: `https://github.com/vulhub/vulhub/tree/master/${v}` };
-    setTags(prev => [...prev, tag]);
-    setTagInput('');
-  };
-
-  const submitComment = () => {
-    if (!commentText.trim()) return;
-    addComment(topic.id, commentText.trim(), tags);
-    setCommentText('');
-    setTags([]);
-  };
-
-  return (
-    <div className="space-y-4">
-      <button className="matrix-button matrix-button-outline" onClick={onBack}>
-        <ArrowLeft className="h-4 w-4 mr-2"/> Back
-      </button>
-
-      <div className="matrix-card">
-        <div className="p-5">
-          <h2 className="text-2xl font-display text-matrix-glow mb-2">{topic.title}</h2>
-          <p className="text-bright whitespace-pre-wrap">{topic.content}</p>
-          <div className="mt-3">
-            {topic.tags.map(tag => <TagChip key={tag.id} tag={tag} />)}
-          </div>
-          <div className="mt-4 flex items-center gap-3">
-            <button className="matrix-button matrix-button-primary" onClick={() => toggleUpvoteTopic(topic.id)}>
-              <ArrowBigUp className="h-4 w-4 mr-1"/> Upvote
-            </button>
-            <button className="matrix-button matrix-button-outline" onClick={() => toggleLikeTopic(topic.id)}>
-              <ThumbsUp className="h-4 w-4 mr-1"/> Like
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="matrix-card">
-        <div className="matrix-card-header">
-          <h2 className="text-xl font-display font-bold text-matrix">Comments ({comments.length})</h2>
-        </div>
-        <div className="matrix-card-content space-y-4">
-          {comments.map(c => (
-            <div key={c.id} className="border border-neutral-800 rounded p-3 row-surface">
-              <div className="text-sm text-muted mb-1">{c.author.name} • {new Date(c.createdAt).toLocaleString()}</div>
-              <div className="text-bright whitespace-pre-wrap">{c.content}</div>
-              <div className="mt-2">
-                {c.tags.map(tag => <TagChip key={tag.id} tag={tag} />)}
-              </div>
-              <div className="mt-2 flex items-center gap-2">
-                <button className="matrix-button matrix-button-outline text-sm" onClick={() => toggleUpvoteComment(c.id)}>
-                  <ArrowBigUp className="h-4 w-4 mr-1"/> {c.votes.upvoters.length}
-                </button>
-                <button className="matrix-button matrix-button-outline text-sm" onClick={() => toggleLikeComment(c.id)}>
-                  <ThumbsUp className="h-4 w-4 mr-1"/> {c.votes.likers.length}
-                </button>
-              </div>
-            </div>
-          ))}
-
-          {/* New Comment */}
-          <div className="border border-neutral-800 rounded p-3 row-surface">
-            <textarea
-              placeholder="Write a comment..."
-              value={commentText}
-              onChange={e => setCommentText(e.target.value)}
-              className="w-full bg-neutral-900/50 border border-matrix/30 rounded p-2 text-bright focus:border-matrix focus:ring-1 focus:ring-matrix"
-              rows={4}
-            />
-            <div className="mt-2 flex items-center gap-2">
-              <input
-                placeholder="Tag a Vulhub path (e.g., langflow/CVE-2025-3248)"
-                value={tagInput}
-                onChange={e => setTagInput(e.target.value)}
-                className="flex-1 bg-neutral-900/50 border border-matrix/30 rounded px-3 py-2 text-bright focus:border-matrix focus:ring-1 focus:ring-matrix"
-              />
-              <button className="matrix-button matrix-button-outline" onClick={addTag}>Add Tag</button>
-              <button className="matrix-button matrix-button-primary" onClick={submitComment}>Post Comment</button>
-            </div>
-            <div className="mt-2">
-              {tags.map((t, i) => <TagChip key={i} tag={t} onRemove={() => setTags(prev => prev.filter(x => x !== t))} />)}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const NewTopicModal: React.FC<{ onClose: () => void, onCreate: (title: string, content: string, tags: ChallengeTag[]) => void }> = ({ onClose, onCreate }) => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [tagInput, setTagInput] = useState('');
-  const [tags, setTags] = useState<ChallengeTag[]>([]);
-
-  const addTag = () => {
-    const v = tagInput.trim();
-    if (!v) return;
-    const tag: ChallengeTag = { id: v, label: v, url: `https://github.com/vulhub/vulhub/tree/master/${v}` };
-    setTags(prev => [...prev, tag]);
-    setTagInput('');
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center">
-      <div className="matrix-card w-full max-w-3xl mx-4">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-display text-matrix-glow">Create Topic</h3>
-            <button onClick={onClose} className="text-muted hover:text-bright">✕</button>
-          </div>
-          <div className="space-y-3">
-            <input
-              placeholder="Title"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              className="w-full bg-neutral-900/50 border border-matrix/30 rounded px-3 py-2 text-bright focus:border-matrix focus:ring-1 focus:ring-matrix"
-            />
-            <textarea
-              placeholder="Share your thoughts, steps, or questions..."
-              value={content}
-              onChange={e => setContent(e.target.value)}
-              className="w-full bg-neutral-900/50 border border-matrix/30 rounded p-2 text-bright focus:border-matrix focus:ring-1 focus:ring-matrix"
-              rows={6}
-            />
-            <div className="flex items-center gap-2">
-              <input
-                placeholder="Tag a Vulhub path (e.g., langflow/CVE-2025-3248)"
-                value={tagInput}
-                onChange={e => setTagInput(e.target.value)}
-                className="flex-1 bg-neutral-900/50 border border-matrix/30 rounded px-3 py-2 text-bright focus:border-matrix focus:ring-1 focus:ring-matrix"
-              />
-              <button className="matrix-button matrix-button-outline" onClick={addTag}>Add Tag</button>
-            </div>
-            <div>
-              {tags.map((t, i) => <TagChip key={i} tag={t} onRemove={() => setTags(prev => prev.filter(x => x !== t))} />)}
-            </div>
-            <div className="flex items-center justify-end gap-2">
-              <button className="matrix-button matrix-button-outline" onClick={onClose}>Cancel</button>
-              <button className="matrix-button matrix-button-primary" onClick={() => { onCreate(title.trim(), content.trim(), tags); onClose(); }}>Create Topic</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const CommunityShell: React.FC = () => {
-  const { createTopic } = useForum();
-  const [activeTopicId, setActiveTopicId] = useState<string | null>(null);
-  const [showNew, setShowNew] = useState(false);
-
-  const onCreate = (title: string, content: string, tags: ChallengeTag[]) => {
-    if (!title || !content) return;
-    const t = createTopic(title, content, tags);
-    setActiveTopicId(t.id);
-  };
-
-  return (
-    <>
-      {activeTopicId ? (
-        <TopicView id={activeTopicId} onBack={() => setActiveTopicId(null)} />
-      ) : (
-        <TopicList onOpen={setActiveTopicId} onNew={() => setShowNew(true)} />
-      )}
-      {showNew && <NewTopicModal onClose={() => setShowNew(false)} onCreate={onCreate} />}
-    </>
-  );
-};
+import { ArrowLeft, Terminal, Search, List, MessageSquare, Users } from 'lucide-react';
+import { 
+  VULHUB_CATEGORIES, 
+  VULHUB_VULNERABILITIES,
+  searchCategories,
+  searchVulnerabilities,
+  getCategoryById,
+  getVulnerabilitiesByCategory,
+  type CategoryInfo,
+  type VulnerabilityInfo
+} from '../../lib/vulhub/categories';
 
 export default function CommunityPage() {
+  const router = useRouter();
+  const [input, setInput] = useState('');
+  const [history, setHistory] = useState<Array<{type: 'system' | 'user' | 'result', content: string | React.ReactNode}>>([]);
+  const [isTyping, setIsTyping] = useState(true);
+  const [currentView, setCurrentView] = useState<'welcome' | 'search' | 'category' | 'thread'>('welcome');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryInfo | null>(null);
+  const [selectedVuln, setSelectedVuln] = useState<VulnerabilityInfo | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const historyRef = useRef<HTMLDivElement>(null);
+
+  const welcomeMessage = `Welcome to VulHub Community Terminal
+
+> Initializing knowledge base...
+> Loading ${VULHUB_VULNERABILITIES.length} vulnerabilities...
+> ${VULHUB_CATEGORIES.length} categories indexed
+> System ready.
+
+What knowledge do you seek?`;
+
+  // Typing animation effect
+  useEffect(() => {
+    if (currentView === 'welcome' && isTyping) {
+      const lines = welcomeMessage.split('\n');
+      let lineIndex = 0;
+      let charIndex = 0;
+
+      const typeInterval = setInterval(() => {
+        if (lineIndex < lines.length) {
+          if (charIndex < lines[lineIndex].length) {
+            const currentHistory = history.slice();
+            const lastEntry = currentHistory[currentHistory.length - 1];
+            
+            if (!lastEntry || lastEntry.type !== 'system') {
+              currentHistory.push({ type: 'system', content: lines[lineIndex][charIndex] });
+            } else {
+              lastEntry.content = (lastEntry.content as string) + lines[lineIndex][charIndex];
+            }
+            
+            setHistory(currentHistory);
+            charIndex++;
+          } else {
+            // Move to next line
+            const currentHistory = history.slice();
+            const lastEntry = currentHistory[currentHistory.length - 1];
+            if (lastEntry) {
+              lastEntry.content = (lastEntry.content as string) + '\n';
+            }
+            setHistory(currentHistory);
+            lineIndex++;
+            charIndex = 0;
+          }
+        } else {
+          clearInterval(typeInterval);
+          setIsTyping(false);
+        }
+      }, 30);
+
+      return () => clearInterval(typeInterval);
+    }
+  }, [currentView]);
+
+  // Auto-scroll to bottom
+  useEffect(() => {
+    if (historyRef.current) {
+      historyRef.current.scrollTop = historyRef.current.scrollHeight;
+    }
+  }, [history]);
+
+  // Focus input on load
+  useEffect(() => {
+    if (!isTyping) {
+      inputRef.current?.focus();
+    }
+  }, [isTyping]);
+
+  const handleCommand = (cmd: string) => {
+    const trimmedCmd = cmd.trim().toLowerCase();
+    
+    // Add user input to history
+    setHistory(prev => [...prev, { type: 'user', content: `$ ${cmd}` }]);
+    
+    if (!trimmedCmd) return;
+
+    // Special commands
+    if (trimmedCmd === 'help') {
+      setHistory(prev => [...prev, {
+        type: 'system',
+        content: `Available Commands:
+• list categories - Show all vulnerability categories
+• search <query> - Search for vulnerabilities or categories
+• Enter category name to view vulnerabilities
+• Enter vulnerability name to open discussion thread
+• clear - Clear terminal
+• back - Return to welcome screen`
+      }]);
+      return;
+    }
+
+    if (trimmedCmd === 'clear') {
+      setHistory([]);
+      setCurrentView('welcome');
+      setIsTyping(false);
+      return;
+    }
+
+    if (trimmedCmd === 'back') {
+      setHistory([]);
+      setCurrentView('welcome');
+      setIsTyping(false);
+      setSelectedCategory(null);
+      setSelectedVuln(null);
+      return;
+    }
+
+    if (trimmedCmd === 'list categories' || trimmedCmd === 'categories') {
+      setHistory(prev => [...prev, {
+        type: 'result',
+        content: (
+          <div className="space-y-2 my-4">
+            <div className="text-matrix-glow font-bold">╔═══ Available Categories ═══╗</div>
+            {VULHUB_CATEGORIES.map(cat => (
+              <div key={cat.id} className="text-bright hover:text-matrix cursor-pointer pl-2 hover:pl-4 transition-all"
+                onClick={() => {
+                  setInput(cat.name);
+                  handleCommand(cat.name);
+                }}
+              >
+                {cat.icon} [{cat.count}] {cat.name} - {cat.description}
+              </div>
+            ))}
+            <div className="text-matrix-glow font-bold">╚════════════════════════════╝</div>
+          </div>
+        )
+      }]);
+      return;
+    }
+
+    // Search for categories or vulnerabilities
+    const categoryMatch = VULHUB_CATEGORIES.find(cat => 
+      cat.name.toLowerCase() === trimmedCmd || 
+      cat.id === trimmedCmd
+    );
+
+    if (categoryMatch) {
+      const vulns = getVulnerabilitiesByCategory(categoryMatch.id);
+      setSelectedCategory(categoryMatch);
+      setHistory(prev => [...prev, {
+        type: 'result',
+        content: (
+          <div className="space-y-3 my-4">
+            <div className="text-matrix-glow font-bold text-xl">
+              ╔═══ {categoryMatch.icon} {categoryMatch.name} ═══╗
+            </div>
+            <div className="text-muted pl-2">{categoryMatch.description}</div>
+            <div className="text-cyan-400 pl-2">Found {vulns.length} vulnerabilities:</div>
+            <div className="space-y-2 pl-2">
+              {vulns.map(vuln => (
+                <div key={vuln.id} className="border-l-2 border-matrix/30 pl-3 hover:border-matrix hover:pl-4 transition-all cursor-pointer"
+                  onClick={() => handleVulnSelect(vuln)}
+                >
+                  <div className="text-bright font-semibold">{vuln.name}</div>
+                  {vuln.cve && <div className="text-yellow-400 text-sm">{vuln.cve}</div>}
+                  <div className="text-muted text-sm">{vuln.description}</div>
+                  <div className="text-xs text-dim mt-1">
+                    {vuln.tags.map(tag => `#${tag}`).join(' ')}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="text-matrix-glow font-bold">╚════════════════════════════╝</div>
+          </div>
+        )
+      }]);
+      return;
+    }
+
+    // Search vulnerabilities
+    const vulnResults = searchVulnerabilities(trimmedCmd);
+    const catResults = searchCategories(trimmedCmd);
+
+    if (vulnResults.length > 0 || catResults.length > 0) {
+      setHistory(prev => [...prev, {
+        type: 'result',
+        content: (
+          <div className="space-y-3 my-4">
+            <div className="text-matrix-glow font-bold">╔═══ Search Results ═══╗</div>
+            
+            {catResults.length > 0 && (
+              <div>
+                <div className="text-cyan-400 font-semibold pl-2">Categories ({catResults.length}):</div>
+                {catResults.map(cat => (
+                  <div key={cat.id} className="text-bright hover:text-matrix cursor-pointer pl-4 hover:pl-6 transition-all"
+                    onClick={() => handleCommand(cat.name)}
+                  >
+                    {cat.icon} {cat.name} ({cat.count} vulns)
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {vulnResults.length > 0 && (
+              <div>
+                <div className="text-cyan-400 font-semibold pl-2">Vulnerabilities ({vulnResults.length}):</div>
+                {vulnResults.map(vuln => (
+                  <div key={vuln.id} className="border-l-2 border-matrix/30 pl-3 hover:border-matrix hover:pl-4 transition-all cursor-pointer my-2"
+                    onClick={() => handleVulnSelect(vuln)}
+                  >
+                    <div className="text-bright font-semibold">{vuln.name}</div>
+                    {vuln.cve && <div className="text-yellow-400 text-sm">{vuln.cve}</div>}
+                    <div className="text-muted text-sm">{vuln.description}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div className="text-matrix-glow font-bold">╚══════════════════════════╝</div>
+          </div>
+        )
+      }]);
+    } else {
+      setHistory(prev => [...prev, {
+        type: 'system',
+        content: `No results found for "${cmd}". Try:
+• "list categories" to see all categories
+• "help" for available commands`
+      }]);
+    }
+  };
+
+  const handleVulnSelect = (vuln: VulnerabilityInfo) => {
+    setSelectedVuln(vuln);
+    setCurrentView('thread');
+    router.push(`/community/thread/${vuln.id}`);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim() && !isTyping) {
+      handleCommand(input);
+      setInput('');
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-black">
-      <ForumProvider>
-        <div className="container mx-auto px-4 py-10 text-neutral-100">
-          <CommunityShell />
+    <div className="min-h-screen bg-black text-matrix font-mono relative overflow-hidden">
+      {/* Scan line effect */}
+      <div className="fixed inset-0 pointer-events-none scan-lines opacity-10" />
+      
+      {/* Matrix grid background */}
+      <div className="fixed inset-0 matrix-grid opacity-5 pointer-events-none" />
+      
+      {/* Vignette */}
+      <div className="fixed inset-0 vignette pointer-events-none" />
+
+      {/* Header */}
+      <div className="relative z-10 border-b border-matrix/30 bg-black/90 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => router.push('/')}
+                className="matrix-button matrix-button-outline"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Exit Terminal
+              </button>
+              
+              <div className="flex items-center gap-2">
+                <Terminal className="h-5 w-5 text-matrix animate-pulse" />
+                <span className="text-lg font-bold text-matrix-glow">VulHub Community Terminal</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2 text-sm text-matrix">
+              <Users className="h-4 w-4" />
+              <span>Online: {Math.floor(Math.random() * 50) + 10}</span>
+            </div>
+          </div>
         </div>
-      </ForumProvider>
+      </div>
+
+      {/* Terminal Window */}
+      <div className="relative z-10 container mx-auto px-4 py-6">
+        <div className="matrix-card border-2 border-matrix/50 shadow-cyber-lg">
+          {/* Terminal Header */}
+          <div className="bg-neutral-900/90 border-b border-matrix/30 px-4 py-2 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-500" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500" />
+              <div className="w-3 h-3 rounded-full bg-matrix" />
+              <span className="ml-4 text-sm text-muted">user@vulhub:~$</span>
+            </div>
+            <div className="text-xs text-dim">Press 'help' for commands</div>
+          </div>
+
+          {/* Terminal Content */}
+          <div 
+            ref={historyRef}
+            className="bg-black p-6 h-[calc(100vh-280px)] overflow-y-auto scroll-smooth"
+            style={{ scrollBehavior: 'smooth' }}
+          >
+            {/* Command History */}
+            <div className="space-y-2">
+              {history.map((entry, index) => (
+                <div key={index} className={`
+                  ${entry.type === 'system' ? 'text-matrix whitespace-pre-wrap' : ''}
+                  ${entry.type === 'user' ? 'text-cyan-400 font-bold' : ''}
+                  ${entry.type === 'result' ? '' : ''}
+                `}>
+                  {entry.content}
+                </div>
+              ))}
+              
+              {/* Blinking cursor during typing */}
+              {isTyping && <span className="inline-block w-2 h-4 bg-matrix animate-pulse ml-1" />}
+            </div>
+          </div>
+
+          {/* Input Area */}
+          <div className="bg-neutral-900/90 border-t border-matrix/30 px-4 py-3">
+            <form onSubmit={handleSubmit} className="flex items-center gap-2">
+              <span className="text-matrix font-bold">$</span>
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                disabled={isTyping}
+                className="flex-1 bg-transparent text-matrix outline-none font-mono placeholder-matrix/30 disabled:opacity-50"
+                placeholder={isTyping ? "System initializing..." : "Enter command or search query..."}
+                autoComplete="off"
+                spellCheck="false"
+              />
+              {!isTyping && <span className="w-2 h-4 bg-matrix animate-pulse" />}
+            </form>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        {!isTyping && history.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              onClick={() => handleCommand('list categories')}
+              className="matrix-button matrix-button-outline text-sm"
+            >
+              <List className="h-3 w-3 mr-2" />
+              List Categories
+            </button>
+            <button
+              onClick={() => handleCommand('help')}
+              className="matrix-button matrix-button-outline text-sm"
+            >
+              <Terminal className="h-3 w-3 mr-2" />
+              Help
+            </button>
+            <button
+              onClick={() => handleCommand('clear')}
+              className="matrix-button matrix-button-outline text-sm"
+            >
+              Clear
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

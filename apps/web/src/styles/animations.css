@@ -1,0 +1,528 @@
+/**
+ * ANIMATION SYSTEM
+ * 
+ * Reusable animations, transitions, and motion effects.
+ * Built on timing design tokens for consistency.
+ * 
+ * Categories:
+ * 1. Keyframe Animations
+ * 2. Transition Utilities
+ * 3. Transform Utilities
+ * 4. Matrix/Cyber-specific Animations
+ */
+
+@import './design-tokens.css';
+
+
+/* ============================================
+   1. KEYFRAME ANIMATIONS
+   ============================================ */
+
+/* Fade In */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Fade Out */
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Slide In From Top */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide In From Bottom */
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide In From Left */
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide In From Right */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale In (Zoom In) */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Scale Out (Zoom Out) */
+@keyframes scaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Bounce */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Pulse (Scale) */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* Spin */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Shake */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+
+/* ============================================
+   2. MATRIX/CYBER-SPECIFIC ANIMATIONS
+   ============================================ */
+
+/* Matrix Glow Pulse */
+@keyframes matrixPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgb(var(--color-matrix-500) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgb(var(--color-matrix-500) / 0.6);
+  }
+}
+
+/* Matrix Text Glow Pulse */
+@keyframes matrixTextPulse {
+  0%, 100% {
+    text-shadow: 0 0 8px rgb(var(--color-matrix-500) / 0.4);
+  }
+  50% {
+    text-shadow: 0 0 16px rgb(var(--color-matrix-500) / 0.8);
+  }
+}
+
+/* Scan Line Effect */
+@keyframes scanLine {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* Flicker (Digital glitch) */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+  75% { opacity: 1; }
+  85% { opacity: 0.9; }
+}
+
+/* Glitch Effect */
+@keyframes glitch {
+  0%, 100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+}
+
+/* Matrix Rain (for background effects) */
+@keyframes matrixRain {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* Neon Flicker */
+@keyframes neonFlicker {
+  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 12px rgb(var(--color-matrix-500) / 0.8);
+  }
+  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    opacity: 0.6;
+    text-shadow: 0 0 4px rgb(var(--color-matrix-500) / 0.4);
+  }
+}
+
+/* Cyber Scan */
+@keyframes cyberScan {
+  0% {
+    border-color: rgb(var(--color-matrix-500) / 0);
+    box-shadow: 0 0 0 rgb(var(--color-matrix-500) / 0);
+  }
+  50% {
+    border-color: rgb(var(--color-matrix-500) / 1);
+    box-shadow: 0 0 20px rgb(var(--color-matrix-500) / 0.6);
+  }
+  100% {
+    border-color: rgb(var(--color-matrix-500) / 0);
+    box-shadow: 0 0 0 rgb(var(--color-matrix-500) / 0);
+  }
+}
+
+
+/* ============================================
+   3. ANIMATION UTILITY CLASSES
+   ============================================ */
+
+/* Fade Animations */
+.animate-fade-in {
+  animation: fadeIn var(--duration-normal) var(--ease-out);
+}
+
+.animate-fade-out {
+  animation: fadeOut var(--duration-normal) var(--ease-in);
+}
+
+/* Slide Animations */
+.animate-slide-in-top {
+  animation: slideInFromTop var(--duration-normal) var(--ease-out);
+}
+
+.animate-slide-in-bottom {
+  animation: slideInFromBottom var(--duration-normal) var(--ease-out);
+}
+
+.animate-slide-in-left {
+  animation: slideInFromLeft var(--duration-normal) var(--ease-out);
+}
+
+.animate-slide-in-right {
+  animation: slideInFromRight var(--duration-normal) var(--ease-out);
+}
+
+/* Scale Animations */
+.animate-scale-in {
+  animation: scaleIn var(--duration-normal) var(--ease-out);
+}
+
+.animate-scale-out {
+  animation: scaleOut var(--duration-normal) var(--ease-in);
+}
+
+/* Motion Animations */
+.animate-bounce {
+  animation: bounce var(--duration-slower) var(--ease-in-out) infinite;
+}
+
+.animate-pulse {
+  animation: pulse var(--duration-pulse) var(--ease-in-out) infinite;
+}
+
+.animate-spin {
+  animation: spin var(--duration-slower) var(--ease-linear) infinite;
+}
+
+.animate-shake {
+  animation: shake var(--duration-slow) var(--ease-in-out);
+}
+
+/* Matrix/Cyber Animations */
+.animate-matrix-pulse {
+  animation: matrixPulse var(--duration-pulse) var(--ease-in-out) infinite;
+}
+
+.animate-matrix-text-pulse {
+  animation: matrixTextPulse var(--duration-pulse) var(--ease-in-out) infinite;
+}
+
+.animate-scan-line {
+  animation: scanLine var(--duration-scan) var(--ease-linear) infinite;
+}
+
+.animate-flicker {
+  animation: flicker var(--duration-normal) var(--ease-in-out) infinite;
+}
+
+.animate-glitch {
+  animation: glitch var(--duration-fast) var(--ease-cyber) infinite;
+}
+
+.animate-neon-flicker {
+  animation: neonFlicker var(--duration-scan) var(--ease-linear) infinite;
+}
+
+.animate-cyber-scan {
+  animation: cyberScan var(--duration-scan) var(--ease-cyber) infinite;
+}
+
+
+/* ============================================
+   4. TRANSITION UTILITIES
+   ============================================ */
+
+/* Base Transitions */
+.transition-none {
+  transition: none;
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: var(--ease-in-out);
+  transition-duration: var(--duration-normal);
+}
+
+.transition-colors {
+  transition-property: color, background-color, border-color, fill, stroke;
+  transition-timing-function: var(--ease-in-out);
+  transition-duration: var(--duration-normal);
+}
+
+.transition-opacity {
+  transition-property: opacity;
+  transition-timing-function: var(--ease-in-out);
+  transition-duration: var(--duration-normal);
+}
+
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: var(--ease-in-out);
+  transition-duration: var(--duration-normal);
+}
+
+.transition-shadow {
+  transition-property: box-shadow;
+  transition-timing-function: var(--ease-in-out);
+  transition-duration: var(--duration-normal);
+}
+
+/* Duration Modifiers */
+.duration-fast {
+  transition-duration: var(--duration-fast);
+}
+
+.duration-normal {
+  transition-duration: var(--duration-normal);
+}
+
+.duration-slow {
+  transition-duration: var(--duration-slow);
+}
+
+.duration-slower {
+  transition-duration: var(--duration-slower);
+}
+
+/* Easing Modifiers */
+.ease-linear {
+  transition-timing-function: var(--ease-linear);
+}
+
+.ease-in {
+  transition-timing-function: var(--ease-in);
+}
+
+.ease-out {
+  transition-timing-function: var(--ease-out);
+}
+
+.ease-in-out {
+  transition-timing-function: var(--ease-in-out);
+}
+
+.ease-cyber {
+  transition-timing-function: var(--ease-cyber);
+}
+
+/* Delay Modifiers */
+.delay-0 {
+  transition-delay: var(--delay-0);
+}
+
+.delay-50 {
+  transition-delay: var(--delay-50);
+}
+
+.delay-100 {
+  transition-delay: var(--delay-100);
+}
+
+.delay-150 {
+  transition-delay: var(--delay-150);
+}
+
+.delay-200 {
+  transition-delay: var(--delay-200);
+}
+
+
+/* ============================================
+   5. TRANSFORM UTILITIES
+   ============================================ */
+
+/* Scale */
+.scale-90 { transform: scale(0.9); }
+.scale-95 { transform: scale(0.95); }
+.scale-100 { transform: scale(1); }
+.scale-105 { transform: scale(1.05); }
+.scale-110 { transform: scale(1.1); }
+
+/* Rotate */
+.rotate-0 { transform: rotate(0deg); }
+.rotate-45 { transform: rotate(45deg); }
+.rotate-90 { transform: rotate(90deg); }
+.rotate-180 { transform: rotate(180deg); }
+.-rotate-45 { transform: rotate(-45deg); }
+.-rotate-90 { transform: rotate(-90deg); }
+
+/* Translate */
+.translate-x-0 { transform: translateX(0); }
+.translate-y-0 { transform: translateY(0); }
+
+
+/* ============================================
+   6. HOVER/INTERACTION ANIMATIONS
+   ============================================ */
+
+/* Lift on Hover */
+.hover-lift {
+  transition: transform var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-cyber-lg);
+}
+
+/* Subtle Lift */
+.hover-lift-subtle {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.hover-lift-subtle:hover {
+  transform: translateY(-2px);
+}
+
+/* Glow on Hover */
+.hover-glow {
+  transition: box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.hover-glow:hover {
+  box-shadow: var(--glow-lg);
+}
+
+/* Scale on Hover */
+.hover-scale {
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Brighten on Hover */
+.hover-brighten {
+  transition: filter var(--duration-normal) var(--ease-out);
+}
+
+.hover-brighten:hover {
+  filter: brightness(1.2);
+}
+
+
+/* ============================================
+   7. REDUCED MOTION OVERRIDES
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

@@ -1,0 +1,307 @@
+/**
+ * TYPOGRAPHY SYSTEM
+ * 
+ * Modular typography utilities built on design tokens.
+ * Each class is composable and can be mixed/matched.
+ * 
+ * Usage:
+ *   <h1 class="text-display text-4xl font-bold text-matrix-glow tracking-wide">Title</h1>
+ */
+
+@import './design-tokens.css';
+
+
+/* ============================================
+   FONT FAMILY UTILITIES
+   ============================================ */
+
+.font-display {
+  font-family: var(--font-family-display);
+}
+
+.font-body {
+  font-family: var(--font-family-body);
+}
+
+.font-mono {
+  font-family: var(--font-family-mono);
+}
+
+.font-accent {
+  font-family: var(--font-family-accent);
+}
+
+
+/* ============================================
+   FONT SIZE UTILITIES (Fluid, responsive)
+   ============================================ */
+
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+.text-3xl { font-size: var(--font-size-3xl); }
+.text-4xl { font-size: var(--font-size-4xl); }
+.text-5xl { font-size: var(--font-size-5xl); }
+
+
+/* ============================================
+   FONT WEIGHT UTILITIES
+   ============================================ */
+
+.font-thin { font-weight: var(--font-weight-thin); }
+.font-light { font-weight: var(--font-weight-light); }
+.font-normal { font-weight: var(--font-weight-normal); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+.font-black { font-weight: var(--font-weight-black); }
+
+
+/* ============================================
+   LINE HEIGHT UTILITIES
+   ============================================ */
+
+.leading-tight { line-height: var(--line-height-tight); }
+.leading-snug { line-height: var(--line-height-snug); }
+.leading-normal { line-height: var(--line-height-normal); }
+.leading-relaxed { line-height: var(--line-height-relaxed); }
+.leading-loose { line-height: var(--line-height-loose); }
+
+
+/* ============================================
+   LETTER SPACING UTILITIES
+   ============================================ */
+
+.tracking-tighter { letter-spacing: var(--letter-spacing-tighter); }
+.tracking-tight { letter-spacing: var(--letter-spacing-tight); }
+.tracking-normal { letter-spacing: var(--letter-spacing-normal); }
+.tracking-wide { letter-spacing: var(--letter-spacing-wide); }
+.tracking-wider { letter-spacing: var(--letter-spacing-wider); }
+.tracking-widest { letter-spacing: var(--letter-spacing-widest); }
+
+
+/* ============================================
+   TEXT COLOR UTILITIES (Using design tokens)
+   ============================================ */
+
+/* Matrix Colors */
+.text-matrix { color: rgb(var(--color-matrix-500)); }
+.text-matrix-bright { color: rgb(var(--color-matrix-400)); }
+.text-matrix-dim { color: rgb(var(--color-matrix-700)); }
+
+/* Cyber/Accent Colors */
+.text-cyber { color: rgb(var(--color-cyber-500)); }
+.text-cyber-bright { color: rgb(var(--color-cyber-400)); }
+
+/* Semantic Text Colors */
+.text-bright { color: rgb(var(--color-text-primary)); }
+.text-normal { color: rgb(var(--color-text-secondary)); }
+.text-muted { color: rgb(var(--color-text-tertiary)); }
+.text-dim { color: rgb(var(--color-text-disabled)); }
+
+/* Status Colors */
+.text-success { color: rgb(var(--color-success)); }
+.text-warning { color: rgb(var(--color-warning)); }
+.text-error { color: rgb(var(--color-error)); }
+.text-info { color: rgb(var(--color-info)); }
+
+
+/* ============================================
+   TEXT GLOW EFFECTS
+   ============================================ */
+
+.text-glow-sm {
+  text-shadow: var(--text-glow-sm);
+}
+
+.text-glow-md,
+.text-matrix-glow {
+  color: rgb(var(--color-matrix-500));
+  text-shadow: var(--text-glow-md);
+}
+
+.text-glow-lg {
+  text-shadow: var(--text-glow-lg);
+}
+
+.text-cyber-glow {
+  color: rgb(var(--color-cyber-500));
+  text-shadow: 0 0 12px rgb(var(--color-cyber-500) / 0.6);
+}
+
+
+/* ============================================
+   PRESET TEXT STYLES (Composable components)
+   ============================================ */
+
+/* Hero Text - Large, bold, glowing */
+.text-hero {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-5xl);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: rgb(var(--color-matrix-500));
+  text-shadow: var(--text-glow-lg);
+}
+
+/* Heading - Display font, medium-large */
+.text-heading {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+  color: rgb(var(--color-matrix-500));
+}
+
+/* Subheading - Display font, smaller */
+.text-subheading {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-snug);
+  letter-spacing: var(--letter-spacing-wide);
+  color: rgb(var(--color-text-primary));
+}
+
+/* Body Text - Readable, standard */
+.text-body {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-relaxed);
+  letter-spacing: var(--letter-spacing-normal);
+  color: rgb(var(--color-text-secondary));
+}
+
+/* Caption/Small Text */
+.text-caption {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  color: rgb(var(--color-text-tertiary));
+}
+
+/* Code/Mono Text */
+.text-code {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  color: rgb(var(--color-matrix-400));
+}
+
+/* Label Text - Uppercase, wide tracking */
+.text-label {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-widest);
+  text-transform: uppercase;
+  color: rgb(var(--color-text-tertiary));
+}
+
+/* Cyber Text - Accent font, glowing */
+.text-cyber-accent {
+  font-family: var(--font-family-accent);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wider);
+  color: rgb(var(--color-cyber-500));
+  text-shadow: 0 0 12px rgb(var(--color-cyber-500) / 0.6);
+}
+
+
+/* ============================================
+   TEXT UTILITIES
+   ============================================ */
+
+/* Text Alignment */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+
+/* Text Transform */
+.uppercase { text-transform: uppercase; }
+.lowercase { text-transform: lowercase; }
+.capitalize { text-transform: capitalize; }
+.normal-case { text-transform: none; }
+
+/* Text Decoration */
+.underline { text-decoration: underline; }
+.line-through { text-decoration: line-through; }
+.no-underline { text-decoration: none; }
+
+/* Text Overflow */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+/* Whitespace */
+.whitespace-normal { white-space: normal; }
+.whitespace-nowrap { white-space: nowrap; }
+.whitespace-pre { white-space: pre; }
+.whitespace-pre-line { white-space: pre-line; }
+.whitespace-pre-wrap { white-space: pre-wrap; }
+
+/* Word Break */
+.break-normal { word-break: normal; overflow-wrap: normal; }
+.break-words { overflow-wrap: break-word; }
+.break-all { word-break: break-all; }
+
+
+/* ============================================
+   RESPONSIVE TYPOGRAPHY
+   ============================================ */
+
+@media (max-width: 640px) {
+  /* Mobile: Slightly smaller text for readability */
+  .text-hero {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .text-heading {
+    font-size: var(--font-size-xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Desktop: Maximize impact on large screens */
+  .text-hero {
+    font-size: var(--font-size-5xl);
+  }
+}
+

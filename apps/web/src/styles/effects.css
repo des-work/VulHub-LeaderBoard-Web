@@ -1,0 +1,375 @@
+/**
+ * VISUAL EFFECTS SYSTEM
+ * 
+ * Modular system for glows, shadows, gradients, and other visual effects.
+ * All effects use design tokens for consistency.
+ */
+
+@import './design-tokens.css';
+
+
+/* ============================================
+   1. GLOW EFFECTS
+   ============================================ */
+
+/* Box Glow (Border/Container glow) */
+.glow-sm {
+  box-shadow: var(--glow-sm);
+}
+
+.glow-md {
+  box-shadow: var(--glow-md);
+}
+
+.glow-lg {
+  box-shadow: var(--glow-lg);
+}
+
+.glow-xl {
+  box-shadow: var(--glow-xl);
+}
+
+.glow-2xl {
+  box-shadow: var(--glow-2xl);
+}
+
+/* Matrix Glow (Green) */
+.matrix-glow {
+  box-shadow: 
+    0 0 10px rgb(var(--color-matrix-500) / 0.3),
+    0 0 20px rgb(var(--color-matrix-500) / 0.2),
+    0 0 30px rgb(var(--color-matrix-500) / 0.1);
+}
+
+.matrix-glow-strong {
+  box-shadow: 
+    0 0 15px rgb(var(--color-matrix-500) / 0.5),
+    0 0 30px rgb(var(--color-matrix-500) / 0.3),
+    0 0 45px rgb(var(--color-matrix-500) / 0.2);
+}
+
+/* Cyber Glow (Cyan) */
+.cyber-glow {
+  box-shadow: 
+    0 0 10px rgb(var(--color-cyber-500) / 0.3),
+    0 0 20px rgb(var(--color-cyber-500) / 0.2),
+    0 0 30px rgb(var(--color-cyber-500) / 0.1);
+}
+
+
+/* ============================================
+   2. SHADOW EFFECTS
+   ============================================ */
+
+/* Standard Shadows */
+.shadow-none {
+  box-shadow: none;
+}
+
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
+.shadow-2xl {
+  box-shadow: var(--shadow-2xl);
+}
+
+/* Cyber Shadows (Matrix-colored) */
+.shadow-cyber-sm {
+  box-shadow: var(--shadow-cyber-sm);
+}
+
+.shadow-cyber-md {
+  box-shadow: var(--shadow-cyber-md);
+}
+
+.shadow-cyber-lg {
+  box-shadow: var(--shadow-cyber-lg);
+}
+
+/* Inner Shadow */
+.shadow-inner {
+  box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.2);
+}
+
+
+/* ============================================
+   3. GRADIENT EFFECTS
+   ============================================ */
+
+/* Matrix Gradient (Top to Bottom) */
+.bg-gradient-matrix {
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--color-matrix-900)),
+    rgb(var(--color-neutral-950))
+  );
+}
+
+/* Matrix Gradient (Radial) */
+.bg-gradient-matrix-radial {
+  background: radial-gradient(
+    circle at center,
+    rgb(var(--color-matrix-900) / 0.3),
+    transparent 70%
+  );
+}
+
+/* Cyber Gradient */
+.bg-gradient-cyber {
+  background: linear-gradient(
+    135deg,
+    rgb(var(--color-matrix-900)),
+    rgb(var(--color-cyber-900))
+  );
+}
+
+/* Subtle Overlay Gradient */
+.bg-gradient-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--color-neutral-950) / 0),
+    rgb(var(--color-neutral-950) / 0.8)
+  );
+}
+
+/* Text Gradient (Matrix) */
+.text-gradient-matrix {
+  background: linear-gradient(
+    to right,
+    rgb(var(--color-matrix-400)),
+    rgb(var(--color-cyber-400))
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+
+/* ============================================
+   4. BORDER EFFECTS
+   ============================================ */
+
+/* Matrix Border */
+.border-matrix {
+  border-color: rgb(var(--color-matrix-500));
+}
+
+.border-matrix-dim {
+  border-color: rgb(var(--color-matrix-700));
+}
+
+.border-matrix-bright {
+  border-color: rgb(var(--color-matrix-400));
+}
+
+/* Cyber Border */
+.border-cyber {
+  border-color: rgb(var(--color-cyber-500));
+}
+
+/* Glowing Border */
+.border-glow {
+  border: var(--border-width-thin) solid rgb(var(--color-matrix-500));
+  box-shadow: 
+    0 0 8px rgb(var(--color-matrix-500) / 0.3),
+    inset 0 0 8px rgb(var(--color-matrix-500) / 0.1);
+}
+
+/* Animated Glowing Border */
+.border-glow-pulse {
+  border: var(--border-width-thin) solid rgb(var(--color-matrix-500));
+  animation: borderPulse var(--duration-pulse) var(--ease-in-out) infinite;
+}
+
+@keyframes borderPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 8px rgb(var(--color-matrix-500) / 0.3),
+      inset 0 0 8px rgb(var(--color-matrix-500) / 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 16px rgb(var(--color-matrix-500) / 0.5),
+      inset 0 0 12px rgb(var(--color-matrix-500) / 0.2);
+  }
+}
+
+
+/* ============================================
+   5. BLUR & BACKDROP EFFECTS
+   ============================================ */
+
+/* Blur */
+.blur-none { filter: blur(0); }
+.blur-sm { filter: blur(var(--blur-sm)); }
+.blur-md { filter: blur(var(--blur-md)); }
+.blur-lg { filter: blur(var(--blur-lg)); }
+.blur-xl { filter: blur(var(--blur-xl)); }
+
+/* Backdrop Blur (for overlays, modals) */
+.backdrop-blur-none { backdrop-filter: blur(0); }
+.backdrop-blur-sm { backdrop-filter: blur(var(--blur-sm)); }
+.backdrop-blur-md { backdrop-filter: blur(var(--blur-md)); }
+.backdrop-blur-lg { backdrop-filter: blur(var(--blur-lg)); }
+.backdrop-blur-xl { backdrop-filter: blur(var(--blur-xl)); }
+
+/* Glass Effect (frosted glass) */
+.glass {
+  background: rgb(var(--color-neutral-900) / 0.5);
+  backdrop-filter: blur(var(--blur-lg));
+  border: var(--border-width-thin) solid rgb(var(--color-neutral-700) / 0.3);
+}
+
+/* Matrix Glass */
+.glass-matrix {
+  background: rgb(var(--color-matrix-950) / 0.3);
+  backdrop-filter: blur(var(--blur-md));
+  border: var(--border-width-thin) solid rgb(var(--color-matrix-500) / 0.2);
+}
+
+
+/* ============================================
+   6. OPACITY UTILITIES
+   ============================================ */
+
+.opacity-0 { opacity: var(--opacity-0); }
+.opacity-5 { opacity: var(--opacity-5); }
+.opacity-10 { opacity: var(--opacity-10); }
+.opacity-20 { opacity: var(--opacity-20); }
+.opacity-30 { opacity: var(--opacity-30); }
+.opacity-40 { opacity: var(--opacity-40); }
+.opacity-50 { opacity: var(--opacity-50); }
+.opacity-60 { opacity: var(--opacity-60); }
+.opacity-70 { opacity: var(--opacity-70); }
+.opacity-80 { opacity: var(--opacity-80); }
+.opacity-90 { opacity: var(--opacity-90); }
+.opacity-100 { opacity: var(--opacity-100); }
+
+
+/* ============================================
+   7. FILTER EFFECTS
+   ============================================ */
+
+/* Brightness */
+.brightness-0 { filter: brightness(0); }
+.brightness-50 { filter: brightness(0.5); }
+.brightness-75 { filter: brightness(0.75); }
+.brightness-100 { filter: brightness(1); }
+.brightness-125 { filter: brightness(1.25); }
+.brightness-150 { filter: brightness(1.5); }
+
+/* Contrast */
+.contrast-0 { filter: contrast(0); }
+.contrast-50 { filter: contrast(0.5); }
+.contrast-100 { filter: contrast(1); }
+.contrast-125 { filter: contrast(1.25); }
+.contrast-150 { filter: contrast(1.5); }
+
+/* Grayscale */
+.grayscale-0 { filter: grayscale(0); }
+.grayscale-50 { filter: grayscale(0.5); }
+.grayscale-100 { filter: grayscale(1); }
+
+/* Hue Rotate (for color shifting) */
+.hue-rotate-0 { filter: hue-rotate(0deg); }
+.hue-rotate-15 { filter: hue-rotate(15deg); }
+.hue-rotate-30 { filter: hue-rotate(30deg); }
+.hue-rotate-60 { filter: hue-rotate(60deg); }
+.hue-rotate-90 { filter: hue-rotate(90deg); }
+
+
+/* ============================================
+   8. SPECIAL EFFECTS
+   ============================================ */
+
+/* Scan Line Overlay (retro CRT effect) */
+.scan-lines {
+  position: relative;
+}
+
+.scan-lines::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgb(var(--color-neutral-950) / 0.1) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.3;
+}
+
+/* Vignette Effect */
+.vignette {
+  position: relative;
+}
+
+.vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    transparent 50%,
+    rgb(var(--color-neutral-950)) 150%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Matrix Grid Background */
+.matrix-grid {
+  background-image: 
+    linear-gradient(rgb(var(--color-matrix-500) / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--color-matrix-500) / 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Noise Texture */
+.noise {
+  position: relative;
+}
+
+.noise::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+  opacity: 0.03;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  z-index: 1;
+}
+
+
+/* ============================================
+   9. LAYERING UTILITIES (Z-Index)
+   ============================================ */
+
+.z-base { z-index: var(--z-base); }
+.z-dropdown { z-index: var(--z-dropdown); }
+.z-sticky { z-index: var(--z-sticky); }
+.z-fixed { z-index: var(--z-fixed); }
+.z-modal-backdrop { z-index: var(--z-modal-backdrop); }
+.z-modal { z-index: var(--z-modal); }
+.z-popover { z-index: var(--z-popover); }
+.z-tooltip { z-index: var(--z-tooltip); }
+.z-notification { z-index: var(--z-notification); }
+.z-max { z-index: var(--z-max); }
+
