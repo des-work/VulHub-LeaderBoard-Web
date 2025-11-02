@@ -30,7 +30,26 @@ export class TestConfigService {
   private config: TestConfig;
 
   constructor(private configService: ConfigService) {
+    this.validateTestEnvironment();
     this.loadTestConfig();
+  }
+
+  /**
+   * Validate that we're running in a proper test environment
+   */
+  private validateTestEnvironment(): void {
+    const nodeEnv = process.env.NODE_ENV;
+    if (nodeEnv !== 'test') {
+      this.logger.warn(`Running tests in ${nodeEnv} environment. Consider setting NODE_ENV=test`);
+    }
+
+    // Check for test-specific environment variables
+    const requiredVars = ['DATABASE_URL'];
+    const missingVars = requiredVars.filter(varName => !process.env[varName]);
+
+    if (missingVars.length > 0) {
+      this.logger.warn(`Missing test environment variables: ${missingVars.join(', ')}`);
+    }
   }
 
   private loadTestConfig(): void {

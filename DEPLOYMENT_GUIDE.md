@@ -1,385 +1,714 @@
-# 🚀 VulHub Leaderboard - Complete Deployment Guide
+# 🚀 VulHub Deployment Guide
 
-**Updated:** October 31, 2025  
-**Target Platforms:** Heroku (API) + Vercel (Frontend) + Supabase (Database)  
-**Estimated Time:** 45 minutes for first-time setup
+**Complete deployment and production operations guide**
 
 ---
 
 ## 📋 Table of Contents
 
-1. [Architecture Overview](#architecture-overview)
-2. [Prerequisites](#prerequisites)
-3. [Step 1: Supabase Database Setup](#step-1-supabase-database-setup)
-4. [Step 2: Heroku API Deployment](#step-2-heroku-api-deployment)
-5. [Step 3: Vercel Frontend Deployment](#step-3-vercel-frontend-deployment)
-6. [Step 4: Connect Everything](#step-4-connect-everything)
-7. [Post-Deployment Verification](#post-deployment-verification)
-8. [Troubleshooting](#troubleshooting)
+- [Quick Start](#quick-start)
+- [Prerequisites](#prerequisites)
+- [Local Development](#local-development)
+- [CI/CD Pipeline](#cicd-pipeline)
+- [Docker Deployment](#docker-deployment)
+- [Kubernetes Deployment](#kubernetes-deployment)
+- [Heroku Deployment](#heroku-deployment)
+- [Production Validation](#production-validation)
+- [Monitoring & Maintenance](#monitoring--maintenance)
+- [Troubleshooting](#troubleshooting)
+- [Rollback Procedures](#rollback-procedures)
 
 ---
 
-## Architecture Overview
+## 🚀 Quick Start
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                      Frontend (Vercel)                       │
-│                   vulhub.vercel.app                          │
-│              (Next.js - React Application)                   │
-└────────────────────┬─────────────────────────────────────────┘
-                     │
-                     │ API calls
-                     ▼
-┌──────────────────────────────────────────────────────────────┐
-│                      API (Heroku)                            │
-│              vulhub-api.herokuapp.com                        │
-│            (NestJS - REST API Server)                        │
-└────────────────────┬─────────────────────────────────────────┘
-                     │
-         ┌───────────┼───────────┐
-         │           │           │
-         ▼           ▼           ▼
-    ┌────────┐  ┌────────┐  ┌────────┐
-    │Database│  │ Redis  │  │Logging │
-    │Supabase│  │Upstash │  │        │
-    └────────┘  └────────┘  └────────┘
-```
+### One-Command Deployment
 
----
-
-## Prerequisites
-
-**Before you start, you need:**
-
-- ✅ **Heroku Account** (you have this)
-  - Visit: https://www.heroku.com
-
-- ❌ **Supabase Account** (create now)
-  - Visit: https://supabase.com
-
-- ❌ **Vercel Account** (create now)
-  - Visit: https://vercel.com
-
-- ✅ **GitHub Account** (you should have this for Git)
-  - Visit: https://github.com
-
-- ✅ **Local Git repo** (your project)
-  - Already set up in your workspace
-
-**Estimated setup times:**
-- Supabase: 5 minutes
-- Heroku: 10 minutes
-- Vercel: 10 minutes
-- Total: ~25 minutes
-
----
-
-## Step 1: Supabase Database Setup
-
-### 1.1 Create Supabase Account
-
-1. Go to https://supabase.com
-2. Click "Start your project" or "Sign up"
-3. Sign up with GitHub (easiest)
-   - Click "Continue with GitHub"
-   - Authorize Supabase
-4. Create an organization or use default
-
-### 1.2 Create New Project
-
-1. In Supabase dashboard, click "New Project"
-2. Fill in details:
-   - **Name:** `vulhub` or `vulhub-db`
-   - **Database Password:** Create a strong password (save it!)
-   - **Region:** Choose closest to your users (e.g., US East if in USA)
-   - **Plan:** Free tier
-3. Click "Create new project" and wait 2-3 minutes for provisioning
-
-### 1.3 Get Connection String
-
-1. In your Supabase project, click on "Settings" (left sidebar)
-2. Click "Database"
-3. Under "Connection string", select "Postgres" (not "URI")
-4. Copy the connection string
-   - It looks like: `postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres`
-   - **Important:** The password in the template is `[PASSWORD]` - replace with your actual password!
-
-### 1.4 Test Connection
-
-1. Open your terminal
-2. Try to connect:
-   ```bash
-   psql postgresql://postgres:[YOUR_PASSWORD]@[HOST]:5432/postgres
-   ```
-3. If you see `postgres=#` prompt, connection works! Type `\q` to exit.
-
-**✅ Supabase setup complete!**  
-**Keep the connection string safe - you'll need it for Heroku**
-
----
-
-## Step 2: Heroku API Deployment
-
-### 2.1 Prepare Your Repository
-
-1. Make sure your code is pushed to GitHub
-   ```bash
-   cd /path/to/VulHub-LeaderBoard-Web
-   git status
-   git push origin main  # or your main branch
-   ```
-
-2. Check that Procfile exists in project root
-   ```bash
-   cat Procfile
-   ```
-   
-   Should see:
-   ```
-   web: cd apps/api && pnpm exec nest start
-   ```
-
-   If not, I've created it for you.
-
-### 2.2 Deploy API to Heroku
-
-**Option A: Using Heroku CLI (Recommended)**
-
-1. Install Heroku CLI (if not already)
-   ```bash
-   npm install -g heroku
-   ```
-
-2. Login to Heroku
-   ```bash
-   heroku login
-   ```
-   - Opens browser, login with your account
-
-3. Create Heroku app
-   ```bash
-   heroku create vulhub-api
-   ```
-   - Will create: `https://vulhub-api.herokuapp.com`
-   - Note: You can use different name if taken
-
-4. Add Supabase database connection
-   ```bash
-   heroku config:set DATABASE_URL="postgresql://postgres:[YOUR_PASSWORD]@[HOST]:5432/postgres" -a vulhub-api
-   ```
-   - Replace with your actual Supabase connection string
-
-5. Set other required environment variables
-   ```bash
-   heroku config:set NODE_ENV=production -a vulhub-api
-   heroku config:set REDIS_URL="redis://default:xxxx@xxxxx.redis.upstash.io:xxxxx" -a vulhub-api
-   heroku config:set JWT_SECRET="your-super-secret-key-change-this" -a vulhub-api
-   heroku config:set TENANT_ID="default-tenant" -a vulhub-api
-   ```
-
-6. Deploy your code
-   ```bash
-   git push heroku main
-   ```
-   - Builds and deploys automatically
-   - Watch logs for success/errors
-
-7. Run migrations on Heroku database
-   ```bash
-   heroku run "cd apps/api && pnpm prisma db push" -a vulhub-api
-   heroku run "cd apps/api && pnpm db:seed" -a vulhub-api
-   ```
-
-8. Verify API is running
-   ```bash
-   heroku open -a vulhub-api
-   ```
-   - Should open: `https://vulhub-api.herokuapp.com`
-   - Or visit: `https://vulhub-api.herokuapp.com/api/v1/health`
-   - Should return: `{"status":"ok"}`
-
-**✅ Heroku API deployment complete!**  
-**Your API URL:** `https://vulhub-api.herokuapp.com`
-
----
-
-## Step 3: Vercel Frontend Deployment
-
-### 3.1 Connect GitHub to Vercel
-
-1. Go to https://vercel.com
-2. Click "Sign Up" → "Continue with GitHub"
-3. Authorize Vercel to access your repositories
-4. Import your repository
-   - Click "Import Project"
-   - Find your `VulHub-LeaderBoard-Web` repo
-   - Click "Import"
-
-### 3.2 Configure for Monorepo
-
-1. In project settings:
-   - **Root Directory:** Leave empty (Vercel auto-detects)
-   - **Build Command:** `pnpm build` (should auto-fill)
-   - **Output Directory:** `.next` (should auto-fill)
-
-2. If Vercel doesn't auto-detect the Next.js app:
-   - Root Directory: `./apps/web`
-
-### 3.3 Set Environment Variables
-
-1. Click "Environment Variables"
-2. Add these variables:
-   ```
-   NEXT_PUBLIC_API_URL = https://vulhub-api.herokuapp.com/api/v1
-   NODE_ENV = production
-   ```
-
-3. Click "Deploy"
-
-### 3.4 Wait for Build
-
-- Vercel automatically builds and deploys
-- Check "Deployments" tab for status
-- Deployment typically takes 2-5 minutes
-
-**✅ Vercel frontend deployment complete!**  
-**Your Frontend URL:** `https://your-project.vercel.app`
-
----
-
-## Step 4: Connect Everything
-
-### 4.1 Verify API is Accessible
-
-1. From your terminal:
-   ```bash
-   curl https://vulhub-api.herokuapp.com/api/v1/health
-   ```
-   
-   Should return:
-   ```json
-   {"status":"ok","info":{"api":{"status":"up","message":"API is running"}}}
-   ```
-
-### 4.2 Verify Frontend Can Reach API
-
-1. Go to your Vercel frontend URL
-2. Open browser DevTools (F12)
-3. Go to Console tab
-4. Try to login
-5. Check Network tab to see if API calls succeed
-
-### 4.3 Verify Database Connection
-
-1. Run this on Heroku:
-   ```bash
-   heroku logs -a vulhub-api --tail
-   ```
-   
-   Should see:
-   ```
-   [Nest] ... info Connected to database
-   ```
-
----
-
-## Post-Deployment Verification
-
-See `POST_DEPLOYMENT_CHECKLIST.md` for detailed verification steps.
-
-Quick checklist:
-- ✅ Frontend loads at Vercel URL
-- ✅ Can login successfully
-- ✅ Dashboard displays data
-- ✅ Can navigate all pages
-- ✅ API calls work (check Network tab in DevTools)
-- ✅ Database queries work (check Heroku logs)
-
----
-
-## Troubleshooting
-
-### Issue: "Cannot find module @nestjs/cli"
-
-**Solution:** Make sure `pnpm` is installed on Heroku
 ```bash
-heroku config:set NPM_CONFIG_PRODUCTION=false -a vulhub-api
+# Clone repository
+git clone https://github.com/your-org/vulhub.git
+cd vulhub
+
+# Run deployment script
+cd apps/api
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh --environment production --deploy-target docker
 ```
 
-### Issue: "DATABASE_URL not found"
+### Post-Deployment Validation
 
-**Solution:** Verify you set the environment variable
 ```bash
-heroku config -a vulhub-api
+# Run comprehensive health checks
+./scripts/health-check.sh --url https://your-api-domain.com
+
+# Run production validation
+./scripts/validate-production.sh --api-url https://your-api-domain.com
 ```
 
-Should show `DATABASE_URL` in the list.
+---
 
-### Issue: Frontend shows "API Connection Error"
+## 📋 Prerequisites
 
-**Solution:** 
-1. Check if `NEXT_PUBLIC_API_URL` is set correctly in Vercel
-2. Verify API is running: `curl https://vulhub-api.herokuapp.com/api/v1/health`
-3. Check CORS settings in API if needed
+### System Requirements
 
-### Issue: Heroku build fails
+- **Node.js**: 18.x or higher
+- **PNPM**: Latest version
+- **Docker**: 20.x or higher (for containerized deployment)
+- **PostgreSQL**: 15.x or higher
+- **Redis**: 7.x or higher
 
-**Solution:**
-1. Check build logs:
+### Environment Setup
+
+1. **Install PNPM**:
    ```bash
-   heroku logs -a vulhub-api
+   npm install -g pnpm
    ```
-2. Common issues:
-   - Missing dependencies: Run `pnpm install` locally
-   - Node version mismatch: Add `engines` to `package.json`
-   - Environment variables not set: Check `heroku config`
 
-### Issue: Database migrations fail
+2. **Install Docker** (optional but recommended):
+   ```bash
+   # Ubuntu/Debian
+   curl -fsSL https://get.docker.com -o get-docker.sh
+   sudo sh get-docker.sh
 
-**Solution:**
-1. Verify connection string is correct
-2. Try running migrations locally first:
-   ```bash
-   DATABASE_URL="your-connection-string" pnpm prisma db push
+   # macOS
+   brew install --cask docker
    ```
-3. If that works, run on Heroku:
+
+3. **Setup PostgreSQL and Redis**:
    ```bash
-   heroku run "cd apps/api && pnpm prisma db push" -a vulhub-api
+   # Using Docker (recommended for development)
+   docker run -d --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=password postgres:15
+   docker run -d --name redis -p 6379:6379 redis:7-alpine
    ```
+
+### Domain and SSL
+
+- **Domain Name**: Configure DNS for your API domain
+- **SSL Certificate**: Use Let's Encrypt or commercial SSL certificates
+- **CDN**: Optional but recommended for production (Cloudflare, AWS CloudFront)
 
 ---
 
-## Next Steps After Deployment
+## 🏠 Local Development
 
-1. **Monitor Logs**
+### Development Setup
+
+```bash
+# Install dependencies
+pnpm install
+
+# Setup environment
+cp .env.example .env.local
+
+# Configure local environment
+echo "DATABASE_URL=file:./dev.db" >> .env.local
+echo "REDIS_HOST=localhost" >> .env.local
+echo "JWT_SECRET=dev-jwt-secret" >> .env.local
+echo "JWT_REFRESH_SECRET=dev-refresh-secret" >> .env.local
+
+# Run database migrations
+cd apps/api
+npx prisma migrate dev
+
+# Start development server
+pnpm run dev
+```
+
+### Local Testing
+
+```bash
+# Run all tests
+pnpm test
+
+# Run with coverage
+pnpm run test:coverage
+
+# Run specific test suites
+pnpm run test:unit
+pnpm run test:integration
+pnpm run test:e2e
+pnpm run test:performance
+```
+
+### Local Deployment Testing
+
+```bash
+# Build for production
+pnpm run build
+
+# Start production server locally
+pnpm run start:prod
+
+# Test deployment script locally
+./scripts/deploy.sh --environment development --deploy-target local
+```
+
+---
+
+## 🔄 CI/CD Pipeline
+
+### GitHub Actions Setup
+
+The repository includes a comprehensive CI/CD pipeline (`.github/workflows/ci-cd.yml`) with:
+
+#### Pipeline Stages
+
+1. **Quality Checks**: Linting, type checking, security scanning
+2. **Unit Tests**: Individual component testing
+3. **Integration Tests**: Service interaction testing
+4. **E2E Tests**: Complete user workflow testing
+5. **Build & Package**: Docker image creation
+6. **Deploy to Staging**: Automated staging deployment
+7. **Deploy to Production**: Automated production deployment
+8. **Performance Tests**: Load testing and benchmarks
+9. **Security Scanning**: Vulnerability assessment
+10. **Monitoring Updates**: Deployment tracking
+
+#### Required Secrets
+
+Add these secrets to your GitHub repository:
+
+```bash
+# Docker Registry
+REGISTRY: ghcr.io
+DOCKER_USERNAME: ${{ github.actor }}
+DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+# Staging Environment
+STAGING_API_KEY: your-staging-api-key
+STAGING_DATABASE_URL: postgresql://...
+
+# Production Environment
+PROD_API_KEY: your-prod-api-key
+PROD_DATABASE_URL: postgresql://...
+
+# Monitoring (optional)
+OTEL_ENDPOINT: https://your-otel-endpoint.com
+SLACK_WEBHOOK_URL: https://hooks.slack.com/...
+```
+
+#### Branch Protection
+
+Configure branch protection rules:
+
+```yaml
+# For main branch
+required_status_checks:
+  - quality-checks
+  - unit-tests
+  - integration-tests
+  - e2e-tests
+  - build
+  - security-scan
+
+required_pull_request_reviews: true
+restrictions: []  # or specify allowed teams/users
+```
+
+### Manual Pipeline Triggers
+
+```bash
+# Trigger staging deployment
+gh workflow run ci-cd.yml --ref develop
+
+# Trigger production deployment
+gh workflow run ci-cd.yml --ref main
+
+# Trigger with custom environment
+gh workflow run ci-cd.yml --ref main \
+  -f environment=production
+```
+
+---
+
+## 🐳 Docker Deployment
+
+### Single Container Deployment
+
+```bash
+# Build production image
+docker build -f apps/api/Dockerfile.production -t vulhub-api:latest .
+
+# Run container
+docker run -d \
+  --name vulhub-api \
+  -p 4000:4000 \
+  -e NODE_ENV=production \
+  -e DATABASE_URL=postgresql://... \
+  -e REDIS_HOST=redis \
+  -e JWT_SECRET=your-secret \
+  vulhub-api:latest
+```
+
+### Docker Compose Setup
+
+Create `docker-compose.yml`:
+
+```yaml
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile.production
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://db:5432/vulhub
+      - REDIS_HOST=redis
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=vulhub
+      - POSTGRES_USER=vulhub
+      - POSTGRES_PASSWORD=secure-password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+```
+
+Deploy with:
+```bash
+docker-compose up -d
+```
+
+### Docker Registry
+
+```bash
+# Login to registry
+docker login ghcr.io
+
+# Tag and push
+docker tag vulhub-api:latest ghcr.io/your-org/vulhub-api:latest
+docker push ghcr.io/your-org/vulhub-api:latest
+```
+
+---
+
+## ☸️ Kubernetes Deployment
+
+### Prerequisites
+
+```bash
+# Install kubectl and helm
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+
+# Install Helm
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+
+### Deploy to Kubernetes
+
+```bash
+# Create namespace
+kubectl create namespace vulhub
+
+# Apply configurations
+kubectl apply -f apps/api/k8s/configmap.yaml
+kubectl apply -f apps/api/k8s/secret.yaml
+kubectl apply -f apps/api/k8s/deployment.yaml
+kubectl apply -f apps/api/k8s/service.yaml
+kubectl apply -f apps/api/k8s/ingress.yaml
+kubectl apply -f apps/api/k8s/hpa.yaml
+
+# Check deployment status
+kubectl get pods -n vulhub
+kubectl get services -n vulhub
+kubectl get ingress -n vulhub
+```
+
+### Kubernetes Secrets Setup
+
+```bash
+# Create secrets from files
+kubectl create secret generic vulhub-secrets \
+  --from-literal=database-url='postgresql://...' \
+  --from-literal=jwt-secret='your-jwt-secret' \
+  --from-literal=jwt-refresh-secret='your-refresh-secret'
+
+# Or from environment variables
+export DB_URL='postgresql://...'
+export JWT_SECRET='your-secret'
+kubectl create secret generic vulhub-secrets \
+  --from-literal=database-url=$DB_URL \
+  --from-literal=jwt-secret=$JWT_SECRET
+```
+
+### Monitoring Kubernetes
+
+```bash
+# Check pod health
+kubectl describe pods -n vulhub
+
+# View logs
+kubectl logs -f deployment/vulhub-api -n vulhub
+
+# Check resource usage
+kubectl top pods -n vulhub
+
+# Scale deployment
+kubectl scale deployment vulhub-api --replicas=5 -n vulhub
+```
+
+---
+
+## 🌐 Heroku Deployment
+
+### Prerequisites
+
+```bash
+# Install Heroku CLI
+curl https://cli-assets.heroku.com/install.sh | sh
+
+# Login to Heroku
+heroku login
+```
+
+### Deploy to Heroku
+
+```bash
+# Create Heroku app
+heroku create your-vulhub-api
+
+# Set environment variables
+heroku config:set NODE_ENV=production
+heroku config:set DATABASE_URL=postgresql://...
+heroku config:set REDIS_URL=redis://...
+heroku config:set JWT_SECRET=your-secret
+
+# Deploy
+git push heroku main
+
+# Run database migrations
+heroku run npx prisma migrate deploy
+
+# Check logs
+heroku logs --tail
+```
+
+### Heroku Add-ons
+
+```bash
+# Add PostgreSQL
+heroku addons:create heroku-postgresql:hobby-dev
+
+# Add Redis
+heroku addons:create heroku-redis:hobby-dev
+
+# Add monitoring
+heroku addons:create papertrail
+heroku addons:create librato
+```
+
+---
+
+## ✅ Production Validation
+
+### Automated Validation
+
+```bash
+# Run comprehensive validation
+./scripts/validate-production.sh \
+  --api-url https://api.vulhub.edu \
+  --web-url https://vulhub.edu
+
+# Quick health check
+./scripts/health-check.sh \
+  --url https://api.vulhub.edu \
+  --quick
+```
+
+### Manual Validation Checklist
+
+#### Infrastructure
+- [ ] SSL certificate valid and current
+- [ ] DNS records point to correct IP
+- [ ] Firewall allows necessary ports
+- [ ] Load balancer configured correctly
+
+#### Application
+- [ ] All health endpoints return 200
+- [ ] Configuration validation passes
+- [ ] Database connections working
+- [ ] Redis connections working
+- [ ] External services accessible
+
+#### Performance
+- [ ] Response times within acceptable limits
+- [ ] Memory usage normal
+- [ ] CPU usage normal
+- [ ] Error rates below threshold
+
+#### Security
+- [ ] Security headers present
+- [ ] HTTPS enforced
+- [ ] Rate limiting working
+- [ ] Authentication functioning
+
+### Performance Benchmarks
+
+| Metric | Target | Critical |
+|--------|--------|----------|
+| Health Check | < 1s | < 5s |
+| API Response | < 2s | < 10s |
+| Database Query | < 1s | < 5s |
+| Memory Usage | < 80% | < 95% |
+| Error Rate | < 1% | < 5% |
+
+---
+
+## 📊 Monitoring & Maintenance
+
+### Health Endpoints
+
+```bash
+# Basic health (for load balancers)
+curl https://api.vulhub.edu/health
+
+# Readiness (for Kubernetes)
+curl https://api.vulhub.edu/ready
+
+# Liveness (for Kubernetes)
+curl https://api.vulhub.edu/api/v1/health/live
+
+# Detailed status
+curl https://api.vulhub.edu/api/v1/health/detailed
+
+# Configuration validation
+curl https://api.vulhub.edu/api/v1/health/config
+
+# Performance metrics
+curl https://api.vulhub.edu/api/v1/health/metrics
+```
+
+### Monitoring Setup
+
+#### Application Metrics
+```bash
+# Prometheus metrics (if enabled)
+curl https://api.vulhub.edu/metrics
+
+# Health check integration
+# Add to your monitoring system:
+# https://api.vulhub.edu/api/v1/health/detailed
+```
+
+#### Log Aggregation
+```bash
+# View application logs
+heroku logs --app your-vulhub-api --tail
+
+# Kubernetes logs
+kubectl logs -f deployment/vulhub-api -n vulhub
+
+# Docker logs
+docker logs -f vulhub-api
+```
+
+#### Alerting Rules
+
+**Critical Alerts**:
+- Health check failures
+- High error rates (>5%)
+- Database connection issues
+- SSL certificate expiration (< 30 days)
+
+**Warning Alerts**:
+- High response times (> 5s)
+- High memory usage (> 85%)
+- Rate limiting triggered frequently
+
+### Maintenance Tasks
+
+#### Daily
+```bash
+# Check health endpoints
+curl -f https://api.vulhub.edu/api/v1/health/detailed
+
+# Monitor error rates
+curl https://api.vulhub.edu/api/v1/health/metrics
+```
+
+#### Weekly
+```bash
+# Review logs for anomalies
+heroku logs --app your-vulhub-api --num 1000
+
+# Check database performance
+# Run EXPLAIN ANALYZE on slow queries
+```
+
+#### Monthly
+```bash
+# Security updates
+# Review and rotate secrets
+# Performance optimization
+# Backup verification
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### Application Won't Start
+```bash
+# Check environment variables
+./scripts/validate-production.sh --api-url http://localhost:4000
+
+# Check logs
+docker logs vulhub-api
+heroku logs --app your-vulhub-api
+
+# Validate configuration
+curl http://localhost:4000/api/v1/health/config
+```
+
+#### Database Connection Issues
+```bash
+# Test database connectivity
+psql "your-database-url" -c "SELECT 1"
+
+# Check database health
+curl http://localhost:4000/api/v1/health/detailed | jq '.checks.database'
+```
+
+#### High Error Rates
+```bash
+# Check application logs
+heroku logs --app your-vulhub-api --source app
+
+# Review error details
+curl http://localhost:4000/api/v1/health/detailed | jq '.metrics'
+```
+
+#### Performance Issues
+```bash
+# Check resource usage
+curl http://localhost:4000/api/v1/health/metrics
+
+# Profile slow endpoints
+# Add logging to identify bottlenecks
+```
+
+### Debug Mode
+
+```bash
+# Enable debug logging
+export LOG_LEVEL=debug
+export NODE_ENV=development
+
+# Run with verbose output
+./scripts/health-check.sh --verbose --url http://localhost:4000
+```
+
+---
+
+## 🔄 Rollback Procedures
+
+### Automated Rollback
+
+```bash
+# Rollback deployment
+./scripts/deploy.sh --rollback --deploy-target docker
+
+# For Kubernetes
+kubectl rollout undo deployment/vulhub-api
+
+# For Heroku
+heroku releases --app your-app-name
+heroku releases:rollback v123  # Replace with previous release
+```
+
+### Manual Rollback Steps
+
+1. **Identify Issue**:
    ```bash
-   heroku logs -a vulhub-api --tail
+   # Check health status
+   curl https://api.vulhub.edu/api/v1/health/detailed
+
+   # Review recent logs
+   heroku logs --app your-app-name --num 100
    ```
 
-2. **Set Up Error Tracking**
-   - Consider adding Sentry or DataDog
+2. **Prepare Rollback**:
+   ```bash
+   # Backup current state if needed
+   # Document the issue and symptoms
+   ```
 
-3. **Configure Backups**
-   - Supabase has automatic backups on free tier
+3. **Execute Rollback**:
+   ```bash
+   # Stop current deployment
+   kubectl scale deployment vulhub-api --replicas=0
 
-4. **Set Custom Domain** (Optional)
-   - Once you have a domain name, configure:
-     - Heroku: `heroku domains:add api.yourdomain.com`
-     - Vercel: Add domain in settings
+   # Deploy previous version
+   kubectl set image deployment/vulhub-api api=your-app:previous-tag
+
+   # Scale back up
+   kubectl scale deployment vulhub-api --replicas=3
+   ```
+
+4. **Verify Rollback**:
+   ```bash
+   # Run validation
+   ./scripts/validate-production.sh
+
+   # Monitor for 30 minutes
+   watch -n 30 ./scripts/health-check.sh --quick
+   ```
+
+5. **Post-Rollback Analysis**:
+   - Document the root cause
+   - Implement fix for the issue
+   - Test fix in staging before re-deploying
 
 ---
 
-## Support
+## 📞 Support & Resources
 
-If you encounter issues:
+### Documentation Links
+- [API Documentation](https://api.vulhub.edu/api/docs)
+- [Health Check Endpoints](https://api.vulhub.edu/api/v1/health)
+- [Configuration Guide](apps/api/src/config/CONFIGURATION_GUIDE.md)
 
-1. Check Heroku logs: `heroku logs -a vulhub-api`
-2. Check Vercel deployment: https://vercel.com
-3. Check Supabase database: https://supabase.com
-4. Review the specific setup guide for that service below
+### Emergency Contacts
+- **On-call Engineer**: +1-XXX-XXX-XXXX
+- **DevOps Team**: devops@vulhub.edu
+- **Security Issues**: security@vulhub.edu
+
+### Useful Commands
+
+```bash
+# Quick status check
+curl -s https://api.vulhub.edu/health | jq .
+
+# Full system status
+curl -s https://api.vulhub.edu/api/v1/health/detailed | jq .
+
+# Recent deployments
+heroku releases --app your-app-name | head -10
+
+# Database status
+heroku pg:info --app your-app-name
+```
 
 ---
 
-**✅ Deployment Guide Complete!**
-
-Next: Follow `SUPABASE_SETUP.md`, `HEROKU_DEPLOYMENT.md`, and `VERCEL_DEPLOYMENT.md` for detailed step-by-step instructions with screenshots.
+**🎉 Happy Deploying!** Your VulHub API is now ready for production deployment with comprehensive monitoring, validation, and rollback capabilities.

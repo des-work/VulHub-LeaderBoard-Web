@@ -1,0 +1,419 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+
+env:
+  NODE_VERSION: '18'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # ==================== QUALITY CHECKS ====================
+  quality-checks:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Type checking
+      run: pnpm run type-check
+
+    - name: Linting
+      run: pnpm run lint
+
+    - name: Security audit
+      run: pnpm audit --audit-level moderate
+
+  # ==================== UNIT TESTS ====================
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Setup test database
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y postgresql-client
+        # Create test database if needed
+
+    - name: Run unit tests
+      run: pnpm run test:unit
+      env:
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+        JWT_SECRET: test-jwt-secret
+        JWT_REFRESH_SECRET: test-refresh-secret
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: unit-tests
+        name: unit-tests-coverage
+
+  # ==================== INTEGRATION TESTS ====================
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Run database migrations
+      run: |
+        cd apps/api
+        npx prisma migrate deploy
+      env:
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
+
+    - name: Run integration tests
+      run: pnpm run test:integration
+      env:
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+        JWT_SECRET: test-jwt-secret
+        JWT_REFRESH_SECRET: test-refresh-secret
+
+  # ==================== E2E TESTS ====================
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build application
+      run: pnpm run build
+
+    - name: Run database migrations
+      run: |
+        cd apps/api
+        npx prisma migrate deploy
+      env:
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
+
+    - name: Run E2E tests
+      run: pnpm run test:e2e
+      env:
+        DATABASE_URL: postgresql://test:test@localhost:5432/test
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+        JWT_SECRET: test-jwt-secret
+        JWT_REFRESH_SECRET: test-refresh-secret
+
+  # ==================== BUILD & PACKAGE ====================
+  build:
+    name: Build & Package
+    runs-on: ubuntu-latest
+    needs: [quality-checks, unit-tests, integration-tests]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build application
+      run: pnpm run build
+
+    - name: Generate Prisma client
+      run: |
+        cd apps/api
+        npx prisma generate
+
+    - name: Build Docker image
+      run: |
+        docker build -f apps/api/Dockerfile -t ${{ env.IMAGE_NAME }}:latest .
+        docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+    - name: Login to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push Docker image
+      run: |
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+        # Tag with commit SHA
+        docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+  # ==================== DEPLOY TO STAGING ====================
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build, e2e-tests]
+    if: github.ref == 'refs/heads/develop' && !contains(github.event.head_commit.message, '[skip deploy]')
+    environment: staging
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to staging
+      run: |
+        echo "Deploying to staging environment..."
+        # Add your staging deployment commands here
+        # For example: kubectl apply -f k8s/staging/ or heroku deploy
+      env:
+        STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}
+        STAGING_DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+
+    - name: Run smoke tests
+      run: |
+        # Wait for deployment and run basic health checks
+        sleep 30
+        curl -f https://staging-api.vulhub.edu/api/v1/health || exit 1
+
+    - name: Notify deployment
+      run: |
+        # Send notification to Slack/Discord/etc
+        echo "Staging deployment completed successfully"
+
+  # ==================== DEPLOY TO PRODUCTION ====================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build, e2e-tests, deploy-staging]
+    if: github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip deploy]')
+    environment: production
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to production
+      run: |
+        echo "Deploying to production environment..."
+        # Add your production deployment commands here
+        # For example: kubectl apply -f k8s/production/ or heroku deploy
+      env:
+        PROD_API_KEY: ${{ secrets.PROD_API_KEY }}
+        PROD_DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+
+    - name: Run production validation
+      run: |
+        # Comprehensive post-deployment validation
+        sleep 60
+
+        # Health checks
+        curl -f https://api.vulhub.edu/api/v1/health || exit 1
+        curl -f https://api.vulhub.edu/api/v1/health/detailed || exit 1
+
+        # Basic functionality tests
+        # Add more comprehensive validation as needed
+
+    - name: Notify deployment
+      run: |
+        # Send notification to Slack/Discord/etc
+        echo "Production deployment completed successfully"
+
+  # ==================== PERFORMANCE TESTS ====================
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: [deploy-staging]
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    environment: staging
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Run performance tests
+      run: pnpm run test:performance
+      env:
+        TEST_API_BASE_URL: https://staging-api.vulhub.edu
+
+    - name: Upload performance reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-reports
+        path: reports/performance/
+
+  # ==================== SECURITY SCANNING ====================
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run security scan
+      uses: github/super-linter/slim@v5
+      env:
+        DEFAULT_BRANCH: main
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VALIDATE_ALL_CODEBASE: false
+        VALIDATE_JAVASCRIPT_ES: true
+        VALIDATE_TYPESCRIPT_ES: true
+        VALIDATE_DOCKERFILE: true
+        VALIDATE_KUBERNETES: true
+
+    - name: Dependency vulnerability scan
+      run: |
+        pnpm audit --audit-level high
+        # Add additional security scanning tools as needed
+
+  # ==================== MONITORING & ALERTS ====================
+  monitoring:
+    name: Update Monitoring
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - name: Update deployment markers
+      run: |
+        # Update deployment markers in monitoring systems
+        # Create release tags, update dashboards, etc.
+
+    - name: Send deployment notification
+      run: |
+        # Send comprehensive deployment report
+        echo "Deployment completed - Version: ${{ github.sha }}"
+
+  # ==================== ROLLBACK ====================
+  rollback:
+    name: Rollback Deployment
+    runs-on: ubuntu-latest
+    if: failure() && (needs.deploy-production.result == 'failure' || needs.deploy-staging.result == 'failure')
+    needs: [deploy-production, deploy-staging]
+    steps:
+    - name: Rollback deployment
+      run: |
+        echo "Deployment failed, initiating rollback..."
+        # Add rollback commands here
+        # kubectl rollout undo, heroku releases:rollback, etc.
+
+    - name: Notify rollback
+      run: |
+        echo "Rollback completed due to deployment failure"

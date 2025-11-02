@@ -30,6 +30,7 @@ import { WebSocketModule } from './ws/websocket.module';
 // Configuration
 import { configuration } from './config/configuration';
 import { validationSchema } from './config/validation';
+import { EnvironmentValidator } from './config/environment-validator';
 
 @Module({
   imports: [
@@ -96,5 +97,6 @@ import { validationSchema } from './config/validation';
     // FlexibilityModule,
     // EnterpriseModule,
   ],
+  providers: [EnvironmentValidator],
 })
 export class AppModule {}

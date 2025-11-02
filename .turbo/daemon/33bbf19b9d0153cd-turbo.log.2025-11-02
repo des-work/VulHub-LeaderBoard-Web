@@ -743,3 +743,471 @@
 2025-11-02T20:54:35.019181Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
 2025-11-02T20:54:44.922854Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
 2025-11-02T20:54:44.922880Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T20:54:46.528549Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T20:54:46.528606Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T20:54:50.617948Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\guards\\rate-limit.guard.ts")}
+2025-11-02T20:54:50.617970Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T20:55:18.917873Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\interceptors\\logging.interceptor.ts")}
+2025-11-02T20:55:18.917915Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T20:55:29.814041Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\interceptors\\logging.interceptor.ts")}
+2025-11-02T20:55:29.814064Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T20:56:09.128319Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\main.ts")}
+2025-11-02T20:56:09.128356Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T20:56:21.321326Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\main.ts")}
+2025-11-02T20:56:21.321361Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T20:56:53.818893Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T20:56:53.818938Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T20:56:54.086008Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T20:56:58.620891Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T20:56:58.620958Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T20:56:58.766271Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T20:57:01.217990Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T20:57:01.218018Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T20:57:01.371900Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T20:57:05.826080Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T20:57:05.826126Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T20:57:06.031196Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T20:57:06.629037Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T20:57:06.629079Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T20:57:06.774302Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T20:57:08.219872Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T20:57:08.219901Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T20:57:09.030733Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T20:57:09.031117Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T20:57:09.031134Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T20:57:09.031252Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T20:57:10.122985Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T20:57:10.123009Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T20:57:10.498004Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T20:57:10.498139Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T20:57:10.498150Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T20:57:10.498228Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T20:57:17.327162Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T20:57:17.327213Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T20:57:17.430655Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T20:57:50.116117Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("PHASE_3_2_COMPLETION_REPORT.md")}
+2025-11-02T20:57:50.116135Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T20:57:50.616229Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("PHASE_3_2_COMPLETION_REPORT.md")}
+2025-11-02T20:57:50.616264Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T20:57:51.919313Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-11-02T20:57:51.919329Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-11-02T20:58:06.718142Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\filters\\http-exception.filter.ts"), AnchoredSystemPathBuf("apps\\api\\src\\common\\interceptors\\logging.interceptor.ts"), AnchoredSystemPathBuf("apps\\api\\src\\common\\guards\\rate-limit.guard.ts"), AnchoredSystemPathBuf("apps\\api\\src\\main.ts"), AnchoredSystemPathBuf("apps\\api\\src\\common\\pipes\\validation.pipe.ts"), AnchoredSystemPathBuf("PHASE_3_2_COMPLETION_REPORT.md")}
+2025-11-02T20:58:06.718162Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T20:58:06.818449Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T20:58:38.721785Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T20:58:38.721853Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T20:58:43.818306Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T20:58:43.818370Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T20:59:49.026070Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T20:59:49.026093Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T20:59:50.619855Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T20:59:50.619874Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:02:45.913886Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\config\\environment-validator.ts")}
+2025-11-02T21:02:45.913934Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:02:46.082545Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\config")}
+2025-11-02T21:02:46.082565Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:02:46.082669Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:02:47.031238Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\config\\environment-validator.ts")}
+2025-11-02T21:02:47.031312Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:02:49.622380Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:02:49.622402Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:02:49.720854Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:02:49.720902Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:03:07.421485Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\config\\validation.ts")}
+2025-11-02T21:03:07.421512Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:03:10.021898Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:03:10.021928Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:03:10.118334Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:03:10.118351Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:03:29.315115Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\health\\health.controller.ts")}
+2025-11-02T21:03:29.315182Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:03:32.616373Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:03:32.616399Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:03:32.720716Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:03:32.720759Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:03:47.015253Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\app.module.ts")}
+2025-11-02T21:03:47.015300Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:03:50.014913Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:03:50.014959Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:03:50.118328Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:03:50.118387Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:04:02.718764Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\app.module.ts")}
+2025-11-02T21:04:02.718817Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:04:28.927047Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\config\\CONFIGURATION_GUIDE.md")}
+2025-11-02T21:04:28.927065Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:04:29.089221Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\config")}
+2025-11-02T21:04:29.089235Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:04:29.089286Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:04:29.415812Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\config\\CONFIGURATION_GUIDE.md")}
+2025-11-02T21:04:29.415847Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:04:31.824783Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:04:31.824819Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:04:42.230822Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\main.ts")}
+2025-11-02T21:04:42.230902Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:04:44.820353Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:04:44.820375Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:04:55.514805Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:04:55.514826Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:04:57.125415Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:04:57.125487Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:04:57.221068Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:04:57.221090Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:05:12.217992Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\main.ts")}
+2025-11-02T21:05:12.218020Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:05:22.922371Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:22.922398Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:23.219466Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:23.219484Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:23.306664Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:05:28.615632Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:28.615663Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:28.947856Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:05:28.948545Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:28.948565Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:28.948722Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:05:32.914467Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:32.914488Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:33.118228Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:05:41.625146Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:41.625207Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:41.739592Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:05:41.924989Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:41.925055Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:42.885307Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:05:43.821528Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:43.821594Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:44.111439Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:05:46.125218Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:46.125249Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:47.133335Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:05:47.133916Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:47.133945Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:47.134186Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:05:48.620771Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:48.620809Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:49.245122Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:05:49.245365Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:49.245383Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:49.245564Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:05:56.926073Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:05:56.926117Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:05:57.055770Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:06:28.616339Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("PHASE_3_3_COMPLETION_REPORT.md")}
+2025-11-02T21:06:28.616369Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:06:28.725820Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-11-02T21:06:28.725834Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-11-02T21:06:29.621726Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("PHASE_3_3_COMPLETION_REPORT.md")}
+2025-11-02T21:06:29.621754Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:06:31.929983Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:06:31.930003Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:06:42.226242Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("PHASE_3_3_COMPLETION_REPORT.md"), AnchoredSystemPathBuf("apps\\api\\src\\main.ts"), AnchoredSystemPathBuf("apps\\api\\src\\config\\environment-validator.ts"), AnchoredSystemPathBuf("apps\\api\\src\\config\\CONFIGURATION_GUIDE.md"), AnchoredSystemPathBuf("apps\\api\\src\\common\\health\\health.controller.ts"), AnchoredSystemPathBuf("apps\\api\\src\\config\\validation.ts"), AnchoredSystemPathBuf("apps\\api\\src\\app.module.ts")}
+2025-11-02T21:06:42.226384Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:06:42.482315Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:06:42.482491Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\config\\CONFIGURATION_GUIDE.md")}
+2025-11-02T21:06:42.482507Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:06:42.482608Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:08:08.928542Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\test-setup.ts")}
+2025-11-02T21:08:08.928569Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:08:09.070591Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\testing")}
+2025-11-02T21:08:09.070603Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:08:09.070650Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:08:09.418364Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\test-setup.ts")}
+2025-11-02T21:08:09.418426Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:08:11.221655Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:08:11.221688Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:08:11.316448Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:08:11.316491Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:08:36.215982Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\modules\\auth\\auth.service.spec.ts")}
+2025-11-02T21:08:36.216001Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:08:36.339643Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\modules\\auth")}
+2025-11-02T21:08:36.339656Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:08:36.339702Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:08:36.714954Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\modules\\auth\\auth.service.spec.ts")}
+2025-11-02T21:08:36.715003Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:08:38.723521Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:08:38.723559Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:09:05.627299Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\modules\\auth\\auth.integration.spec.ts")}
+2025-11-02T21:09:05.627320Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:09:05.764934Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\modules\\auth")}
+2025-11-02T21:09:05.764947Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:09:05.764999Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:09:06.119825Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\modules\\auth\\auth.integration.spec.ts")}
+2025-11-02T21:09:06.119859Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:09:08.026846Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:09:08.026910Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:09:08.123016Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:09:08.123060Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:09:35.019907Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\app.e2e.spec.ts")}
+2025-11-02T21:09:35.019928Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:09:35.177796Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src")}
+2025-11-02T21:09:35.177808Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:09:35.177863Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:09:35.724643Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\app.e2e.spec.ts")}
+2025-11-02T21:09:35.724680Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:09:37.024938Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:09:37.025004Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:09:59.028481Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:09:59.028511Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:10:00.822747Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:10:00.822760Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:10:14.122838Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\performance.spec.ts")}
+2025-11-02T21:10:14.122855Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:10:14.284068Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\testing")}
+2025-11-02T21:10:14.284081Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:10:14.284136Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:10:15.024294Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\performance.spec.ts")}
+2025-11-02T21:10:15.024316Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:10:16.028133Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:10:16.028184Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:10:45.619852Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\test-config.service.ts")}
+2025-11-02T21:10:45.619897Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:10:47.427077Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:10:47.427122Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:10:47.522955Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:10:47.522976Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:11:02.919844Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\jest.config.js")}
+2025-11-02T21:11:02.919876Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:11:04.827812Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:11:04.827853Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:11:04.920965Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:11:04.921038Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:11:42.423068Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\test-utils.service.ts")}
+2025-11-02T21:11:42.423092Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:11:43.917695Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:11:43.917722Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:11:58.428932Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\test-utils.service.ts")}
+2025-11-02T21:11:58.428959Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:12:17.527000Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\test-utils.service.ts")}
+2025-11-02T21:12:17.527030Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:12:33.715238Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\test-utils.service.ts")}
+2025-11-02T21:12:33.715284Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:12:43.919877Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:12:43.919913Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:12:44.115169Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:12:52.522981Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:12:52.523030Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:12:52.872175Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:12:52.872964Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:12:52.872989Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:12:52.873191Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:12:56.719004Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:12:56.719035Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:12:56.863833Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:13:03.516887Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:13:03.516928Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:13:03.905905Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:13:04.623855Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:13:04.623880Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:13:04.878144Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:13:07.820281Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:13:07.820310Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:13:09.232230Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:13:09.232990Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:13:09.233060Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:13:09.233551Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:13:11.315463Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:13:11.315522Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:13:12.059304Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:13:12.059620Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:13:12.059640Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:13:12.059813Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:13:23.419712Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:13:23.419779Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:13:23.666483Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:14:03.620728Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("PHASE_3_4_COMPLETION_REPORT.md")}
+2025-11-02T21:14:03.620785Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:14:04.129867Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("PHASE_3_4_COMPLETION_REPORT.md")}
+2025-11-02T21:14:04.129930Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:14:05.518140Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-11-02T21:14:05.518181Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-11-02T21:14:06.026716Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:14:06.026770Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:14:17.426598Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\modules\\auth\\auth.service.spec.ts"), AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\test-utils.service.ts"), AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\test-config.service.ts"), AnchoredSystemPathBuf("PHASE_3_4_COMPLETION_REPORT.md"), AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\performance.spec.ts"), AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\test-setup.ts"), AnchoredSystemPathBuf("apps\\api\\src\\modules\\auth\\auth.integration.spec.ts"), AnchoredSystemPathBuf("apps\\api\\src\\app.e2e.spec.ts"), AnchoredSystemPathBuf("apps\\api\\jest.config.js")}
+2025-11-02T21:14:17.426659Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:14:17.607972Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:14:17.608088Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("PHASE_3_4_COMPLETION_REPORT.md"), AnchoredSystemPathBuf("apps\\api\\src\\common\\testing\\test-utils.service.ts")}
+2025-11-02T21:14:17.608097Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }, WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:14:17.608152Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:15:04.025716Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:15:04.025741Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:15:05.816832Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:15:05.816852Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:16:33.726421Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api"), AnchoredSystemPathBuf("apps\\api\\scripts\\deploy.sh"), AnchoredSystemPathBuf("apps\\api\\scripts")}
+2025-11-02T21:16:33.726448Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:16:33.887202Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\scripts")}
+2025-11-02T21:16:33.887216Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:16:33.887265Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:16:34.424404Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\scripts\\deploy.sh")}
+2025-11-02T21:16:34.424447Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:16:36.320233Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:16:36.320272Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:16:36.415410Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:16:36.415468Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:16:55.420435Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\Dockerfile.production")}
+2025-11-02T21:16:55.420551Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:16:57.223974Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:16:57.224141Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:16:57.317259Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:16:57.317288Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:17:02.616722Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\apps\\api"), AnchoredSystemPathBuf("apps\\web\\apps\\api\\k8s"), AnchoredSystemPathBuf("apps\\web"), AnchoredSystemPathBuf("apps\\web\\apps")}
+2025-11-02T21:17:02.616745Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:17:02.731372Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:17:20.420058Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s"), AnchoredSystemPathBuf("apps\\api\\k8s\\deployment.yaml")}
+2025-11-02T21:17:20.420078Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:17:20.619832Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s"), AnchoredSystemPathBuf("apps\\api")}
+2025-11-02T21:17:20.619846Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:17:20.619919Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:17:21.020330Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s\\deployment.yaml")}
+2025-11-02T21:17:21.020365Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:17:23.127333Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:17:23.127362Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:17:35.720884Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s\\service.yaml")}
+2025-11-02T21:17:35.720899Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:17:35.877807Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s")}
+2025-11-02T21:17:35.877820Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:17:35.877871Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:17:36.828407Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s\\service.yaml")}
+2025-11-02T21:17:36.828432Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:17:39.122923Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:17:39.122940Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:17:39.215505Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:17:39.215521Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:18:00.429098Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s\\ingress.yaml"), AnchoredSystemPathBuf("apps\\api\\k8s")}
+2025-11-02T21:18:00.429113Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:18:00.928793Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s\\ingress.yaml")}
+2025-11-02T21:18:00.928824Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:18:03.029343Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:18:03.029409Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:18:15.925919Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s\\configmap.yaml")}
+2025-11-02T21:18:15.925940Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:18:16.028630Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s")}
+2025-11-02T21:18:16.028641Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:18:16.028686Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:18:16.314774Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s\\configmap.yaml")}
+2025-11-02T21:18:16.314788Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:18:16.447810Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s\\configmap.yaml")}
+2025-11-02T21:18:16.447826Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:18:16.447885Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:18:18.933318Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:18:18.933387Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:18:19.025002Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:18:19.025026Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:18:32.825603Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s\\secret.yaml")}
+2025-11-02T21:18:32.825619Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:18:33.002611Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s")}
+2025-11-02T21:18:33.002624Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:18:33.002681Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:18:33.423620Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s\\secret.yaml")}
+2025-11-02T21:18:33.423646Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:18:35.717524Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:18:35.717562Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:18:35.831413Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:18:35.831432Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:18:58.923641Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s\\hpa.yaml")}
+2025-11-02T21:18:58.923658Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:18:59.066660Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s")}
+2025-11-02T21:18:59.066675Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:18:59.066750Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:18:59.429635Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\k8s\\hpa.yaml")}
+2025-11-02T21:18:59.429711Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:19:01.229640Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:19:01.229676Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:19:01.322858Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:19:01.322881Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:19:11.819113Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.github"), AnchoredSystemPathBuf("apps\\web\\.github\\workflows")}
+2025-11-02T21:19:11.819312Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:19:12.009224Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:19:12.009431Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web")}
+2025-11-02T21:19:12.009449Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:19:12.009640Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:19:37.519904Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".github\\workflows\\ci-cd.yml")}
+2025-11-02T21:19:37.519949Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:19:38.826174Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".github\\workflows\\ci-cd.yml")}
+2025-11-02T21:19:38.826201Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:19:39.723976Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:19:39.723998Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:19:39.817546Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:19:39.817602Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:20:04.827449Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\scripts\\health-check.sh")}
+2025-11-02T21:20:04.827469Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:20:05.047059Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\scripts")}
+2025-11-02T21:20:05.047073Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:20:05.047123Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:20:06.024587Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\scripts\\health-check.sh")}
+2025-11-02T21:20:06.024607Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:20:07.817327Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:20:07.817358Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:20:07.926228Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:20:07.926291Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:20:09.617153Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:20:09.617174Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:20:10.516441Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:20:10.516457Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:20:10.626315Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:20:10.626332Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:20:32.827864Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\scripts\\validate-production.sh")}
+2025-11-02T21:20:32.827885Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:20:32.958968Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\scripts")}
+2025-11-02T21:20:32.958981Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:20:32.959053Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:20:33.315726Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\scripts\\validate-production.sh")}
+2025-11-02T21:20:33.315753Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-02T21:20:35.126461Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:20:35.126499Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:20:35.221982Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:20:35.222046Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:21:09.714653Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("DEPLOYMENT_GUIDE.md")}
+2025-11-02T21:21:09.714732Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:21:11.626078Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:21:11.626129Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:21:29.829311Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\apps\\api"), AnchoredSystemPathBuf("apps\\web\\apps\\api\\scripts")}
+2025-11-02T21:21:29.829405Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:21:29.948499Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:21:40.716552Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:21:40.716588Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:21:41.237716Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:21:41.238084Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:21:41.238097Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:21:41.238563Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:21:46.926886Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:21:46.926930Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:21:47.291982Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:21:47.292988Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:21:47.293015Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:21:47.293247Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:21:53.623060Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:21:53.623096Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:21:53.778368Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:22:02.316673Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:22:02.319749Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:22:02.641839Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:22:03.421203Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:22:03.421269Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:22:03.741998Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:22:06.928982Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:22:06.929048Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:22:08.744881Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:22:08.745807Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:22:08.745841Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:22:08.746328Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:22:11.015878Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:22:11.015931Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:22:12.143537Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:22:12.144328Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:22:12.144356Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:22:12.144736Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:22:23.626966Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\web\\.next")}
+2025-11-02T21:22:23.627133Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/web"), path: AnchoredSystemPathBuf("apps\\web") }}))
+2025-11-02T21:22:23.825296Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-02T21:23:09.221705Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("PHASE_3_5_COMPLETION_REPORT.md")}
+2025-11-02T21:23:09.221718Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:23:09.915603Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("PHASE_3_5_COMPLETION_REPORT.md")}
+2025-11-02T21:23:09.915625Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:23:11.219367Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("")}
+2025-11-02T21:23:11.219389Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({}))
+2025-11-02T21:23:11.722687Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:23:11.722711Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:23:11.817256Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-02")}
+2025-11-02T21:23:11.817275Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-02T21:23:39.326307Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("PHASE_3_COMPLETION_REPORT.md")}
+2025-11-02T21:23:39.326343Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))

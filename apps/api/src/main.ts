@@ -90,13 +90,24 @@ async function bootstrap() {
     },
   });
 
-  // Health check endpoint
+  // Health check endpoint (legacy - use /api/v1/health instead)
   app.use('/health', (req, res) => {
     res.json({
       status: 'ok',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       message: 'API is running successfully!',
+      version: process.env.npm_package_version || '1.0.0',
+      environment: process.env.NODE_ENV || 'development',
+    });
+  });
+
+  // Readiness check for load balancers
+  app.use('/ready', (req, res) => {
+    res.json({
+      status: 'ready',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
     });
   });
 
@@ -105,20 +116,68 @@ async function bootstrap() {
     res.json({
       message: 'API test endpoint is working!',
       timestamp: new Date().toISOString(),
+      version: process.env.npm_package_version || '1.0.0',
+      environment: process.env.NODE_ENV || 'development',
     });
   });
 
   const port = configService.get('app.port', 4000);
   const host = process.env.HOST || '0.0.0.0';
+  const shutdownTimeout = configService.get('app.shutdownTimeout', 10000);
+
   await app.listen(port, host);
 
   const displayHost = host === '0.0.0.0' ? 'localhost' : host;
   logger.log(`🚀 Application is running on: http://${displayHost}:${port}`);
   logger.log(`📚 API Documentation: http://${displayHost}:${port}/api/docs`);
   logger.log(`🏥 Health Check: http://${displayHost}:${port}/health`);
+  logger.log(`✅ Readiness Check: http://${displayHost}:${port}/ready`);
+  logger.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
+  logger.log(`📊 Version: ${process.env.npm_package_version || '1.0.0'}`);
+
+  // Graceful shutdown handling
+  const gracefulShutdown = async (signal: string) => {
+    logger.log(`📴 Received ${signal}, starting graceful shutdown...`);
+
+    try {
+      // Close the HTTP server
+      await app.close();
+      logger.log('✅ HTTP server closed successfully');
+
+      // Additional cleanup can be added here
+      // - Close database connections
+      // - Close Redis connections
+      // - Close external service connections
+      // - Flush logs
+
+      logger.log('✅ Graceful shutdown completed');
+      process.exit(0);
+    } catch (error) {
+      logger.error('❌ Error during graceful shutdown:', error);
+      process.exit(1);
+    }
+  };
+
+  // Handle shutdown signals
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+  // Handle uncaught exceptions
+  process.on('uncaughtException', (error) => {
+    logger.error('💥 Uncaught Exception:', error);
+    gracefulShutdown('uncaughtException');
+  });
+
+  // Handle unhandled promise rejections
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);
+    gracefulShutdown('unhandledRejection');
+  });
 }
 
 bootstrap().catch((error) => {
   console.error('❌ Error starting application:', error);
+  console.error('🔍 Check your environment configuration and try again');
+  console.error('📖 See CONFIGURATION_GUIDE.md for setup instructions');
   process.exit(1);
 });
