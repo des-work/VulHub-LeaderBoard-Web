@@ -153,19 +153,27 @@ All critical systems are ready.
 **Effort:** 15 minutes  
 **Impact:** Required for production
 
+**See:** [FREE_PLATFORMS_SETUP_GUIDE.md](./FREE_PLATFORMS_SETUP_GUIDE.md) for complete setup
+
 **Required Variables:**
 ```env
-# Frontend
-NEXT_PUBLIC_SITE_URL=https://yourdomain.com
-NEXT_PUBLIC_API_URL=https://api.yourdomain.com/api
+# Frontend (Vercel)
+NEXT_PUBLIC_SITE_URL=https://your-app.vercel.app
+NEXT_PUBLIC_API_URL=https://your-api.render.com/api/v1
 NODE_ENV=production
 
-# Backend (in deployment platform)
-DATABASE_URL=postgresql://...
-JWT_SECRET=<32-char-secret>
-JWT_REFRESH_SECRET=<32-char-secret>
-CORS_ORIGIN=https://yourdomain.com
+# Backend (Render/Railway/Heroku)
+DATABASE_URL=postgresql://... (from Supabase/Neon)
+JWT_SECRET=<32-char-secret>  (generate with: openssl rand -hex 32)
+JWT_REFRESH_SECRET=<32-char-secret>  (generate with: openssl rand -hex 32)
+CORS_ORIGIN=https://your-app.vercel.app
 ```
+
+**Free Platform Options:**
+- **Database:** Supabase (free), Neon (free), ElephantSQL (20MB free)
+- **Frontend:** Vercel (free), Netlify (free), Cloudflare Pages (free)
+- **Backend:** Render (free), Railway ($5/mo), Heroku (no free tier)
+- **Redis:** Upstash (free), Redis Cloud (30MB free), or skip (optional)
 
 ---
 
@@ -394,22 +402,45 @@ The application is:
 ## 🚀 Next Steps
 
 ### Immediate (Before Launch)
-1. ✅ Create Open Graph image
-2. ✅ Configure production environment variables
-3. ✅ Run database migrations
-4. ✅ Test production build
+1. ✅ **Set up free external services** (20-30 min)
+   - Database: Supabase or Neon (free PostgreSQL)
+   - Frontend: Vercel (free Next.js hosting)
+   - Backend: Render (free) or Railway ($5/mo)
+   - See: [FREE_PLATFORMS_SETUP_GUIDE.md](./FREE_PLATFORMS_SETUP_GUIDE.md)
+
+2. ✅ **Configure environment variables** (15 min)
+   - Generate JWT secrets (2x 32-char strings)
+   - Set database connection URL
+   - Configure CORS and API URLs
+
+3. ✅ **Run database migrations** (5 min)
+   ```bash
+   # On Render/Railway console:
+   npx prisma migrate deploy
+   ```
+
+4. ✅ **Create Open Graph image** (30 min)
+   - Create `/public/og-image.png` (1200x630px)
+   - Add VulHub Leaderboard branding
+
+5. ✅ **Test production deployment** (15 min)
+   - Verify health endpoint
+   - Test login
+   - Check API connectivity
 
 ### Short-Term (First Week)
-1. ⚠️ Monitor error rates
-2. ⚠️ Verify performance metrics
+1. ⚠️ Monitor error rates (check Vercel/Render dashboards)
+2. ⚠️ Verify performance metrics (page load times < 2s)
 3. ⚠️ Collect user feedback
 4. ⚠️ Address any critical issues
+5. 🟡 Optional: Add Upstash Redis for better performance
 
 ### Medium-Term (First Month)
 1. 🔵 Improve table accessibility
-2. 🔵 Set up CI/CD pipeline
-3. 🔵 Add advanced monitoring
+2. 🔵 Set up CI/CD pipeline (GitHub Actions)
+3. 🔵 Add advanced monitoring (Sentry, LogRocket)
 4. 🔵 Implement page-specific metadata
+5. 🔵 Consider upgrading to paid tier if traffic increases
 
 ---
 

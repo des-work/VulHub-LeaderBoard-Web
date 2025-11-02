@@ -39,10 +39,10 @@ VulHub Leaderboard transforms cybersecurity education into an engaging, competit
 
 ### Current Status
 
-**Phase**: Beta / Pre-Production Ready  
+**Phase**: Production Ready (85% - See [PRODUCTION_READINESS_ASSESSMENT.md](./PRODUCTION_READINESS_ASSESSMENT.md))  
 **Test Environment**: Fully functional local development setup  
-**Database**: PostgreSQL with seed data included  
-**Deployment**: Ready for Heroku + Vercel + Supabase
+**Database**: PostgreSQL/SQLite with seed data included  
+**Deployment**: Ready for Vercel + Render/Railway + Supabase (100% free options available)
 
 ---
 
@@ -328,8 +328,13 @@ Before running the application, ensure you have:
   npm install -g pnpm
   ```
 - **Git** for cloning the repository
-- **PostgreSQL** 14+ (for local database) OR Docker Desktop (for containerized setup)
-- **Redis** (optional, for caching) or use in-memory fallback
+
+**For Local Development:**
+- **PostgreSQL** 14+ OR **SQLite** (automatic fallback) OR **Docker Desktop**
+- **Redis** (optional, app works fine without it using in-memory fallback)
+
+**For Production Deployment:**
+- See [FREE_PLATFORMS_SETUP_GUIDE.md](./FREE_PLATFORMS_SETUP_GUIDE.md) for free hosting options
 
 ### Installation
 
@@ -772,40 +777,80 @@ curl http://localhost:4010/api/v1/leaderboards/my-rank \
 
 ## Deployment
 
-### Quick Deployment Summary
+### 🆓 Free Hosting Options (Updated 2025)
 
-The application is ready to deploy to production using:
+The application can be deployed **100% free** or for as low as **$5/month** using modern cloud platforms:
 
-| Component | Platform | Time | Status |
-|-----------|----------|------|--------|
-| Frontend | Vercel | 10 min | 🟢 Ready |
-| API | Heroku | 15 min | 🟢 Ready |
-| Database | Supabase | 5 min | 🟢 Ready |
-| **Total** | | **45 min** | ✅ Complete |
+| Component | Platform | Cost | Time | Status |
+|-----------|----------|------|------|--------|
+| **Frontend** | Vercel | FREE | 5 min | 🟢 Ready |
+| **API** | Render (free) / Railway ($5/mo) | $0-5/month | 10 min | 🟢 Ready |
+| **Database** | Supabase / Neon | FREE | 5 min | 🟢 Ready |
+| **Redis** | Upstash (optional) | FREE | 3 min | 🟡 Optional |
+| **Total** | | **$0-5/month** | **20-30 min** | ✅ Complete |
 
-### Detailed Deployment Guides
+**⚠️ Important:** Heroku removed their free tier in 2022. See updated options below.
 
-We've created comprehensive deployment guides for each platform:
+### 📚 Deployment Documentation
 
-1. **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Start here! Master guide with architecture overview
-2. **[SUPABASE_SETUP.md](./SUPABASE_SETUP.md)** - Set up free PostgreSQL database
-3. **[HEROKU_DEPLOYMENT.md](./HEROKU_DEPLOYMENT.md)** - Deploy API to Heroku
-4. **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)** - Deploy frontend to Vercel  
-5. **[POST_DEPLOYMENT_CHECKLIST.md](./POST_DEPLOYMENT_CHECKLIST.md)** - Verify everything works
+**Start Here:**
+1. **[FREE_PLATFORMS_SETUP_GUIDE.md](./FREE_PLATFORMS_SETUP_GUIDE.md)** ⭐ **NEW!** Complete guide to free hosting
+2. **[PRODUCTION_READINESS_ASSESSMENT.md](./PRODUCTION_READINESS_ASSESSMENT.md)** - Launch readiness checklist
+3. **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Architecture overview and deployment process
+
+**Platform-Specific Guides:**
+- **Database:** Supabase (free PostgreSQL) or Neon (free serverless PostgreSQL)
+- **Frontend:** Vercel (made for Next.js, 100% free)
+- **Backend:** Render (free tier) or Railway ($5/month, better performance)
+- **Optional:** Upstash Redis (free caching), Cloudinary (free file storage)
+
+### 🎯 Recommended Launch Stack
+
+#### **Option A: 100% Free (Recommended for MVP)**
+```
+Frontend:  Vercel (free)
+Backend:   Render (free, auto-sleeps after 15 min)
+Database:  Supabase (free, 500MB)
+Cost:      $0/month
+```
+
+#### **Option B: Better Performance ($5/month)**
+```
+Frontend:  Vercel (free)
+Backend:   Railway ($5/month, always-on)
+Database:  Supabase (free, 500MB)
+Redis:     Upstash (free)
+Cost:      $5/month
+```
+
+### Required External Services
+
+Based on your code, here's what you **must** set up:
+
+#### ✅ **Required:**
+1. **PostgreSQL Database** - Supabase (free) or Neon (free)
+2. **Frontend Hosting** - Vercel (free)
+3. **Backend Hosting** - Render (free) or Railway ($5/mo)
+
+#### 🟡 **Optional (App Works Without):**
+1. **Redis** - Upstash (free) - Improves performance but has in-memory fallback
+2. **Email** - Resend/SendGrid (free) - For notifications, uses in-app notifications otherwise
+3. **File Storage** - Cloudinary (free) - For uploads, local storage works as fallback
 
 ### Production Checklist
 
 Before going live:
-- [ ] All core pages load and function
-- [ ] Authentication works (login/logout)
-- [ ] API communicates with frontend
-- [ ] Database has all tables
-- [ ] Leaderboard updates correctly
-- [ ] Badges system works
-- [ ] Submissions can be uploaded
-- [ ] HTTPS everywhere
-- [ ] Monitoring/logging configured
-- [ ] Backup strategy in place
+- [ ] ✅ Set up free database (Supabase/Neon)
+- [ ] ✅ Deploy frontend to Vercel
+- [ ] ✅ Deploy backend to Render/Railway
+- [ ] ✅ Set all environment variables (see [FREE_PLATFORMS_SETUP_GUIDE.md](./FREE_PLATFORMS_SETUP_GUIDE.md))
+- [ ] ✅ Run database migrations
+- [ ] ✅ Test authentication (login/logout)
+- [ ] ✅ Verify API health endpoint
+- [ ] ✅ Test core features (leaderboard, submissions, badges)
+- [ ] ✅ Verify HTTPS everywhere
+- [ ] 🟡 Optional: Set up Redis cache
+- [ ] 🟡 Optional: Configure email service
 
 ---
 
