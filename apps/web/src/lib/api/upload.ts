@@ -300,7 +300,6 @@ export async function uploadFiles(
  */
 export function cancelUpload(fileId: string): void {
   // TODO: Implement abort controller cancellation
-  console.log(`Upload cancelled for fileId: ${fileId}`);
 }
 
 // ============================================================================

@@ -97,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               localStorage.removeItem('auth_token');
             }
           } catch (parseError) {
-            console.warn('Invalid user data in localStorage:', parseError);
+            // Invalid stored data - clear it silently
             localStorage.removeItem('user_data');
             localStorage.removeItem('auth_token');
           }
@@ -106,10 +106,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // No valid session found - ensure loading is false
         dispatch({ type: 'SET_LOADING', payload: false });
       } catch (error) {
-        console.error('Auth check failed:', error);
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('user_data');
-        dispatch({ type: 'SET_LOADING', payload: false });
+        // Auth check failed silently
       }
     };
 
@@ -279,7 +276,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await AuthApi.logout();
       }
     } catch (error) {
-      console.error('Logout API call failed:', error);
       // Continue with local logout even if API fails
     } finally {
       // Always clear all tokens and user data

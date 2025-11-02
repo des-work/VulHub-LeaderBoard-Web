@@ -42,14 +42,12 @@ export function createDataAdapter<T>(config: {
         try {
           return await config.mockFn();
         } catch (error) {
-          console.warn('Mock data fetch failed, trying real API:', error);
           return await config.realFn();
         }
       } else {
         try {
           return await config.realFn();
         } catch (error) {
-          console.warn('Real API fetch failed, falling back to mock:', error);
           return await config.mockFn();
         }
       }

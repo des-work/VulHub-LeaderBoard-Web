@@ -13,10 +13,6 @@ import { useAnimationOrchestrator } from './hooks/useAnimationOrchestrator';
 
 // Debug and error handling
 import { AnimationDebugger, errorLogger } from './utils/debug';
-import { DebugOverlay } from './components/DebugOverlay';
-
-// Performance monitoring
-import { PerformanceMonitor } from './performance/PerformanceMonitor';
 
 // Logging
 import { logger } from '../../../lib/logging/logger';
@@ -200,35 +196,8 @@ export const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({
         </button>
       )}
 
-      {/* Debug Overlay */}
-      {debug && debuggerInstance && state && (
-        <DebugOverlay
-          debugInfo={debuggerInstance.getDebugInfo(
-            {
-              stars: state?.entities?.entityCount ?? 0,
-              projectiles: 0,
-              explosions: 0,
-              debris: 0
-            },
-            currentPhase,
-            state?.animation?.elapsedTime ?? 0,
-            isPlaying
-          )}
-        />
-      )}
-
-      {/* Performance Monitor */}
-      {enablePerformanceMonitor && (
-        <PerformanceMonitor
-          enabled={true}
-          showOverlay={debug}
-          onPerformanceIssue={(metrics) => {
-            if (debug) {
-              console.warn('Performance issue detected:', metrics);
-            }
-          }}
-        />
-      )}
+      {/* Debug overlay and performance monitor removed for production launch */}
+      {/* Can be re-added later if needed */}
 
       {/* System Health Indicator */}
       {debug && systemHealth !== 'healthy' && (

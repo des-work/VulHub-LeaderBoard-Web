@@ -244,17 +244,7 @@ export function logError(error: Error, context?: any): void {
   }
   
   if (isDevelopment) {
-    console.error('[API Error]', {
-      name: error.name,
-      message: error.message,
-      ...(error instanceof ApiError && {
-        status: error.status,
-        code: error.code,
-        details: error.details
-      }),
-      context,
-      stack: error.stack
-    });
+    // Development logging removed - errors should be tracked silently in production
   }
 }
 

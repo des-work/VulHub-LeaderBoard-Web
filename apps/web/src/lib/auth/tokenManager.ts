@@ -26,9 +26,7 @@ export function decodeToken(token: string): TokenPayload | null {
     const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
     return JSON.parse(decoded);
   } catch (error) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.error('Failed to decode token:', error);
-    }
+    // Silent fail - token decode errors should not expose details to console
     return null;
   }
 }
@@ -93,9 +91,7 @@ export class TokenRefreshManager {
   start(): void {
     const accessToken = apiClient.getAuthToken();
     if (!accessToken) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn('No access token found, cannot start refresh manager');
-      }
+      // No access token - cannot start refresh manager
       return;
     }
 
@@ -122,9 +118,7 @@ export class TokenRefreshManager {
     const timeUntilExpiry = getTimeUntilExpiry(accessToken);
     
     if (timeUntilExpiry <= 0) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('Token already expired, refreshing immediately');
-      }
+      // Token already expired, refresh immediately
       this.refreshNow();
       return;
     }
@@ -134,64 +128,53 @@ export class TokenRefreshManager {
       30, // Minimum 30 seconds
       Math.min(
         timeUntilExpiry - 300, // 5 minutes before expiry
-        timeUntilExpiry / 2    // Or halfway through
+        timeUntilExpiry / 2   // Or halfway through token lifespan
       )
     );
 
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`Token refresh scheduled in ${refreshInSeconds} seconds`);
-    }
-
-    this.refreshTimer = setTimeout(() => {
-      this.refreshNow();
-    }, refreshInSeconds * 1000);
+    this.refreshTimer = setTimeout(() => this.refreshNow(), refreshInSeconds * 1000);
   }
 
   /**
    * Refresh token immediately
    */
   private async refreshNow(): Promise<void> {
-    if (!this.refreshToken) {
-      console.error('No refresh token available');
-      this.onRefreshFailed?.();
+    const refreshToken = this.refreshToken;
+
+    if (!refreshToken) {
+      // Refresh token not available - silently fail
       return;
     }
 
     try {
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('Refreshing access token...');
-      }
       const response = await AuthApi.refreshToken(this.refreshToken);
-      
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('Token refreshed successfully');
-      }
       this.onTokenRefreshed?.(response.accessToken);
-      
-      // Schedule next refresh
       this.scheduleRefresh(response.accessToken);
     } catch (error) {
-      console.error('Token refresh failed:', error);
+      // Token refresh failed - silently fail, will require re-login
       this.onRefreshFailed?.();
     }
   }
 
   /**
-   * Manually trigger token refresh
+   * Manually trigger token refresh (called by auth context on demand)
    */
-  async refresh(): Promise<string | null> {
-    if (!this.refreshToken) {
-      console.error('No refresh token available');
-      return null;
+  async manualRefresh(): Promise<boolean> {
+    const refreshToken = this.refreshToken;
+
+    if (!refreshToken) {
+      // Cannot refresh without token
+      return false;
     }
 
     try {
-      const response = await AuthApi.refreshToken(this.refreshToken);
+      const response = await AuthApi.refreshToken(refreshToken);
+      this.onTokenRefreshed?.(response.accessToken);
       this.scheduleRefresh(response.accessToken);
-      return response.accessToken;
+      return true;
     } catch (error) {
-      console.error('Manual token refresh failed:', error);
-      return null;
+      // Manual refresh failed
+      return false;
     }
   }
 }

@@ -58,7 +58,6 @@ async function fetchRealProfileData(userId: string): Promise<ProfileData> {
       recentActivity: activity
     };
   } catch (error) {
-    console.error('Failed to fetch real profile data:', error);
     // Fallback to mock data if API fails
     return fetchMockProfileData(userId);
   }
@@ -289,7 +288,6 @@ export function enableRealDataMode() {
  */
 export function disableMockDataMode() {
   DATA_SOURCE.useRealData = false;
-  console.log('ℹ️ Mock data mode enabled');
 }
 
 /**

@@ -221,9 +221,7 @@ class ErrorTrackingService implements ErrorTrackingService {
     // Check deduplication and rate limiting
     const shouldTrack = this.deduplicator.shouldTrack(error, context);
     if (!shouldTrack.track) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn(`[Error Tracking] Skipping error: ${shouldTrack.reason}`, error);
-      }
+      // Silently skip duplicate/rate-limited errors
       return;
     }
 
@@ -250,32 +248,8 @@ class ErrorTrackingService implements ErrorTrackingService {
       try {
         sentry.captureException(error, formattedContext);
       } catch (e) {
-        console.error('[Error Tracking] Failed to send to Sentry:', e);
+        // Silently fail if Sentry is unavailable
       }
-    }
-
-    // Always log in development
-    // @ts-ignore - process.env is replaced by Next.js at build time
-    const isDevelopment = typeof process !== 'undefined' && process.env?.NODE_ENV === 'development';
-    if (isDevelopment) {
-      console.error('[Error Tracking] Exception:', {
-        error: {
-          name: error.name,
-          message: error.message,
-          stack: error.stack,
-        },
-        context: formattedContext,
-      });
-    }
-
-    // Log to console in production for critical errors
-    if (error instanceof ApiError && error.status >= 500) {
-      console.error('[Critical API Error]', {
-        status: error.status,
-        code: error.code,
-        message: error.message,
-        url: formattedContext.extra?.url,
-      });
     }
   }
 
@@ -292,14 +266,8 @@ class ErrorTrackingService implements ErrorTrackingService {
       try {
         sentry.captureMessage(message, level, formattedContext);
       } catch (e) {
-        console.error('[Error Tracking] Failed to send to Sentry:', e);
+        // Silently fail if Sentry is unavailable
       }
-    }
-
-    const isDevelopment = typeof process !== 'undefined' && process.env?.NODE_ENV === 'development';
-    if (isDevelopment) {
-      const logMethod = level === 'error' ? console.error : level === 'warning' ? console.warn : console.info;
-      logMethod(`[Error Tracking] ${level.toUpperCase()}:`, message, formattedContext);
     }
   }
 
@@ -309,22 +277,29 @@ class ErrorTrackingService implements ErrorTrackingService {
     const sentry = getSentry();
     if (sentry) {
       try {
-        sentry.setUser(user);
+        if (user) {
+          sentry.setUser({ id: user.id, email: user.email, username: user.username });
+        } else {
+          sentry.setUser(null);
+        }
       } catch (e) {
-        console.error('[Error Tracking] Failed to set user in Sentry:', e);
+        // Silently fail if Sentry is unavailable
       }
     }
   }
 
   setContext(key: string, context: any): void {
-    this.contexts.set(key, context);
+    if (!this.context) {
+      this.context = {};
+    }
+    this.context[key] = context;
 
     const sentry = getSentry();
     if (sentry) {
       try {
         sentry.setContext(key, context);
       } catch (e) {
-        console.error('[Error Tracking] Failed to set context in Sentry:', e);
+        // Silently fail if Sentry is unavailable
       }
     }
   }

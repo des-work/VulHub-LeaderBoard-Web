@@ -8,7 +8,7 @@
 import { AnimationEngine } from '../canvas/AnimationEngine';
 import { OrchestratorState, createInitialOrchestratorState } from './types/OrchestratorState';
 import { errorLogger, performanceMonitor } from '../utils/debug';
-import { logger } from '../../../lib/logging/logger';
+import { logger } from '@/lib/logging/logger';
 
 export interface OrchestratorConfig {
   enableDebug?: boolean;
@@ -114,12 +114,16 @@ export class AnimationOrchestrator {
    */
   start(): void {
     if (!this.state.system.isInitialized || !this.animationEngine) {
-      console.error('Cannot start: orchestrator not initialized');
+      if (this.config.enableDebug) {
+        logger.error('Cannot start: orchestrator not initialized');
+      }
       return;
     }
 
     if (this.state.animation.isPlaying) {
-      console.warn('Animation already playing');
+      if (this.config.enableDebug) {
+        logger.warn('Animation already playing');
+      }
       return;
     }
 

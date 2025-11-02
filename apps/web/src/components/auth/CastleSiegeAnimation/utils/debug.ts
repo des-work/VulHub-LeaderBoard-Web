@@ -81,17 +81,8 @@ export class AnimationDebugger {
   }
 
   logPerformance(info: DebugInfo): void {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🎬 Animation Debug:`, {
-        FPS: info.fps,
-        'Frame Time': `${info.frameTime}ms`,
-        Memory: info.memoryUsage ? `${info.memoryUsage}MB` : 'N/A',
-        Entities: info.entityCount,
-        Phase: info.phase,
-        Time: `${info.elapsedTime}ms`,
-        Playing: info.isPlaying,
-      });
-    }
+    // Development-only logging - not used in production
+    // This method is kept for backward compatibility but is not called from components
   }
 }
 
@@ -113,7 +104,8 @@ export class AnimationErrorLogger {
       this.errors.shift();
     }
 
-    console.error('🎬 Animation Error:', error, context);
+    // Error tracking without console - errors are tracked in array
+    // Use logger from app for production error reporting
   }
 
   getRecentErrors(): typeof this.errors {
@@ -152,10 +144,7 @@ export class PerformanceMonitor {
       measurements.shift();
     }
 
-    if (process.env.NODE_ENV === 'development') {
-      const avg = measurements.reduce((a, b) => a + b, 0) / measurements.length;
-      console.log(`⏱️ ${label}: ${duration.toFixed(2)}ms (avg: ${avg.toFixed(2)}ms)`);
-    }
+    // Development-only performance tracking - not logged to console in production
   }
 
   getAverage(label: string): number {

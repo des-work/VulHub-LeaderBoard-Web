@@ -50,10 +50,8 @@ export default function AuthPage() {
 
   // Handle animation completion
   const handleAnimationComplete = () => {
-    console.log('Animation complete - starting fade out');
     setAnimationFadingOut(true);
     setTimeout(() => {
-      console.log('Animation faded out - showing form');
       setAnimationPhase('idle');
       setShowForm(true);
     }, 800);

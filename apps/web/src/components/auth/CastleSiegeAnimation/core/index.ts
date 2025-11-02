@@ -16,14 +16,7 @@ export type { OrchestratorState, AnimationState as OrchestratorAnimationState } 
 export { OrchestratorActions } from './types/OrchestratorActions';
 export type { OrchestratorAction } from './types/OrchestratorActions';
 
-// Transitions (optional - can be enabled via config)
-export { TransitionManager } from './transitions/TransitionManager';
-export type {
-  TransitionConfig,
-  TransitionType,
-  TransitionState,
-  EasingFunction,
-} from './transitions/types/Transition';
+// Transitions (removed - was unused and disabled by default)
 
 // Note: The following are NOT exported as they're not used:
 // - RenderQueue, RenderExecutor (Phase 2) - AnimationEngine handles rendering

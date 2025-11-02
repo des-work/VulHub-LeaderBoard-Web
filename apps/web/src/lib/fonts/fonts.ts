@@ -104,7 +104,6 @@ export const loadFonts = () => {
     fontLink.rel = 'stylesheet';
     fontLink.href = `https://fonts.googleapis.com/css2?family=${font.family}:wght@${font.weights}&display=${font.display}`;
     fontLink.onerror = () => {
-      console.warn(`Failed to load font: ${font.family}`);
     };
     document.head.appendChild(fontLink);
   });
@@ -112,7 +111,6 @@ export const loadFonts = () => {
   // Set up font loading detection
   if ('fonts' in document) {
     document.fonts.ready.then(() => {
-      console.log('All fonts loaded successfully');
     });
   }
 };
