@@ -1,7 +1,20 @@
 /**
  * Animation Engine
  * 
- * Core animation loop and state management for the canvas animation
+ * Core animation loop and state management for the canvas animation.
+ * Handles entity updates, rendering, and performance optimization.
+ *
+ * @example
+ * ```typescript
+ * const canvas = document.createElement('canvas');
+ * const engine = new AnimationEngine(canvas, () => {
+ *   console.log('Animation complete!');
+ * });
+ *
+ * engine.start();
+ * ```
+ *
+ * @class AnimationEngine
  */
 
 import { Entity, AnimationPhase, AnimationState, Castle, Vector2, ProjectileConfig } from '../types';
@@ -20,6 +33,7 @@ import {
   EXPLOSION_CONFIG,
 } from '../config';
 import { COLORS } from '../config';
+import { frameRateManager, performanceMonitor, getMemoryUsage } from '../utils/performance';
 
 export class AnimationEngine {
   private renderer: CanvasRenderer;
@@ -151,13 +165,24 @@ export class AnimationEngine {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
     }
+    // Reset frame rate manager
+    frameRateManager.reset();
   }
 
   /**
-   * Main animation loop
+   * Main animation loop with performance optimization
    */
   private animate = (currentTime: number = performance.now()): void => {
     if (!this.isRunning) return;
+    
+    // Frame rate management - skip frame if not time to render
+    if (!frameRateManager.shouldRender(currentTime)) {
+      this.animationFrameId = requestAnimationFrame(this.animate);
+      return;
+    }
+
+    // Start performance monitoring
+    performanceMonitor.mark('frame-start');
     
     const deltaTime = currentTime - this.lastFrameTime;
     this.lastFrameTime = currentTime;
@@ -168,8 +193,10 @@ export class AnimationEngine {
     // Update phase
     this.updatePhase();
     
-    // Update entities
+    // Update entities with performance tracking
+    performanceMonitor.mark('update-start');
     this.updateEntities(deltaTime);
+    const updateTime = performanceMonitor.measure('update-start') || 0;
 
     // Progressively grow star field for better visual experience
     this.growStarField(deltaTime);
@@ -188,8 +215,33 @@ export class AnimationEngine {
     // Update title opacity
     this.updateTitleOpacity();
     
-    // Render
+    // Render with performance tracking
+    performanceMonitor.mark('render-start');
     this.render();
+    const renderTime = performanceMonitor.measure('render-start') || 0;
+    
+    // Record frame metrics
+    const entityCount = this.stars.length + this.projectiles.length + 
+                       this.explosions.length + this.debris.length;
+    performanceMonitor.recordFrame({
+      fps: frameRateManager.getFPS(),
+      frameTime: deltaTime,
+      memoryUsage: getMemoryUsage(),
+      entityCount,
+      renderTime,
+      updateTime
+    });
+
+    // Check for performance degradation
+    if (performanceMonitor.isDegrading()) {
+      // Auto-reduce quality if degrading
+      const currentQuality = frameRateManager.getQuality();
+      if (currentQuality === 'high') {
+        frameRateManager.setQuality('medium');
+      } else if (currentQuality === 'medium') {
+        frameRateManager.setQuality('low');
+      }
+    }
     
     // Continue animation loop
     this.animationFrameId = requestAnimationFrame(this.animate);
@@ -444,6 +496,46 @@ export class AnimationEngine {
   }
 
   /**
+   * Reduce animation quality for better performance
+   */
+  reduceQuality(): void {
+    const currentQuality = frameRateManager.getQuality();
+    if (currentQuality === 'high') {
+      frameRateManager.setQuality('medium');
+    } else if (currentQuality === 'medium') {
+      frameRateManager.setQuality('low');
+    }
+  }
+
+  /**
+   * Get performance metrics
+   */
+  getPerformanceMetrics() {
+    return {
+      fps: frameRateManager.getFPS(),
+      quality: frameRateManager.getQuality(),
+      frameMetrics: frameRateManager.getMetrics(),
+      averageMetrics: performanceMonitor.getAverageMetrics(),
+      currentMetrics: performanceMonitor.getCurrentMetrics(),
+      isDegrading: performanceMonitor.isDegrading()
+    };
+  }
+
+  /**
+   * Set quality level explicitly
+   */
+  setQuality(level: 'high' | 'medium' | 'low'): void {
+    frameRateManager.setQuality(level);
+  }
+
+  /**
+   * Get current quality level
+   */
+  getQuality(): 'high' | 'medium' | 'low' {
+    return frameRateManager.getQuality();
+  }
+
+  /**
    * Cleanup
    */
   destroy(): void {
@@ -451,6 +543,9 @@ export class AnimationEngine {
     this.renderer.destroy();
     this.entities.clear();
     this.projectileSpawnTimers.clear();
+    // Clear performance monitoring
+    performanceMonitor.clear();
+    frameRateManager.reset();
   }
 }
 

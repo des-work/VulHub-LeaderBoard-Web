@@ -163,7 +163,7 @@ export interface LeaderboardEntry {
   id: string;
   rank: number;
   name: string;
-  schoolId: string;
+  email: string;
   points: number;
   level: number;
   streak?: number;

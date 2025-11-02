@@ -1,14 +1,45 @@
 /**
- * Simplified Animation Orchestrator
+ * Animation Orchestrator
+ * 
+ * Coordinates the entire animation system including:
+ * - Canvas rendering management
+ * - Entity lifecycle management
+ * - Performance monitoring
+ * - Error handling and recovery
+ * - State persistence
+ * - Accessibility features
  *
- * Pragmatic integration: Uses working AnimationEngine
- * Removes: RenderQueue, RenderExecutor, EntityLifecycleManager, PluginSystem, TransitionManager
+ * @example
+ * ```typescript
+ * const orchestrator = new AnimationOrchestrator({
+ *   enableDebug: false,
+ *   enablePerformanceMonitoring: true
+ * });
+ *
+ * await orchestrator.initialize();
+ * orchestrator.start();
+ * ```
+ * 
+ * @class AnimationOrchestrator
  */
 
 import { AnimationEngine } from '../canvas/AnimationEngine';
 import { OrchestratorState, createInitialOrchestratorState } from './types/OrchestratorState';
 import { errorLogger, performanceMonitor } from '../utils/debug';
 import { logger } from '@/lib/logging/logger';
+import {
+  animationErrorHandler,
+  AnimationErrorType,
+  createAnimationError
+} from '../utils/error-handling';
+import {
+  detectBrowserCapabilities,
+  polyfillRequestAnimationFrame,
+  shouldShowAnimation,
+  logBrowserCapabilities,
+  getFallbackMessage
+} from '../utils/browser-support';
+import { animationAccessibility } from '../utils/accessibility';
 
 export interface OrchestratorConfig {
   enableDebug?: boolean;
@@ -64,14 +95,49 @@ export class AnimationOrchestrator {
   async initialize(): Promise<void> {
     // SSR guard: don't initialize on server
     if (typeof window === 'undefined' || typeof document === 'undefined') {
-      const error = new Error('AnimationOrchestrator can only be initialized in the browser');
-      this.handleError(error, 'orchestrator_initialize');
-      throw error;
+      const error = createAnimationError(
+        AnimationErrorType.INITIALIZATION,
+        'AnimationOrchestrator can only be initialized in the browser',
+        false
+      );
+      animationErrorHandler.handle(error);
+      throw new Error(error.message);
     }
+
+    // Log browser capabilities in development
+    if (this.config.enableDebug) {
+      logBrowserCapabilities();
+    }
+
+    // Check if animation should be shown at all
+    if (!shouldShowAnimation()) {
+      const fallbackMessage = getFallbackMessage();
+      const error = createAnimationError(
+        AnimationErrorType.BROWSER_SUPPORT,
+        fallbackMessage,
+        false
+      );
+      animationErrorHandler.handle(error);
+      this.callbacks.onError?.(error);
+      throw new Error(fallbackMessage);
+    }
+
+    // Apply polyfills if needed
+    polyfillRequestAnimationFrame();
 
     performanceMonitor?.start('orchestrator_initialize');
 
     try {
+      // Check browser capabilities
+      const capabilities = detectBrowserCapabilities();
+      if (!capabilities.canvasSupported) {
+        throw createAnimationError(
+          AnimationErrorType.BROWSER_SUPPORT,
+          'Canvas API is not supported in this browser',
+          false
+        );
+      }
+
       // Create canvas
       this.canvasElement = document.createElement('canvas');
       this.canvasElement.width = window.innerWidth;
@@ -83,16 +149,24 @@ export class AnimationOrchestrator {
       this.state.canvas.dimensions.height = this.canvasElement.height;
 
       // Create the ACTUAL animation engine that does the rendering
-      this.animationEngine = new AnimationEngine(this.canvasElement);
-
-      // Initialize transition manager if enabled
-      if (this.config.enableTransitions) {
-        // This block is removed as per the edit hint
+      try {
+        this.animationEngine = new AnimationEngine(this.canvasElement);
+      } catch (engineError) {
+        const error = createAnimationError(
+          AnimationErrorType.RENDERING,
+          'Failed to initialize animation engine',
+          true,
+          { originalError: (engineError as Error).message },
+          engineError as Error,
+          'high'
+        );
+        animationErrorHandler.handle(error);
+        throw error;
       }
 
       // Mark as initialized
       this.state.system.isInitialized = true;
-      
+
       if (this.config.enableDebug) {
         logger.debug('✅ AnimationOrchestrator initialized successfully');
       }
@@ -100,13 +174,30 @@ export class AnimationOrchestrator {
       // Notify ready
       this.callbacks.onReady?.();
 
-      performanceMonitor?.end('orchestrator_initialize');
-
     } catch (error) {
+      // Handle initialization errors
+      this.state.system.hasError = true;
+
+      let animError = error as any;
+      if (!(error instanceof Error) || !(error as any).type) {
+        animError = createAnimationError(
+          AnimationErrorType.INITIALIZATION,
+          (error as Error).message || 'Unknown initialization error',
+          true,
+          undefined,
+          error as Error,
+          'high'
+        );
+      }
+
+      animationErrorHandler.handle(animError);
+      this.callbacks.onError?.(animError);
+
       performanceMonitor?.end('orchestrator_initialize');
-      this.handleError(error, 'orchestrator_initialize');
-      throw error;
+      throw animError;
     }
+
+    performanceMonitor?.end('orchestrator_initialize');
   }
 
   /**
@@ -114,9 +205,13 @@ export class AnimationOrchestrator {
    */
   start(): void {
     if (!this.state.system.isInitialized || !this.animationEngine) {
-      if (this.config.enableDebug) {
-        logger.error('Cannot start: orchestrator not initialized');
-      }
+      const error = createAnimationError(
+        AnimationErrorType.INITIALIZATION,
+        'Cannot start: orchestrator not initialized',
+        false
+      );
+      animationErrorHandler.handle(error);
+      this.callbacks.onError?.(error);
       return;
     }
 
@@ -127,17 +222,33 @@ export class AnimationOrchestrator {
       return;
     }
 
-    // Start the animation engine
-    this.animationEngine.start();
+    try {
+      // Start the animation engine
+      this.animationEngine.start();
 
-    this.state.animation.isPlaying = true;
-    this.state.animation.isPaused = false;
+      this.state.animation.isPlaying = true;
+      this.state.animation.isPaused = false;
 
-    // Start state synchronization
-    this.startStateSync();
+      // Start state synchronization
+      this.startStateSync();
 
-    if (this.config.enableDebug) {
-      logger.debug('▶️ Animation started');
+      // Start error monitoring
+      this.startErrorMonitoring();
+
+      if (this.config.enableDebug) {
+        logger.debug('▶️ Animation started');
+      }
+    } catch (error) {
+      const animError = createAnimationError(
+        AnimationErrorType.RENDERING,
+        'Failed to start animation',
+        true,
+        undefined,
+        error as Error,
+        'high'
+      );
+      animationErrorHandler.handle(animError);
+      this.callbacks.onError?.(animError);
     }
   }
 
@@ -202,6 +313,34 @@ export class AnimationOrchestrator {
       clearInterval(this.stateSyncTimer);
       this.stateSyncTimer = null;
     }
+
+    // Stop error monitoring
+    const monitoringInterval = (this as any).errorMonitoringInterval;
+    if (monitoringInterval) {
+      clearInterval(monitoringInterval);
+      (this as any).errorMonitoringInterval = null;
+    }
+  }
+
+  /**
+   * Register error listener on orchestrator
+   */
+  onError(callback: (error: any) => void): () => void {
+    return animationErrorHandler.onError(callback);
+  }
+
+  /**
+   * Get error history
+   */
+  getErrorHistory() {
+    return animationErrorHandler.getErrorHistory();
+  }
+
+  /**
+   * Clear error history
+   */
+  clearErrorHistory(): void {
+    animationErrorHandler.clearErrorHistory();
   }
 
   /**
@@ -211,6 +350,22 @@ export class AnimationOrchestrator {
     if (!this.animationEngine) return;
 
     const engineState = this.animationEngine.getState();
+    
+    // Announce phase changes to screen readers
+    if (this.state.animation.currentPhase !== engineState.phase) {
+      const phaseDescriptions: Record<string, string> = {
+        intro: 'Animation introduction starting',
+        castle: 'Castle structure appearing',
+        battle: 'Battle phase beginning',
+        victory: 'Victory celebration',
+        complete: 'Animation complete'
+      };
+      animationAccessibility.announcePhaseChange(
+        engineState.phase,
+        phaseDescriptions[engineState.phase]
+      );
+      this.callbacks.onPhaseChange?.(engineState.phase);
+    }
     
     // Sync animation state
     this.state.animation.currentPhase = engineState.phase;
@@ -286,6 +441,46 @@ export class AnimationOrchestrator {
 
     errorLogger?.logError(error, { context });
     this.callbacks.onError?.(error);
+  }
+
+  /**
+   * Start error monitoring during animation
+   */
+  private startErrorMonitoring(): void {
+    const monitoringInterval = setInterval(() => {
+      // Check if system should degrade
+      if (animationErrorHandler.shouldDegrade()) {
+        this.state.system.isDegraded = true;
+        this.animationEngine?.reduceQuality?.();
+
+        if (this.config.enableDebug) {
+          logger.warn('🔴 Animation system degraded due to errors');
+        }
+
+        clearInterval(monitoringInterval);
+        return;
+      }
+
+      // Monitor performance
+      if (this.config.enablePerformanceMonitoring && performance.memory) {
+        const usedMemory = (performance.memory as any).usedJSHeapSize / 1048576;
+        if (usedMemory > 100) {
+          // More than 100MB
+          const error = createAnimationError(
+            AnimationErrorType.MEMORY,
+            `High memory usage: ${Math.round(usedMemory)}MB`,
+            true,
+            { memory: usedMemory },
+            undefined,
+            'medium'
+          );
+          animationErrorHandler.handle(error);
+        }
+      }
+    }, 1000); // Check every second
+
+    // Store interval for cleanup
+    (this as any).errorMonitoringInterval = monitoringInterval;
   }
 
   /**

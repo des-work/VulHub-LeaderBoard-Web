@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
@@ -8,6 +8,8 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { ValidationPipe } from './common/pipes/validation.pipe';
+import { ErrorHandlerService } from './common/errors/error-handler.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -42,12 +44,12 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID'],
   });
 
+  // Get services for dependency injection
+  const errorHandlerService = app.get(ErrorHandlerService);
+
   // Global pipes
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
       transformOptions: {
         enableImplicitConversion: true,
       },
@@ -55,7 +57,7 @@ async function bootstrap() {
   );
 
   // Global filters
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(errorHandlerService));
 
   // Global interceptors
   app.useGlobalInterceptors(

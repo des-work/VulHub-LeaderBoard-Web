@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useReducer, useCallback, useEffect, ReactNode } from 'react';
+import React, { createContext, useReducer, useCallback, useEffect, useMemo, ReactNode } from 'react';
 import {
   Notification,
   ToastNotification,
@@ -179,7 +179,8 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     return state.unreadCount;
   }, [state.unreadCount]);
 
-  const value: NotificationContextType = {
+  // Memoize context value to prevent unnecessary re-renders
+  const value: NotificationContextType = useMemo(() => ({
     state,
     notify,
     dismiss,
@@ -187,7 +188,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     markAllAsRead,
     clear,
     getUnreadCount,
-  };
+  }), [state, notify, dismiss, markAsRead, markAllAsRead, clear, getUnreadCount]);
 
   return (
     <NotificationContext.Provider value={value}>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../../lib/auth/context';
 import { useRouter } from 'next/navigation';
 import { useNotification } from '../../lib/notifications/context';
@@ -39,10 +39,11 @@ export default function ProfilePage() {
   const router = useRouter();
   const { notify } = useNotification();
 
-  const [stats, setStats] = useState<UserStats | null>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [loadingState, setLoadingState] = useState({
+    isLoading: true,
+    error: '',
+  });
 
   // Load user data
   useEffect(() => {
@@ -53,33 +54,13 @@ export default function ProfilePage() {
 
     const loadUserData = async () => {
       try {
-        setIsLoading(true);
-        setError('');
+        setLoadingState({ isLoading: true, error: '' });
 
         // Fetch user's submissions
         const userSubmissions = await SubmissionApi.getUserSubmissions(user?.id || '');
         setSubmissions(userSubmissions);
-
-        // Calculate stats
-        const stats: UserStats = {
-          totalSubmissions: userSubmissions.length,
-          approvedSubmissions: userSubmissions.filter(s => s.status === 'approved').length,
-          rejectedSubmissions: userSubmissions.filter(s => s.status === 'rejected').length,
-          pendingSubmissions: userSubmissions.filter(s => s.status === 'pending').length,
-          averageScore: (() => {
-            const scoredSubmissions = userSubmissions.filter(s => s.pointsAwarded && s.pointsAwarded > 0);
-            return scoredSubmissions.length > 0
-              ? Math.round(
-                  scoredSubmissions.reduce((sum, s) => sum + (s.pointsAwarded || 0), 0) / scoredSubmissions.length
-                )
-              : 0;
-          })(),
-          longestStreak: calculateStreak(userSubmissions),
-        };
-
-        setStats(stats);
       } catch (err: any) {
-        setError(err.message || 'Failed to load profile data');
+        setLoadingState({ isLoading: false, error: err.message || 'Failed to load profile data' });
         notify({
           type: 'error',
           title: 'Error Loading Profile',
@@ -88,12 +69,35 @@ export default function ProfilePage() {
           read: false,
         });
       } finally {
-        setIsLoading(false);
+        setLoadingState(prev => ({ ...prev, isLoading: false }));
       }
     };
 
     loadUserData();
-  }, [isAuthenticated, user, router, notify]);
+  }, [isAuthenticated, user?.id, router, notify]);
+
+  // Compute stats from submissions (useMemo instead of useEffect)
+  const stats = useMemo<UserStats | null>(() => {
+    if (submissions.length === 0) {
+      return null;
+    }
+
+    const scoredSubmissions = submissions.filter(s => s.pointsAwarded && s.pointsAwarded > 0);
+    const averageScore = scoredSubmissions.length > 0
+      ? Math.round(
+          scoredSubmissions.reduce((sum, s) => sum + (s.pointsAwarded || 0), 0) / scoredSubmissions.length
+        )
+      : 0;
+
+    return {
+      totalSubmissions: submissions.length,
+      approvedSubmissions: submissions.filter(s => s.status === 'approved').length,
+      rejectedSubmissions: submissions.filter(s => s.status === 'rejected').length,
+      pendingSubmissions: submissions.filter(s => s.status === 'pending').length,
+      averageScore,
+      longestStreak: calculateStreak(submissions),
+    };
+  }, [submissions]);
 
   const calculateStreak = (subs: Submission[]): number => {
     // Simple streak calculation - number of consecutive approved submissions
@@ -186,16 +190,16 @@ export default function ProfilePage() {
 
       {/* Main Content */}
       <div className="layer-content container mx-auto px-4 py-6">
-        {error && (
+        {loadingState.error && (
           <div className="matrix-card bg-red-500/10 border-red-500/30 mb-6">
             <div className="flex items-center space-x-3">
               <XCircle className="h-5 w-5 text-red-400 flex-shrink-0" />
-              <p className="text-red-400">{error}</p>
+              <p className="text-red-400">{loadingState.error}</p>
             </div>
           </div>
         )}
 
-        {isLoading ? (
+        {loadingState.isLoading ? (
           <div className="text-center py-12">
             <div className="inline-flex items-center space-x-2 text-matrix">
               <Loader className="h-5 w-5 animate-spin" />
@@ -218,7 +222,7 @@ export default function ProfilePage() {
                     <p className="text-lg font-semibold text-bright">{user.name}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted mb-1">School ID</p>
+                    <p className="text-sm text-muted mb-1">Email</p>
                     <p className="text-lg font-semibold text-bright">{user.email}</p>
                   </div>
                   <div>

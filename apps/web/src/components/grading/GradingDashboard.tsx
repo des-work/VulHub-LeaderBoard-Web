@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useMemo, useState } from 'react';
-import { useGrading } from '../../lib/grading/context';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import { GradingApi } from '../../lib/api/endpoints';
 import { Submission, SubmissionFilters } from '../../lib/grading/types';
 import { Card, CardContent, CardHeader, CardTitle } from '../../lib/ui/card';
 import { Button } from '../../lib/ui/button';
 import { RefreshCw, CheckCircle2, XCircle } from 'lucide-react';
 import { SubmissionsTable } from '../submissions/SubmissionsTable';
+import { useAuth } from '../../lib/auth/context';
+import { searchSubmissions } from '../../lib/grading/utils';
 
 interface GradeModalProps {
   submission: Submission | null;
@@ -82,25 +84,123 @@ const GradeModal: React.FC<GradeModalProps> = ({ submission, onClose, onApprove,
 };
 
 export const GradingDashboard: React.FC = () => {
-  const { submissions, search, grade, reload } = useGrading();
+  const { updateUserPoints } = useAuth();
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>('');
   const [filters, setFilters] = useState<SubmissionFilters>({ status: 'pending' });
   const [active, setActive] = useState<Submission | null>(null);
 
-  const filtered = useMemo(() => search(filters), [submissions, filters]);
+  // Load submissions
+  const loadSubmissions = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError('');
+      
+      // Try to load from API with timeout fallback
+      const submissionsList = await Promise.race([
+        GradingApi.listSubmissions(),
+        new Promise<Submission[]>((_, reject) => 
+          setTimeout(() => reject(new Error('timeout')), 2000)
+        )
+      }).catch(() => {
+        // Fallback to empty array if API fails
+        console.warn('Failed to load submissions from API');
+        return [];
+      });
+
+      setSubmissions(submissionsList);
+    } catch (err: any) {
+      setError(err.message || 'Failed to load submissions');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Load on mount
+  useEffect(() => {
+    loadSubmissions();
+  }, [loadSubmissions]);
+
+  // Filter submissions
+  const filtered = useMemo(() => searchSubmissions(submissions, filters), [submissions, filters]);
+
+  // Grade submission
+  const gradeSubmission = useCallback(async (
+    submissionId: string,
+    status: 'approved' | 'rejected',
+    pointsAwarded: number,
+    feedback?: string
+  ) => {
+    try {
+      // Grade via API
+      await GradingApi.grade(submissionId, { status, pointsAwarded, feedback });
+
+      // Update local state
+      setSubmissions(prev => prev.map(sub => 
+        sub.id === submissionId
+          ? {
+              ...sub,
+              status,
+              pointsAwarded,
+              feedback,
+              gradedAt: new Date().toISOString(),
+              gradedBy: undefined, // Will be set by API
+            }
+          : sub
+      ));
+
+      // Update user points if approved
+      if (status === 'approved' && pointsAwarded > 0 && updateUserPoints) {
+        const submission = submissions.find(s => s.id === submissionId);
+        if (submission) {
+          await updateUserPoints(submission.userId, pointsAwarded);
+        }
+      }
+
+      return true;
+    } catch (err: any) {
+      setError(err.message || 'Failed to grade submission');
+      return false;
+    }
+  }, [submissions, updateUserPoints]);
 
   const onApprove = async (points: number, feedback?: string) => {
     if (!active) return;
-    await grade({ submissionId: active.id, status: 'approved', pointsAwarded: points, feedback });
+    await gradeSubmission(active.id, 'approved', points, feedback);
     setActive(null);
-    reload();
+    loadSubmissions(); // Reload to get updated data
   };
 
   const onReject = async (feedback?: string) => {
     if (!active) return;
-    await grade({ submissionId: active.id, status: 'rejected', pointsAwarded: 0, feedback });
+    await gradeSubmission(active.id, 'rejected', 0, feedback);
     setActive(null);
-    reload();
+    loadSubmissions(); // Reload to get updated data
   };
+
+  if (isLoading && submissions.length === 0) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <div className="text-neutral-400">Loading submissions...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-red-400">{error}</div>
+            <Button onClick={loadSubmissions} className="mt-4">
+              <RefreshCw className="h-4 w-4 mr-2" /> Retry
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -140,7 +240,12 @@ export const GradingDashboard: React.FC = () => {
               <option value="rejected">Rejected</option>
             </select>
             <div className="flex gap-2">
-              <Button variant="outline" className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50" onClick={() => reload()}>
+              <Button 
+                variant="outline" 
+                className="border-neutral-600/50 text-neutral-300 hover:bg-neutral-800/50" 
+                onClick={loadSubmissions}
+                disabled={isLoading}
+              >
                 <RefreshCw className="h-4 w-4 mr-2" /> Refresh
               </Button>
             </div>

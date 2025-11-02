@@ -47,8 +47,9 @@ POST /api/auth/register
 Content-Type: application/json
 
 {
-  "schoolId": "student456",
-  "name": "Jane Smith",
+  "email": "student456@school.edu",
+  "firstName": "Jane",
+  "lastName": "Smith",
   "password": "password123"
 }
 ```
@@ -59,9 +60,8 @@ Content-Type: application/json
   "success": true,
   "user": {
     "id": "user-2",
-    "schoolId": "student456",
-    "name": "Jane Smith",
     "email": "student456@school.edu",
+    "name": "Jane Smith",
     "role": "student",
     "points": 0,
     "level": 1,
@@ -295,9 +295,8 @@ ws.onmessage = (event) => {
 ```typescript
 interface User {
   id: string;
-  schoolId: string;
-  name: string;
   email: string;
+  name: string;
   role: 'student' | 'grader' | 'admin';
   points: number;
   level: number;

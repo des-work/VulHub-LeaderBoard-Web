@@ -1,6 +1,7 @@
 /* Resilient API client with retry, timeout, and circuit breaker */
 
 import { ApiError, NetworkError, TimeoutError, createApiError, parseApiError, logError } from './errors';
+import { getStoredTokens, storeTokens, clearTokens } from '../auth/tokenManager';
 
 export interface ApiClientOptions {
   baseUrl?: string;
@@ -38,9 +39,9 @@ export class ApiClient {
     this.timeoutMs = opts.timeoutMs ?? 8000;
     this.retry = opts.retry ?? 2;
     
-    // Load auth token from localStorage if available
+    // Load auth token from tokenManager if available
     if (typeof window !== 'undefined') {
-      this.authToken = localStorage.getItem('auth_token');
+      this.authToken = getStoredTokens().accessToken;
     }
   }
 
@@ -48,17 +49,17 @@ export class ApiClient {
   
   setAuthToken(token: string | null) {
     this.authToken = token;
-    if (typeof window !== 'undefined') {
-      if (token) {
-        localStorage.setItem('auth_token', token);
-      } else {
-        localStorage.removeItem('auth_token');
-      }
+    // Delegate to tokenManager for consistent storage
+    if (token) {
+      storeTokens(token, undefined); // Store access token, keep existing refresh token
+    } else {
+      clearTokens();
     }
   }
-  
+
   getAuthToken(): string | null {
-    return this.authToken;
+    // Always read from tokenManager for consistency
+    return getStoredTokens().accessToken;
   }
   
   private getHeaders(additionalHeaders: Record<string, string> = {}): Record<string, string> {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../../lib/auth/context';
 import { useRouter } from 'next/navigation';
 import { 
@@ -39,14 +39,20 @@ export default function GradingDashboard() {
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
   
+  // Consolidated state
   const [submissions, setSubmissions] = useState<Submission[]>([]);
-  const [filteredSubmissions, setFilteredSubmissions] = useState<Submission[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [loadingState, setLoadingState] = useState({
+    isLoading: true,
+    error: '',
+  });
   
-  const [filter, setFilter] = useState<Filter>({ status: 'pending' });
-  const [search, setSearch] = useState('');
-  const [sort, setSort] = useState<SortConfig>({ key: 'date', direction: 'desc' });
+  // Consolidated filter/search/sort state
+  const [viewState, setViewState] = useState({
+    filter: { status: 'pending' } as Filter,
+    search: '',
+    sort: { key: 'date' as const, direction: 'desc' as const },
+  });
+  
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   
   const [stats, setStats] = useState<{
@@ -75,8 +81,7 @@ export default function GradingDashboard() {
 
     const loadSubmissions = async () => {
       try {
-        setIsLoading(true);
-        setError('');
+        setLoadingState({ isLoading: true, error: '' });
         
         const queue = await GradingApi.getGradingQueue();
         setSubmissions(queue);
@@ -88,26 +93,26 @@ export default function GradingDashboard() {
           today: graderStats.todayCount,
         });
       } catch (err: any) {
-        setError(err.message || 'Failed to load submissions');
+        setLoadingState({ isLoading: false, error: err.message || 'Failed to load submissions' });
       } finally {
-        setIsLoading(false);
+        setLoadingState(prev => ({ ...prev, isLoading: false }));
       }
     };
 
     loadSubmissions();
   }, [isAuthenticated]);
 
-  // Filter and sort submissions
-  useEffect(() => {
+  // Computed filtered and sorted submissions (useMemo instead of useEffect)
+  const filteredSubmissions = useMemo(() => {
     let filtered = submissions.filter(sub => {
       // Status filter
-      if (filter.status && sub.status !== filter.status) {
+      if (viewState.filter.status && sub.status !== viewState.filter.status) {
         return false;
       }
 
       // Search filter
-      if (search) {
-        const searchLower = search.toLowerCase();
+      if (viewState.search) {
+        const searchLower = viewState.search.toLowerCase();
         const studentName = (sub as any).studentName?.toLowerCase() || '';
         const challengeName = (sub as any).challengeName?.toLowerCase() || '';
         
@@ -122,7 +127,7 @@ export default function GradingDashboard() {
       let aVal: any;
       let bVal: any;
 
-      switch (sort.key) {
+      switch (viewState.sort.key) {
         case 'date':
           aVal = new Date(a.submittedAt || 0).getTime();
           bVal = new Date(b.submittedAt || 0).getTime();
@@ -143,13 +148,13 @@ export default function GradingDashboard() {
           return 0;
       }
 
-      if (aVal < bVal) return sort.direction === 'asc' ? -1 : 1;
-      if (aVal > bVal) return sort.direction === 'asc' ? 1 : -1;
+      if (aVal < bVal) return viewState.sort.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return viewState.sort.direction === 'asc' ? 1 : -1;
       return 0;
     });
 
-    setFilteredSubmissions(filtered);
-  }, [submissions, filter, search, sort]);
+    return filtered;
+  }, [submissions, viewState.filter.status, viewState.search, viewState.sort]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -187,12 +192,32 @@ export default function GradingDashboard() {
   };
 
   const toggleSort = (key: SortConfig['key']) => {
-    if (sort.key === key) {
-      setSort({ ...sort, direction: sort.direction === 'asc' ? 'desc' : 'asc' });
-    } else {
-      setSort({ key, direction: 'desc' });
-    }
+    setViewState(prev => {
+      if (prev.sort.key === key) {
+        return {
+          ...prev,
+          sort: { ...prev.sort, direction: prev.sort.direction === 'asc' ? 'desc' : 'asc' }
+        };
+      } else {
+        return {
+          ...prev,
+          sort: { key, direction: 'desc' }
+        };
+      }
+    });
   };
+
+  // Helper functions for updating view state
+  const updateFilter = useCallback((filter: Partial<Filter>) => {
+    setViewState(prev => ({
+      ...prev,
+      filter: { ...prev.filter, ...filter }
+    }));
+  }, []);
+
+  const updateSearch = useCallback((search: string) => {
+    setViewState(prev => ({ ...prev, search }));
+  }, []);
 
   if (!isAuthenticated) return null;
 
@@ -270,8 +295,8 @@ export default function GradingDashboard() {
                   <input
                     type="text"
                     placeholder="Search student or challenge..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    value={viewState.search}
+                    onChange={(e) => updateSearch(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 bg-black/50 border border-matrix-dark rounded text-bright placeholder-dim focus:border-matrix focus:outline-none"
                     aria-label="Search submissions"
                   />
@@ -280,8 +305,8 @@ export default function GradingDashboard() {
               <div className="flex items-center space-x-2">
                 <Filter className="h-4 w-4 text-dim" />
                 <select
-                  value={filter.status}
-                  onChange={(e) => setFilter({ ...filter, status: e.target.value })}
+                  value={viewState.filter.status}
+                  onChange={(e) => updateFilter({ status: e.target.value })}
                   className="px-3 py-2 bg-black/50 border border-matrix-dark rounded text-bright focus:border-matrix focus:outline-none"
                   aria-label="Filter by status"
                 >
@@ -297,14 +322,14 @@ export default function GradingDashboard() {
         </div>
 
         {/* Error Message */}
-        {error && (
+        {loadingState.error && (
           <div className="matrix-card bg-red-500/10 border-red-500/30 mb-6">
-            <p className="text-red-400">{error}</p>
+            <p className="text-red-400">{loadingState.error}</p>
           </div>
         )}
 
         {/* Loading State */}
-        {isLoading && (
+        {loadingState.isLoading && (
           <div className="text-center py-12">
             <div className="inline-flex items-center space-x-2 text-matrix">
               <Clock className="h-5 w-5 animate-spin" />
@@ -314,7 +339,7 @@ export default function GradingDashboard() {
         )}
 
         {/* Submissions Table */}
-        {!isLoading && filteredSubmissions.length === 0 ? (
+        {!loadingState.isLoading && filteredSubmissions.length === 0 ? (
           <div className="matrix-card text-center py-12">
             <p className="text-muted">No submissions found</p>
           </div>
@@ -340,8 +365,8 @@ export default function GradingDashboard() {
                   >
                     <div className="flex items-center space-x-1">
                       <span>Student</span>
-                      {sort.key === 'student' && (
-                        sort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+                      {viewState.sort.key === 'student' && (
+                        viewState.sort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
                       )}
                     </div>
                   </th>
@@ -353,8 +378,8 @@ export default function GradingDashboard() {
                   >
                     <div className="flex items-center space-x-1">
                       <span>Challenge</span>
-                      {sort.key === 'challenge' && (
-                        sort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+                      {viewState.sort.key === 'challenge' && (
+                        viewState.sort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
                       )}
                     </div>
                   </th>
@@ -366,8 +391,8 @@ export default function GradingDashboard() {
                   >
                     <div className="flex items-center space-x-1">
                       <span>Status</span>
-                      {sort.key === 'status' && (
-                        sort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+                      {viewState.sort.key === 'status' && (
+                        viewState.sort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
                       )}
                     </div>
                   </th>
@@ -379,8 +404,8 @@ export default function GradingDashboard() {
                   >
                     <div className="flex items-center space-x-1">
                       <span>Submitted</span>
-                      {sort.key === 'date' && (
-                        sort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
+                      {viewState.sort.key === 'date' && (
+                        viewState.sort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
                       )}
                     </div>
                   </th>

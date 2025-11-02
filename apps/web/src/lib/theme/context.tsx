@@ -5,7 +5,7 @@
  * Provides theme management and customization capabilities
  */
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { ThemeConfig, ThemeContextType, ThemePreset } from './types';
 import { themePresets } from './presets';
 
@@ -155,13 +155,14 @@ export function ThemeProvider({
     }));
   }, []);
 
-  const value: ThemeContextType = {
+  // Memoize context value to prevent unnecessary re-renders
+  const value: ThemeContextType = useMemo(() => ({
     theme,
     setTheme,
     updateTheme,
     resetTheme,
     toggleMode,
-  };
+  }), [theme, setTheme, updateTheme, resetTheme, toggleMode]);
 
   return (
     <ThemeContext.Provider value={value}>
