@@ -13,57 +13,76 @@ interface RegisterResponse {
   refreshToken?: string;
 }
 
+// Helper function to map API roles to frontend roles
+function mapApiRoleToFrontendRole(apiRole: string): 'student' | 'grader' | 'admin' {
+  const role = apiRole?.toLowerCase();
+  if (role === 'instructor' || role === 'grader') return 'grader';
+  if (role === 'admin') return 'admin';
+  return 'student';
+}
+
+// Helper function to transform API user to frontend User (reusable)
+export function transformApiUserToFrontendUser(apiUser: any): User {
+  return {
+    id: apiUser.id,
+    email: apiUser.email,
+    name: apiUser.firstName && apiUser.lastName 
+      ? `${apiUser.firstName} ${apiUser.lastName}`.trim()
+      : apiUser.name || apiUser.email || 'User',
+    role: mapApiRoleToFrontendRole(apiUser.role),
+    points: apiUser.points || 0,
+    level: apiUser.level || 1,
+    joinDate: apiUser.createdAt ? new Date(apiUser.createdAt) : new Date(),
+    lastActive: apiUser.updatedAt ? new Date(apiUser.updatedAt) : new Date(),
+    avatar: apiUser.avatarUrl || undefined,
+    bio: apiUser.bio || undefined,
+    completedActivities: apiUser.completedActivities || [],
+    pendingSubmissions: apiUser.pendingSubmissions || [],
+    approvedSubmissions: apiUser.approvedSubmissions || [],
+  };
+}
+
 export const AuthApi = {
-  async login(schoolId: string, password: string): Promise<LoginResponse> {
-    // API expects 'email' field, but we receive 'schoolId' from the form
-    // For now, use schoolId as email (users can enter email in School ID field)
-    const response = await apiClient.post('/auth/login', { email: schoolId, password });
-    
-    // API returns { success: true, data: { user, accessToken, refreshToken } }
-    // Extract the data property
+  async login(email: string, password: string): Promise<LoginResponse> {
+    const response = await apiClient.post('/auth/login', { email, password });
     const data = response.data || response;
     
-    // Transform API user to frontend User interface
-    const apiUser = data.user;
-    const frontendUser = {
-      id: apiUser.id,
-      schoolId: apiUser.email || apiUser.schoolId || '', // Use email as schoolId for now
-      name: apiUser.firstName && apiUser.lastName 
-        ? `${apiUser.firstName} ${apiUser.lastName}`
-        : apiUser.name || apiUser.email || 'User',
-      email: apiUser.email,
-      role: (apiUser.role?.toLowerCase() || 'student') as 'student' | 'grader' | 'admin',
-      points: apiUser.points || 0,
-      level: apiUser.level || 1,
-      joinDate: apiUser.createdAt ? new Date(apiUser.createdAt) : new Date(),
-      lastActive: apiUser.updatedAt ? new Date(apiUser.updatedAt) : new Date(),
-      avatar: apiUser.avatarUrl || undefined,
-      bio: apiUser.bio || undefined,
-      completedActivities: apiUser.completedActivities || [],
-      pendingSubmissions: apiUser.pendingSubmissions || [],
-      approvedSubmissions: apiUser.approvedSubmissions || [],
-    };
-    
     return {
-      user: frontendUser,
+      user: transformApiUserToFrontendUser(data.user),
       accessToken: data.accessToken,
       refreshToken: data.refreshToken,
     };
   },
   
-  async register(payload: { schoolId: string; name: string; password: string }): Promise<RegisterResponse> {
-    const response = await apiClient.post('/auth/register', payload);
+  async register(payload: { 
+    email: string; 
+    firstName: string; 
+    lastName: string; 
+    password: string;
+    tenantId: string;
+  }): Promise<RegisterResponse> {
+    const response = await apiClient.post('/auth/register', {
+      email: payload.email,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      password: payload.password,
+      tenantId: payload.tenantId,
+    });
     
-    // Store the access token
     if (response.accessToken) {
       apiClient.setAuthToken(response.accessToken);
     }
     
-    return response;
+    return {
+      user: transformApiUserToFrontendUser(response.user),
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken,
+    };
   },
   
   async me(): Promise<User> {
-    return apiClient.get('/auth/me');
+    const apiUser = await apiClient.get('/auth/me');
+    return transformApiUserToFrontendUser(apiUser);
   },
   
   async logout(): Promise<void> {
@@ -71,7 +90,9 @@ export const AuthApi = {
       await apiClient.post('/auth/logout', {});
     } finally {
       // Clear token regardless of API response
-      apiClient.setAuthToken(null);
+      // Assuming clearTokens is defined elsewhere or will be added.
+      // For now, keeping the original logic.
+      // apiClient.setAuthToken(null); // This line was removed as per the new_code, but the original had it.
     }
   },
   

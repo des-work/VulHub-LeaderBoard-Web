@@ -16,7 +16,7 @@ POST /api/auth/login
 Content-Type: application/json
 
 {
-  "schoolId": "student123",
+  "email": "student@example.com",
   "password": "password123"
 }
 ```
@@ -27,9 +27,8 @@ Content-Type: application/json
   "success": true,
   "user": {
     "id": "user-1",
-    "schoolId": "student123",
+    "email": "student@example.com",
     "name": "John Doe",
-    "email": "student123@school.edu",
     "role": "student",
     "points": 1250,
     "level": 3,

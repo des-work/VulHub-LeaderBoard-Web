@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -14,7 +14,7 @@ model Tenant {
   id        String   @id @default(cuid())
   name      String
   domain    String?  @unique
-  settings  Json?
+  settings  String? @default("{}")
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -43,7 +43,7 @@ model User {
   role         UserRole @default(STUDENT)
   tenantId     String
   lastLoginAt  DateTime?
-  preferences  Json?
+  preferences  String? @default("{}")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -110,7 +110,7 @@ model Badge {
   icon        String?
   category    String?
   difficulty  String?
-  criteria    Json?
+  criteria    String?
   isActive    Boolean @default(true)
   tenantId    String
   createdAt   DateTime @default(now())
@@ -161,7 +161,7 @@ model EventStore {
   eventType    String
   aggregateId  String
   aggregateType String
-  eventData    Json
+  eventData    String
   occurredOn   DateTime
   version      Int
   tenantId     String
@@ -184,7 +184,7 @@ model AuditLog {
   action       String
   resource     String
   resourceId   String?
-  details      Json?
+  details      String?
   ipAddress    String?
   userAgent    String?
   timestamp    DateTime  @default(now())

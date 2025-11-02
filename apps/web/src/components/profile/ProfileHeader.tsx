@@ -39,7 +39,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user, stats }) => {
               {user.name}
             </h1>
             <p className="text-muted mb-4">
-              {user.schoolId} • {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+              {user.email} • {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
             </p>
 
             {/* Quick Stats */}

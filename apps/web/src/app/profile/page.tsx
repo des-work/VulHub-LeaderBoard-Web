@@ -219,7 +219,7 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <p className="text-sm text-muted mb-1">School ID</p>
-                    <p className="text-lg font-semibold text-bright">{user.schoolId}</p>
+                    <p className="text-lg font-semibold text-bright">{user.email}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted mb-1">Role</p>

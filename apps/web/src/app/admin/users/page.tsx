@@ -23,7 +23,7 @@ export default function AdminUsersPage() {
                 <thead className="text-neutral-400">
                   <tr className="border-b border-neutral-800">
                     <th className="text-left py-2 pr-4">Name</th>
-                    <th className="text-left py-2 pr-4">School ID</th>
+                    <th className="text-left py-2 pr-4">Email</th>
                     <th className="text-left py-2 pr-4">Points</th>
                     <th className="text-left py-2 pr-4">Level</th>
                     <th className="text-left py-2 pr-4">Actions</th>
@@ -33,7 +33,7 @@ export default function AdminUsersPage() {
                   {users.map(u => (
                     <tr key={u.id} className="border-b border-neutral-900 hover:bg-neutral-900/40">
                       <td className="py-2 pr-4">{u.name}</td>
-                      <td className="py-2 pr-4">{u.schoolId}</td>
+                      <td className="py-2 pr-4">{u.email}</td>
                       <td className="py-2 pr-4 font-mono">{u.points.toLocaleString()}</td>
                       <td className="py-2 pr-4">{u.level}</td>
                       <td className="py-2 pr-4 flex gap-2">

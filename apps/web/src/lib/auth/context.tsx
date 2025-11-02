@@ -2,8 +2,8 @@
 
 import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import { User, AuthState, LoginCredentials, RegisterData } from './types';
-import { AuthApi } from '../api/endpoints';
-import { TokenRefreshManager, storeTokens, clearTokens, getStoredTokens } from './tokenManager';
+import { AuthApi, transformApiUserToFrontendUser } from '../api/endpoints';
+import { TokenRefreshManager, storeTokens, clearTokens, getStoredTokens, isTokenExpired } from './tokenManager';
 import { setErrorTrackingUser } from '../api/errorTracking';
 
 // Toggle between mock and real API
@@ -80,37 +80,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Check for existing session on mount - optimized for speed
   useEffect(() => {
-    const checkAuth = () => {
+    const checkAuth = async () => {
       try {
-        // Check local session first - this is instant
-        const userData = localStorage.getItem('user_data');
-        if (userData) {
-          try {
-            const parsedUser = JSON.parse(userData);
-            // Validate user data structure
-            if (parsedUser && parsedUser.id && parsedUser.name) {
-              dispatch({ type: 'LOGIN_SUCCESS', payload: parsedUser });
-              return;
-            } else {
-              // Invalid user data, clean up
-              localStorage.removeItem('user_data');
-              localStorage.removeItem('auth_token');
-            }
-          } catch (parseError) {
-            // Invalid stored data - clear it silently
-            localStorage.removeItem('user_data');
-            localStorage.removeItem('auth_token');
-          }
-        }
+        // Check if token exists and not expired
+        const { accessToken } = getStoredTokens();
         
-        // No valid session found - ensure loading is false
-        dispatch({ type: 'SET_LOADING', payload: false });
+        if (!accessToken || isTokenExpired(accessToken)) {
+          // Token missing or expired - clear everything
+          clearTokens();
+          localStorage.removeItem('user_data');
+          dispatch({ type: 'SET_LOADING', payload: false });
+          return;
+        }
+
+        // Validate token with server
+        try {
+          const user = await AuthApi.me();
+          
+          // Transform API user to frontend User
+          const frontendUser = transformApiUserToFrontendUser(user);
+          
+          // Token valid, user exists - set authenticated
+          dispatch({ type: 'LOGIN_SUCCESS', payload: frontendUser });
+          localStorage.setItem('user_data', JSON.stringify(frontendUser));
+          
+        } catch (error) {
+          // Token invalid, user not found, or server error
+          clearTokens();
+          localStorage.removeItem('user_data');
+          dispatch({ type: 'SET_LOADING', payload: false });
+        }
       } catch (error) {
-        // Auth check failed silently
+        // Unexpected error - clear state
+        clearTokens();
+        localStorage.removeItem('user_data');
+        dispatch({ type: 'SET_LOADING', payload: false });
       }
     };
 
-    // Run immediately, no async needed
     checkAuth();
   }, []);
 
@@ -124,13 +131,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         tokenManagerRef.current = new TokenRefreshManager(
           refreshToken,
           (newAccessToken) => {
-            // On token refreshed
-            console.log('Token refreshed successfully');
+            // Token refreshed successfully - silent
             storeTokens(newAccessToken, refreshToken);
           },
           () => {
-            // On refresh failed
-            console.error('Token refresh failed, logging out');
+            // Token refresh failed - silent logout
             logout();
           }
         );
@@ -165,12 +170,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         const mockUser: User = {
           id: Date.now().toString(),
-          schoolId: credentials.schoolId,
-          name: credentials.schoolId === 'admin' ? 'Admin User' : 'Student User',
-          email: `${credentials.schoolId}@school.edu`,
-          role: credentials.schoolId === 'admin' ? 'admin' : 'student',
-          points: credentials.schoolId === 'admin' ? 0 : 1000,
-          level: credentials.schoolId === 'admin' ? 1 : 3,
+          email: credentials.email,
+          name: credentials.email === 'admin' ? 'Admin User' : 'Student User',
+          role: credentials.email === 'admin' ? 'admin' : 'student',
+          points: credentials.email === 'admin' ? 0 : 1000,
+          level: credentials.email === 'admin' ? 1 : 3,
           joinDate: new Date(),
           lastActive: new Date(),
           completedActivities: [],
@@ -186,11 +190,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setErrorTrackingUser({
           id: mockUser.id,
           email: mockUser.email,
-          username: mockUser.schoolId,
+          username: mockUser.email,
         });
       } else {
         // REAL API AUTH - For production
-        const response = await AuthApi.login(credentials.schoolId, credentials.password);
+        const response = await AuthApi.login(credentials.email, credentials.password);
         
         // Store tokens and user data
         storeTokens(response.accessToken, response.refreshToken);
@@ -202,7 +206,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setErrorTrackingUser({
           id: response.user.id,
           email: response.user.email,
-          username: response.user.schoolId,
+          username: response.user.email,
         });
       }
     } catch (error: any) {
@@ -226,9 +230,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         const newUser: User = {
           id: Date.now().toString(),
-          schoolId: data.schoolId,
-          name: data.name,
-          email: `${data.schoolId}@school.edu`,
+          email: data.email,
+          name: `${data.firstName} ${data.lastName}`,
           role: 'student',
           points: 0,
           level: 1,
@@ -244,10 +247,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         dispatch({ type: 'LOGIN_SUCCESS', payload: newUser });
       } else {
         // REAL API AUTH - For production
+        // TODO: Get tenantId from somewhere (config, environment, context, etc.)
+        const tenantId = 'default-tenant';
+        
         const response = await AuthApi.register({
-          schoolId: data.schoolId,
-          name: data.name,
-          password: data.password
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          password: data.password,
+          tenantId: tenantId,
         });
         
         // Store tokens and user data

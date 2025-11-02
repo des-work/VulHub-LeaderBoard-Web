@@ -1,8 +1,7 @@
 export interface User {
   id: string;
-  schoolId: string;
+  email: string;
   name: string;
-  email?: string;
   role: 'student' | 'grader' | 'admin';
   points: number;
   level: number;
@@ -59,13 +58,14 @@ export interface AuthState {
 }
 
 export interface LoginCredentials {
-  schoolId: string;
+  email: string;
   password: string;
 }
 
 export interface RegisterData {
-  schoolId: string;
-  name: string;
+  email: string;
+  firstName: string;
+  lastName: string;
   password: string;
   confirmPassword: string;
 }
