@@ -79,7 +79,7 @@ export const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({
 
   // Control animation based on phase
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady) {return;}
 
     if (phase === 'intro' && !isPlaying && !isComplete) {
       // Start animation when in intro phase
@@ -92,7 +92,7 @@ export const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({
 
   // Update debug info
   useEffect(() => {
-    if (!debug || !debuggerInstance || !state) return;
+    if (!debug || !debuggerInstance || !state) {return;}
 
     debuggerInstance.update();
 

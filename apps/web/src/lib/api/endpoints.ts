@@ -16,8 +16,8 @@ interface RegisterResponse {
 // Helper function to map API roles to frontend roles
 function mapApiRoleToFrontendRole(apiRole: string): 'student' | 'grader' | 'admin' {
   const role = apiRole?.toLowerCase();
-  if (role === 'instructor' || role === 'grader') return 'grader';
-  if (role === 'admin') return 'admin';
+  if (role === 'instructor' || role === 'grader') {return 'grader';}
+  if (role === 'admin') {return 'admin';}
   return 'student';
 }
 

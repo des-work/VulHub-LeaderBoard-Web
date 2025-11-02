@@ -60,7 +60,7 @@ export function useValidation(schema: ValidationSchema): ValidationHook {
   const validateField = useCallback(
     (field: string, value: any): boolean => {
       const fieldRules = schema[field];
-      if (!fieldRules) return true;
+      if (!fieldRules) {return true;}
 
       let fieldError = '';
 

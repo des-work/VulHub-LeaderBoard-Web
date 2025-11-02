@@ -38,7 +38,7 @@ export function useUserRank(userId: string | null | undefined) {
   return useQuery({
     queryKey: queryKeys.leaderboard.userRank(userId || ''),
     queryFn: async () => {
-      if (!userId) return null;
+      if (!userId) {return null;}
       
       // Try real API first, fallback to mock
       try {
@@ -81,7 +81,7 @@ export function useBadge(badgeId: string | null | undefined) {
   return useQuery({
     queryKey: queryKeys.badges.detail(badgeId || ''),
     queryFn: async () => {
-      if (!badgeId) return null;
+      if (!badgeId) {return null;}
       const badges = await badgesAdapter.fetch();
       return badges.find((b: any) => b.id === badgeId) || null;
     },
@@ -115,7 +115,7 @@ export function useChallenge(challengeId: string | null | undefined) {
   return useQuery({
     queryKey: queryKeys.challenges.detail(challengeId || ''),
     queryFn: async () => {
-      if (!challengeId) return null;
+      if (!challengeId) {return null;}
       
       // Try real API first
       try {
@@ -140,7 +140,7 @@ export function useSubmissions(userId?: string | null) {
   return useQuery({
     queryKey: queryKeys.submissions.user(userId || ''),
     queryFn: async () => {
-      if (!userId) return [];
+      if (!userId) {return [];}
       return await Api.SubmissionApi.getUserSubmissions(userId);
     },
     enabled: !!userId,
@@ -181,7 +181,7 @@ export function useProfile(userId: string | null | undefined) {
   return useQuery({
     queryKey: queryKeys.profile.detail(userId || ''),
     queryFn: () => {
-      if (!userId) throw new Error('User ID required');
+      if (!userId) {throw new Error('User ID required');}
       return fetchProfileData(userId);
     },
     enabled: !!userId,

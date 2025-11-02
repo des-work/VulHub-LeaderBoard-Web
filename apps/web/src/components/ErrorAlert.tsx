@@ -15,7 +15,7 @@ export interface ErrorAlertProps {
 }
 
 export function ErrorAlert({ error, onClose, variant = 'error', className = '' }: ErrorAlertProps) {
-  if (!error) return null;
+  if (!error) {return null;}
 
   const message = typeof error === 'string' ? error : error.message;
   
@@ -98,7 +98,7 @@ export interface InlineErrorProps {
 }
 
 export function InlineError({ error, className = '' }: InlineErrorProps) {
-  if (!error) return null;
+  if (!error) {return null;}
 
   return (
     <p 
@@ -133,7 +133,7 @@ export function ErrorToast({ error, duration = 5000, onDismiss }: ErrorToastProp
     }
   }, [error, duration, onDismiss]);
 
-  if (!error || !isVisible) return null;
+  if (!error || !isVisible) {return null;}
 
   const message = typeof error === 'string' ? error : error.message;
 

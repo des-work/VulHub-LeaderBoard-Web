@@ -62,9 +62,9 @@ export function createHoverEffect(options: {
   borderColor?: string
 }) {
   const transforms = [];
-  if (options.scale) transforms.push(`scale(${options.scale})`);
-  if (options.translateX) transforms.push(`translateX(${options.translateX})`);
-  if (options.translateY) transforms.push(`translateY(${options.translateY})`);
+  if (options.scale) {transforms.push(`scale(${options.scale})`);}
+  if (options.translateX) {transforms.push(`translateX(${options.translateX})`);}
+  if (options.translateY) {transforms.push(`translateY(${options.translateY})`);}
   return {
     transform: transforms.join(' '),
     boxShadow: options.glow ? `0 0 20px ${options.glow}` : undefined,

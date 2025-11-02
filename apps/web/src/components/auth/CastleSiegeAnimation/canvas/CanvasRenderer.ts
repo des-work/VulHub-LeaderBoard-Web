@@ -39,7 +39,7 @@ export class CanvasRenderer {
    */
   handleResize(): void {
     const container = this.canvas.parentElement;
-    if (!container) return;
+    if (!container) {return;}
 
     const rect = container.getBoundingClientRect();
     this.width = rect.width;
@@ -185,7 +185,7 @@ export class CanvasRenderer {
    * Check if entity is visible (for culling)
    */
   private isVisible(position: Vector2): boolean {
-    if (!PERFORMANCE_CONFIG.enableSpatialCulling) return true;
+    if (!PERFORMANCE_CONFIG.enableSpatialCulling) {return true;}
     
     const margin = PERFORMANCE_CONFIG.cullMargin;
     return (
@@ -200,7 +200,7 @@ export class CanvasRenderer {
    * Apply screen shake transform
    */
   applyScreenShake(intensity: number): void {
-    if (intensity <= 0) return;
+    if (intensity <= 0) {return;}
     
     const offsetX = (Math.random() - 0.5) * intensity;
     const offsetY = (Math.random() - 0.5) * intensity;

@@ -96,7 +96,7 @@ export function useAnimationOrchestrator(options: UseAnimationOrchestratorOption
 
   // State synchronization (poll for updates)
   useEffect(() => {
-    if (!orchestratorRef.current || !isInitialized) return;
+    if (!orchestratorRef.current || !isInitialized) {return;}
 
     const updateState = () => {
       if (orchestratorRef.current) {

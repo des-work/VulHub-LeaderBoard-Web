@@ -30,7 +30,7 @@ const StatusIcon: React.FC<StatusIconProps> = ({
   showLabel = true,
   className = '',
 }) => {
-  if (status === 'normal') return null;
+  if (status === 'normal') {return null;}
   
   const styles = createStatusBadgeStyles(status, compact);
   const config = STATUS_BADGE_CONFIG[status];

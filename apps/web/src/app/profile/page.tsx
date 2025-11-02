@@ -24,6 +24,8 @@ import {
 import RippleGridV2 from '../../components/RippleGrid/RippleGridV2';
 import { SubmissionApi } from '../../lib/api/endpoints';
 import { Submission } from '../../lib/auth/types';
+import { ErrorAlert } from '../../components/ErrorAlert';
+import { PageLoader } from '../../components/common/Loading';
 
 interface UserStats {
   totalSubmissions: number;
@@ -101,7 +103,7 @@ export default function ProfilePage() {
 
   const calculateStreak = (subs: Submission[]): number => {
     // Simple streak calculation - number of consecutive approved submissions
-    if (subs.length === 0) return 0;
+    if (subs.length === 0) {return 0;}
 
     let streak = 0;
     for (let i = 0; i < Math.min(5, subs.length); i++) {
@@ -191,20 +193,12 @@ export default function ProfilePage() {
       {/* Main Content */}
       <div className="layer-content container mx-auto px-4 py-6">
         {loadingState.error && (
-          <div className="matrix-card bg-red-500/10 border-red-500/30 mb-6">
-            <div className="flex items-center space-x-3">
-              <XCircle className="h-5 w-5 text-red-400 flex-shrink-0" />
-              <p className="text-red-400">{loadingState.error}</p>
-            </div>
-          </div>
+          <ErrorAlert error={loadingState.error} variant="error" />
         )}
 
         {loadingState.isLoading ? (
           <div className="text-center py-12">
-            <div className="inline-flex items-center space-x-2 text-matrix">
-              <Loader className="h-5 w-5 animate-spin" />
-              <span>Loading profile...</span>
-            </div>
+            <PageLoader message="Loading profile..." />
           </div>
         ) : (
           <>

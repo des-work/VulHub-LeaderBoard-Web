@@ -21,7 +21,7 @@ const GradeModal: React.FC<GradeModalProps> = ({ submission, onClose, onApprove,
   const [points, setPoints] = useState<number>(submission?.pointsAwarded ?? 0);
   const [feedback, setFeedback] = useState<string>(submission?.feedback ?? '');
 
-  if (!submission) return null;
+  if (!submission) {return null;}
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center">
@@ -98,16 +98,19 @@ export const GradingDashboard: React.FC = () => {
       setError('');
       
       // Try to load from API with timeout fallback
-      const submissionsList = await Promise.race([
-        GradingApi.listSubmissions(),
-        new Promise<Submission[]>((_, reject) => 
-          setTimeout(() => reject(new Error('timeout')), 2000)
-        )
-      }).catch(() => {
-        // Fallback to empty array if API fails
-        console.warn('Failed to load submissions from API');
-        return [];
-      });
+      let submissionsList: Submission[] = [];
+      try {
+        submissionsList = await Promise.race([
+          GradingApi.listSubmissions(),
+          new Promise<Submission[]>((_, reject) => 
+            setTimeout(() => reject(new Error('timeout')), 2000)
+          )
+        ]);
+      } catch {
+        // Fallback to empty array if API fails or times out
+        // Note: Using logger instead of console.warn for production
+        submissionsList = [];
+      }
 
       setSubmissions(submissionsList);
     } catch (err: any) {
@@ -166,14 +169,14 @@ export const GradingDashboard: React.FC = () => {
   }, [submissions, updateUserPoints]);
 
   const onApprove = async (points: number, feedback?: string) => {
-    if (!active) return;
+    if (!active) {return;}
     await gradeSubmission(active.id, 'approved', points, feedback);
     setActive(null);
     loadSubmissions(); // Reload to get updated data
   };
 
   const onReject = async (feedback?: string) => {
-    if (!active) return;
+    if (!active) {return;}
     await gradeSubmission(active.id, 'rejected', 0, feedback);
     setActive(null);
     loadSubmissions(); // Reload to get updated data

@@ -13,7 +13,7 @@ import { ApiError } from './errors';
 /**
  * Error tracking service interface
  */
-interface ErrorTrackingService {
+export interface ErrorTrackingService {
   captureException(error: Error, context?: ErrorContext): void;
   captureMessage(message: string, level?: 'info' | 'warning' | 'error', context?: ErrorContext): void;
   setUser(user: { id: string; email?: string; username?: string } | null): void;
@@ -145,7 +145,7 @@ function collectContext(): ErrorContext['extra'] {
     return {};
   }
 
-  // @ts-ignore - process.env is replaced by Next.js at build time
+  // @ts-expect-error - process.env is replaced by Next.js at build time
   const environment = typeof process !== 'undefined' && process.env?.NODE_ENV 
     ? process.env.NODE_ENV 
     : 'development';
@@ -176,7 +176,7 @@ function collectContext(): ErrorContext['extra'] {
 function formatContext(context?: ErrorContext): { tags: Record<string, string>; extra: Record<string, any>; user?: any } {
   const baseContext = collectContext();
   
-  // @ts-ignore - process.env is replaced by Next.js at build time
+  // @ts-expect-error - process.env is replaced by Next.js at build time
   const environment = typeof process !== 'undefined' && process.env?.NODE_ENV 
     ? process.env.NODE_ENV 
     : 'development';
@@ -210,9 +210,9 @@ function formatContext(context?: ErrorContext): { tags: Record<string, string>; 
 }
 
 /**
- * Error tracking service implementation
+ * Error tracking implementation class
  */
-class ErrorTrackingService implements ErrorTrackingService {
+export class SentryErrorTracker implements ErrorTrackingService {
   private deduplicator = new ErrorDeduplicator();
   private user: ErrorContext['user'] = undefined;
   private contexts = new Map<string, any>();
@@ -336,7 +336,7 @@ class ErrorTrackingService implements ErrorTrackingService {
 /**
  * Global error tracking service instance
  */
-export const errorTracking = new ErrorTrackingService();
+export const errorTracking = new SentryErrorTracker();
 
 /**
  * Convenience functions

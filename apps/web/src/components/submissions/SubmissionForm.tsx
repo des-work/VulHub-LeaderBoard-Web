@@ -54,7 +54,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
-    if (!selectedFiles) return;
+    if (!selectedFiles) {return;}
 
     const files = Array.from(selectedFiles);
     setIsUploading(true);
@@ -284,7 +284,7 @@ export const SubmissionForm: React.FC<SubmissionFormProps> = ({
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) {return '0 Bytes';}
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));

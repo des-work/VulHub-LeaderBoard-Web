@@ -194,8 +194,8 @@ export function drawHealthBar(ctx: CanvasRenderingContext2D, health: number, max
   
   // Health fill (color based on health)
   let healthColor = COLORS.healthHigh;
-  if (percentage < 0.5) healthColor = COLORS.healthMid;
-  if (percentage < 0.25) healthColor = COLORS.healthLow;
+  if (percentage < 0.5) {healthColor = COLORS.healthMid;}
+  if (percentage < 0.25) {healthColor = COLORS.healthLow;}
   
   ctx.fillStyle = healthColor;
   ctx.fillRect(x, y, width * percentage, height);

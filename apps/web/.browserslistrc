@@ -1,0 +1,14 @@
+# Browserslist configuration
+# Defines browser support targets for Autoprefixer and other tools
+
+# Production: Support browsers with >0.2% usage, exclude dead browsers
+>0.2%
+not dead
+not op_mini all
+
+# Explicit browser versions
+Chrome >= 90
+Firefox >= 88
+Safari >= 14
+Edge >= 90
+

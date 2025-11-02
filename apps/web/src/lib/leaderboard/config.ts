@@ -520,9 +520,9 @@ export const LEADERBOARD_CONTAINER_CONFIG = {
 // ============================================================================
 
 export function getRankConfig(rank: number) {
-  if (rank === 1) return RANK_BADGE_CONFIG.rank1;
-  if (rank === 2) return RANK_BADGE_CONFIG.rank2;
-  if (rank === 3) return RANK_BADGE_CONFIG.rank3;
+  if (rank === 1) {return RANK_BADGE_CONFIG.rank1;}
+  if (rank === 2) {return RANK_BADGE_CONFIG.rank2;}
+  if (rank === 3) {return RANK_BADGE_CONFIG.rank3;}
   return RANK_BADGE_CONFIG.default;
 }
 

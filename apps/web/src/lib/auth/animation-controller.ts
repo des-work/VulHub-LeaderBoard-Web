@@ -22,7 +22,7 @@ export const DEFAULT_ANIMATION_CONFIG: AnimationConfig = {
  * Check if user prefers reduced motion
  */
 export function prefersReducedMotion(): boolean {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === 'undefined') {return false;}
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
@@ -30,7 +30,7 @@ export function prefersReducedMotion(): boolean {
  * Check if animation has been played this session
  */
 export function hasPlayedThisSession(): boolean {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === 'undefined') {return false;}
   return sessionStorage.getItem('auth_intro_played') === 'true';
 }
 
@@ -38,7 +38,7 @@ export function hasPlayedThisSession(): boolean {
  * Mark animation as played for this session
  */
 export function markAsPlayed(): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
   sessionStorage.setItem('auth_intro_played', 'true');
 }
 
@@ -46,7 +46,7 @@ export function markAsPlayed(): void {
  * Clear played state (for testing)
  */
 export function clearPlayedState(): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
   sessionStorage.removeItem('auth_intro_played');
 }
 
@@ -55,13 +55,13 @@ export function clearPlayedState(): void {
  */
 export function shouldPlayAnimation(config: AnimationConfig): boolean {
   // Check if disabled
-  if (!config.enableIntro) return false;
+  if (!config.enableIntro) {return false;}
   
   // Respect reduced motion preference
-  if (config.respectUserPreference && prefersReducedMotion()) return false;
+  if (config.respectUserPreference && prefersReducedMotion()) {return false;}
   
   // Check if already played this session
-  if (config.playOnce && hasPlayedThisSession()) return false;
+  if (config.playOnce && hasPlayedThisSession()) {return false;}
   
   return true;
 }
@@ -156,7 +156,7 @@ export function calculateProgress(
   currentStepIndex: number,
   currentStepProgress: number
 ): number {
-  if (!sequence.totalDuration) return 100;
+  if (!sequence.totalDuration) {return 100;}
   
   // Calculate completed time
   let completedTime = 0;

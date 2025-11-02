@@ -20,7 +20,7 @@ interface TokenPayload {
 export function decodeToken(token: string): TokenPayload | null {
   try {
     const parts = token.split('.');
-    if (parts.length !== 3) return null;
+    if (parts.length !== 3) {return null;}
     
     const payload = parts[1];
     const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
@@ -36,7 +36,7 @@ export function decodeToken(token: string): TokenPayload | null {
  */
 export function isTokenExpired(token: string): boolean {
   const payload = decodeToken(token);
-  if (!payload || !payload.exp) return true;
+  if (!payload || !payload.exp) {return true;}
   
   // Token is expired if expiration time is in the past
   const now = Math.floor(Date.now() / 1000);
@@ -48,7 +48,7 @@ export function isTokenExpired(token: string): boolean {
  */
 export function isTokenExpiringSoon(token: string, bufferSeconds = 300): boolean {
   const payload = decodeToken(token);
-  if (!payload || !payload.exp) return true;
+  if (!payload || !payload.exp) {return true;}
   
   const now = Math.floor(Date.now() / 1000);
   return payload.exp - now < bufferSeconds;
@@ -59,7 +59,7 @@ export function isTokenExpiringSoon(token: string, bufferSeconds = 300): boolean
  */
 export function getTimeUntilExpiry(token: string): number {
   const payload = decodeToken(token);
-  if (!payload || !payload.exp) return 0;
+  if (!payload || !payload.exp) {return 0;}
   
   const now = Math.floor(Date.now() / 1000);
   return Math.max(0, payload.exp - now);
@@ -212,7 +212,7 @@ export function clearTokens(): void {
  */
 export function hasValidToken(): boolean {
   const { accessToken } = getStoredTokens();
-  if (!accessToken) return false;
+  if (!accessToken) {return false;}
   
   return !isTokenExpired(accessToken);
 }

@@ -23,6 +23,8 @@ import { GradingPermissions } from '../../lib/grading/permissions';
 import { STATUS_CONFIG } from '../../lib/grading/config';
 import { GradingApi } from '../../lib/api/endpoints';
 import { Submission } from '../../lib/auth/types';
+import { ErrorAlert } from '../../components/ErrorAlert';
+import { SkeletonTable } from '../../components/common/Loading';
 
 interface Filter {
   status: string;
@@ -77,7 +79,7 @@ export default function GradingDashboard() {
 
   // Load submissions
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {return;}
 
     const loadSubmissions = async () => {
       try {
@@ -104,7 +106,7 @@ export default function GradingDashboard() {
 
   // Computed filtered and sorted submissions (useMemo instead of useEffect)
   const filteredSubmissions = useMemo(() => {
-    let filtered = submissions.filter(sub => {
+    const filtered = submissions.filter(sub => {
       // Status filter
       if (viewState.filter.status && sub.status !== viewState.filter.status) {
         return false;
@@ -148,8 +150,8 @@ export default function GradingDashboard() {
           return 0;
       }
 
-      if (aVal < bVal) return viewState.sort.direction === 'asc' ? -1 : 1;
-      if (aVal > bVal) return viewState.sort.direction === 'asc' ? 1 : -1;
+      if (aVal < bVal) {return viewState.sort.direction === 'asc' ? -1 : 1;}
+      if (aVal > bVal) {return viewState.sort.direction === 'asc' ? 1 : -1;}
       return 0;
     });
 
@@ -169,7 +171,7 @@ export default function GradingDashboard() {
 
   const getStatusColor = (status: string) => {
     const config = STATUS_CONFIG[status as keyof typeof STATUS_CONFIG];
-    if (!config) return 'gray';
+    if (!config) {return 'gray';}
     return config.color;
   };
 
@@ -219,7 +221,7 @@ export default function GradingDashboard() {
     setViewState(prev => ({ ...prev, search }));
   }, []);
 
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated) {return null;}
 
   return (
     <div className="min-h-screen bg-black text-neutral-100 font-body relative">
@@ -323,18 +325,13 @@ export default function GradingDashboard() {
 
         {/* Error Message */}
         {loadingState.error && (
-          <div className="matrix-card bg-red-500/10 border-red-500/30 mb-6">
-            <p className="text-red-400">{loadingState.error}</p>
-          </div>
+          <ErrorAlert error={loadingState.error} variant="error" />
         )}
 
         {/* Loading State */}
         {loadingState.isLoading && (
           <div className="text-center py-12">
-            <div className="inline-flex items-center space-x-2 text-matrix">
-              <Clock className="h-5 w-5 animate-spin" />
-              <span>Loading submissions...</span>
-            </div>
+            <SkeletonTable rows={5} />
           </div>
         )}
 

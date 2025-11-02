@@ -263,7 +263,7 @@ export class AnimationOrchestrator {
    * Pause the animation
    */
   pause(): void {
-    if (!this.animationEngine) return;
+    if (!this.animationEngine) {return;}
 
     // AnimationEngine doesn't have a pause method, so we'll just stop
     this.state.animation.isPaused = true;
@@ -278,7 +278,7 @@ export class AnimationOrchestrator {
    * Skip the animation
    */
   skip(): void {
-    if (!this.animationEngine) return;
+    if (!this.animationEngine) {return;}
 
     this.animationEngine.skip();
     this.handleComplete();
@@ -347,7 +347,7 @@ export class AnimationOrchestrator {
    * Sync orchestrator state from animation engine state
    */
   private syncStateFromEngine(): void {
-    if (!this.animationEngine) return;
+    if (!this.animationEngine) {return;}
 
     const engineState = this.animationEngine.getState();
     

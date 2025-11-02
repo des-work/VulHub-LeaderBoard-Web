@@ -110,7 +110,7 @@ export function getStaggerDelay(index: number, speed: 'fast' | 'normal' | 'slow'
  * Format rank display text
  */
 export function formatRank(rank: number): string {
-  if (rank <= 3) return '';  // Top 3 use icons
+  if (rank <= 3) {return '';}  // Top 3 use icons
   return `#${rank}`;
 }
 
@@ -289,9 +289,9 @@ export function createLiveIndicatorPulse() {
  * Get color by rank
  */
 export function getColorByRank(rank: number): string {
-  if (rank === 1) return LEADERBOARD_COLORS.rank.first.primary;
-  if (rank === 2) return LEADERBOARD_COLORS.rank.second.primary;
-  if (rank === 3) return LEADERBOARD_COLORS.rank.third.primary;
+  if (rank === 1) {return LEADERBOARD_COLORS.rank.first.primary;}
+  if (rank === 2) {return LEADERBOARD_COLORS.rank.second.primary;}
+  if (rank === 3) {return LEADERBOARD_COLORS.rank.third.primary;}
   return LEADERBOARD_COLORS.matrix.primary;
 }
 

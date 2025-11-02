@@ -124,11 +124,11 @@ export class AnimationEngine {
    * Progressively add more stars over time for better visual experience
    */
   private growStarField(deltaTime: number): void {
-    if (this.stars.length >= STAR_CONFIG.maxCount) return;
+    if (this.stars.length >= STAR_CONFIG.maxCount) {return;}
 
     // Add stars gradually (growthRate stars per second)
     const starsToAdd = Math.floor((STAR_CONFIG.growthRate * deltaTime) / 1000);
-    if (starsToAdd <= 0) return;
+    if (starsToAdd <= 0) {return;}
 
     const { width, height } = this.renderer.getDimensions();
 
@@ -147,7 +147,7 @@ export class AnimationEngine {
    * Start the animation
    */
   start(): void {
-    if (this.isRunning) return;
+    if (this.isRunning) {return;}
     
     this.isRunning = true;
     this.state.isPlaying = true;
@@ -173,7 +173,7 @@ export class AnimationEngine {
    * Main animation loop with performance optimization
    */
   private animate = (currentTime: number = performance.now()): void => {
-    if (!this.isRunning) return;
+    if (!this.isRunning) {return;}
     
     // Frame rate management - skip frame if not time to render
     if (!frameRateManager.shouldRender(currentTime)) {
@@ -321,7 +321,7 @@ export class AnimationEngine {
    * Create a projectile from an army
    */
   private createProjectile(army: typeof ARMIES[0]): void {
-    if (this.projectiles.length >= PERFORMANCE_CONFIG.maxProjectiles) return;
+    if (this.projectiles.length >= PERFORMANCE_CONFIG.maxProjectiles) {return;}
     
     const { width, height } = this.renderer.getDimensions();
     let startX: number, startY: number, targetX: number, targetY: number;
@@ -363,7 +363,7 @@ export class AnimationEngine {
    * Handle projectile completion (create explosion and debris)
    */
   private onProjectileComplete(projectile: ProjectileEntity): void {
-    if (this.explosions.length >= PERFORMANCE_CONFIG.maxExplosions) return;
+    if (this.explosions.length >= PERFORMANCE_CONFIG.maxExplosions) {return;}
     
     // Create explosion
     const expId = `exp-${Date.now()}-${Math.random()}`;
@@ -373,7 +373,7 @@ export class AnimationEngine {
     
     // Create debris
     for (let i = 0; i < DEBRIS_CONFIG.countPerExplosion; i++) {
-      if (this.debris.length >= PERFORMANCE_CONFIG.maxDebris) break;
+      if (this.debris.length >= PERFORMANCE_CONFIG.maxDebris) {break;}
       
       const angle = Math.random() * Math.PI * 2;
       const speed = DEBRIS_CONFIG.minSpeed + Math.random() * (DEBRIS_CONFIG.maxSpeed - DEBRIS_CONFIG.minSpeed);

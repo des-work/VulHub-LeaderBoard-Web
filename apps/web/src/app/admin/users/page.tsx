@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { MOCK_USERS } from '../../../lib/users/mock';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../lib/ui/card';
 import { Button } from '../../../lib/ui/button';
-import { Search, User } from 'lucide-react';
+import { User } from 'lucide-react';
 
 export default function AdminUsersPage() {
   const router = useRouter();

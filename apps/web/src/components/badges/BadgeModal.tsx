@@ -17,7 +17,7 @@ interface BadgeModalProps {
 }
 
 const BadgeModal: React.FC<BadgeModalProps> = ({ badge, isOpen, onClose }) => {
-  if (!isOpen || !badge) return null;
+  if (!isOpen || !badge) {return null;}
 
   const progress = calculateBadgeProgress(badge);
 

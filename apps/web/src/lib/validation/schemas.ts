@@ -24,7 +24,7 @@ export const validators = {
    * - At least one special character
    */
   password: (value: string): boolean => {
-    if (value.length < 8 || value.length > 128) return false;
+    if (value.length < 8 || value.length > 128) {return false;}
     const hasUpperCase = /[A-Z]/.test(value);
     const hasLowerCase = /[a-z]/.test(value);
     const hasNumber = /[0-9]/.test(value);
@@ -39,7 +39,7 @@ export const validators = {
    * - Cannot start/end with hyphen or underscore
    */
   username: (value: string): boolean => {
-    if (value.length < 3 || value.length > 30) return false;
+    if (value.length < 3 || value.length > 30) {return false;}
     const usernameRegex = /^[a-zA-Z0-9]([a-zA-Z0-9_-]*[a-zA-Z0-9])?$/;
     return usernameRegex.test(value);
   },
@@ -50,7 +50,7 @@ export const validators = {
    * - Alphanumeric and basic punctuation
    */
   displayName: (value: string): boolean => {
-    if (value.length < 1 || value.length > 50) return false;
+    if (value.length < 1 || value.length > 50) {return false;}
     const displayNameRegex = /^[a-zA-Z0-9\s\-_.']+$/;
     return displayNameRegex.test(value);
   },

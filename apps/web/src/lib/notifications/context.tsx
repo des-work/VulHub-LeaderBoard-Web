@@ -123,7 +123,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   useEffect(() => {
     const timers = state.toasts.map(toast => {
       const duration = NOTIFICATION_DURATIONS[toast.duration];
-      if (duration === 0) return null; // Don't auto-dismiss persistent
+      if (duration === 0) {return null;} // Don't auto-dismiss persistent
 
       return setTimeout(() => {
         dispatch({ type: 'REMOVE_TOAST', payload: toast.id });
@@ -132,7 +132,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
     return () => {
       timers.forEach(timer => {
-        if (timer) clearTimeout(timer);
+        if (timer) {clearTimeout(timer);}
       });
     };
   }, [state.toasts]);

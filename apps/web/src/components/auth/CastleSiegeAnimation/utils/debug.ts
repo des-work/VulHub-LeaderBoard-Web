@@ -149,7 +149,7 @@ export class PerformanceMonitor {
 
   getAverage(label: string): number {
     const measurements = this.measurements.get(label);
-    if (!measurements || measurements.length === 0) return 0;
+    if (!measurements || measurements.length === 0) {return 0;}
 
     return measurements.reduce((a, b) => a + b, 0) / measurements.length;
   }

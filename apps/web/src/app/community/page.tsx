@@ -98,7 +98,7 @@ What knowledge do you seek?`;
     
     setHistory(prev => [...prev, { type: 'user', content: `$ ${cmd}` }]);
     
-    if (!trimmedCmd) return;
+    if (!trimmedCmd) {return;}
 
     if (trimmedCmd === 'help') {
       setHistory(prev => [...prev, {

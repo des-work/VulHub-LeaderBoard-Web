@@ -15,7 +15,7 @@ export const Toast: React.FC<ToastProps> = ({ notification, onDismiss }) => {
   // Auto-dismiss timer
   useEffect(() => {
     const duration = NOTIFICATION_DURATIONS[notification.duration];
-    if (duration === 0) return; // Don't auto-dismiss persistent
+    if (duration === 0) {return;} // Don't auto-dismiss persistent
 
     const timer = setTimeout(() => {
       handleDismiss();

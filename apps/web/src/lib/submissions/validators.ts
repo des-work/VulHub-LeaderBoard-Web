@@ -142,13 +142,13 @@ export function validateSubmission(payload: {
 
   // Validate each field
   const challengeError = validateChallengeId(payload.challengeId);
-  if (challengeError) errors.push(challengeError);
+  if (challengeError) {errors.push(challengeError);}
 
   const descriptionError = validateDescription(payload.description);
-  if (descriptionError) errors.push(descriptionError);
+  if (descriptionError) {errors.push(descriptionError);}
 
   const fileError = validateFileCount(payload.fileCount);
-  if (fileError) errors.push(fileError);
+  if (fileError) {errors.push(fileError);}
 
   return {
     valid: errors.length === 0,

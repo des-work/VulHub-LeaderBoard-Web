@@ -90,7 +90,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
       // Default error UI
       const { error, errorInfo } = this.state;
-      // @ts-ignore - process.env is replaced by Next.js at build time
+      // @ts-expect-error - process.env is replaced by Next.js at build time
       const isDev = typeof process !== 'undefined' && process.env?.NODE_ENV === 'development';
       const showDetails = this.props.showDetails ?? isDev;
 

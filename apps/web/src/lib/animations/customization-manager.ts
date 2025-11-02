@@ -19,7 +19,7 @@ export class CustomizationManager {
    * Initialize customization system
    */
   init(): void {
-    if (this.isInitialized) return;
+    if (this.isInitialized) {return;}
     
     this.applyColors();
     this.applyTypography();

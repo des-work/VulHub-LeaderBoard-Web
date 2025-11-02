@@ -20,8 +20,8 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({ submissions,
 
   const list = useMemo(() => {
     return submissions.filter(s => {
-      if (status !== 'all' && s.status !== status) return false;
-      if (q && !(`${s.activityName} ${s.description}`.toLowerCase().includes(q.toLowerCase()))) return false;
+      if (status !== 'all' && s.status !== status) {return false;}
+      if (q && !(`${s.activityName} ${s.description}`.toLowerCase().includes(q.toLowerCase()))) {return false;}
       return true;
     });
   }, [submissions, status, q]);

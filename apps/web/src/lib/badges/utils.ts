@@ -122,8 +122,8 @@ export function sortBadges(
  * Calculate overall progress for a badge
  */
 export function calculateBadgeProgress(badge: Badge): number {
-  if (badge.isUnlocked) return 100;
-  if (badge.requirements.length === 0) return 0;
+  if (badge.isUnlocked) {return 100;}
+  if (badge.requirements.length === 0) {return 0;}
 
   const totalProgress = badge.requirements.reduce((sum, req) => {
     const reqProgress = Math.min((req.progress / req.target) * 100, 100);
@@ -181,7 +181,7 @@ export function getRecentlyUnlockedBadges(badges: Badge[], limit: number = 5): B
   return badges
     .filter(badge => badge.isUnlocked && badge.unlockedAt)
     .sort((a, b) => {
-      if (!a.unlockedAt || !b.unlockedAt) return 0;
+      if (!a.unlockedAt || !b.unlockedAt) {return 0;}
       return b.unlockedAt.getTime() - a.unlockedAt.getTime();
     })
     .slice(0, limit);
@@ -203,7 +203,7 @@ export function getBadgesNearCompletion(badges: Badge[], threshold: number = 75)
  * Format badge progress text
  */
 export function formatBadgeProgress(badge: Badge): string {
-  if (badge.isUnlocked) return 'Unlocked';
+  if (badge.isUnlocked) {return 'Unlocked';}
   
   const progress = calculateBadgeProgress(badge);
   return `${Math.floor(progress)}% Complete`;

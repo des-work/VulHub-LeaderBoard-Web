@@ -15,7 +15,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   visible,
   className = '',
 }) => {
-  if (!visible) return null;
+  if (!visible) {return null;}
 
   const lines = typedText.split('\n');
   const hasQuestion = lines.some(line => line.includes(WELCOME_SCREEN.text.question));

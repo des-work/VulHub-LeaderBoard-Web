@@ -22,6 +22,8 @@ import { GradingPermissions } from '../../../lib/grading/permissions';
 import { GRADING_RUBRIC, FEEDBACK_TEMPLATES, SCORING_GUIDELINES } from '../../../lib/grading/config';
 import { GradingApi } from '../../../lib/api/endpoints';
 import { Submission } from '../../../lib/auth/types';
+import { ErrorAlert } from '../../../components/ErrorAlert';
+import { PageLoader } from '../../../components/common/Loading';
 
 interface RubricScore {
   criterionId: string;
@@ -88,7 +90,7 @@ export default function GradingDetailPage() {
 
   const handleRubricScoreChange = (criterionId: string, level: 'excellent' | 'good' | 'fair' | 'poor') => {
     const criterion = GRADING_RUBRIC.find(c => c.id === criterionId);
-    if (!criterion) return;
+    if (!criterion) {return;}
 
     const score = criterion.maxPoints * criterion.weights[level];
 
@@ -103,7 +105,7 @@ export default function GradingDetailPage() {
 
   const handleAddTemplate = (templateId: string) => {
     const template = FEEDBACK_TEMPLATES.find(t => t.id === templateId);
-    if (!template) return;
+    if (!template) {return;}
 
     setFeedback(prev => {
       const newFeedback = prev ? `${prev}\n\n${template.content}` : template.content;
@@ -155,7 +157,7 @@ export default function GradingDetailPage() {
     }
   };
 
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated) {return null;}
 
   return (
     <div className="min-h-screen bg-black text-neutral-100 font-body relative">
@@ -198,29 +200,16 @@ export default function GradingDetailPage() {
       <div className="layer-content container mx-auto px-4 py-6 max-w-6xl">
         {isLoading && (
           <div className="text-center py-12">
-            <div className="inline-flex items-center space-x-2 text-matrix">
-              <Loader className="h-5 w-5 animate-spin" />
-              <span>Loading submission...</span>
-            </div>
+            <PageLoader message="Loading submission..." />
           </div>
         )}
 
         {error && !isLoading && (
-          <div className="matrix-card bg-red-500/10 border-red-500/30 mb-6">
-            <div className="flex items-center space-x-3">
-              <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0" />
-              <p className="text-red-400">{error}</p>
-            </div>
-          </div>
+          <ErrorAlert error={error} variant="error" />
         )}
 
         {successMessage && (
-          <div className="matrix-card bg-green-500/10 border-green-500/30 mb-6">
-            <div className="flex items-center space-x-3">
-              <CheckCircle className="h-5 w-5 text-green-400 flex-shrink-0" />
-              <p className="text-green-400">{successMessage}</p>
-            </div>
-          </div>
+          <ErrorAlert error={successMessage} variant="info" className="bg-green-500/10 border-green-500/30 text-green-400" />
         )}
 
         {submission && !isLoading && (

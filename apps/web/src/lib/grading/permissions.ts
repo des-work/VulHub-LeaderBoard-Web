@@ -257,7 +257,7 @@ export function canViewGradingStats(user: User | null): PermissionCheck {
  * Check if user has grader role or higher
  */
 export function isGrader(user: User | null): boolean {
-  if (!user) return false;
+  if (!user) {return false;}
   return user.role === 'grader' || user.role === 'admin';
 }
 
@@ -265,7 +265,7 @@ export function isGrader(user: User | null): boolean {
  * Check if user is admin
  */
 export function isAdmin(user: User | null): boolean {
-  if (!user) return false;
+  if (!user) {return false;}
   return user.role === 'admin';
 }
 
@@ -273,7 +273,7 @@ export function isAdmin(user: User | null): boolean {
  * Check if user is student
  */
 export function isStudent(user: User | null): boolean {
-  if (!user) return false;
+  if (!user) {return false;}
   return user.role === 'student';
 }
 

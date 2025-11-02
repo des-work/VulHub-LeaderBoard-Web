@@ -44,7 +44,7 @@ const RippleGridV2 = ({
   const uniformsRef = useRef<any>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) {return;}
 
     const hexToRgb = (hex: string) => {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -197,7 +197,7 @@ const RippleGridV2 = ({
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!mouseInteraction || !containerRef.current) return;
+      if (!mouseInteraction || !containerRef.current) {return;}
       const rect = containerRef.current.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width;
       const y = 1.0 - (e.clientY - rect.top) / rect.height; // Flip Y coordinate
@@ -205,12 +205,12 @@ const RippleGridV2 = ({
     };
 
     const handleMouseEnter = () => {
-      if (!mouseInteraction) return;
+      if (!mouseInteraction) {return;}
       mouseInfluenceRef.current = 1.0;
     };
 
     const handleMouseLeave = () => {
-      if (!mouseInteraction) return;
+      if (!mouseInteraction) {return;}
       mouseInfluenceRef.current = 0.0;
     };
 
@@ -256,7 +256,7 @@ const RippleGridV2 = ({
   }, []);
 
   useEffect(() => {
-    if (!uniformsRef.current) return;
+    if (!uniformsRef.current) {return;}
 
     const hexToRgb = (hex: string) => {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);

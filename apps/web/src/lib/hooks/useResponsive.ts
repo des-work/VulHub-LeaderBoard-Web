@@ -223,7 +223,7 @@ export function useIsTouchDevice(): boolean {
       return (
         'ontouchstart' in window ||
         navigator.maxTouchPoints > 0 ||
-        // @ts-ignore - msMaxTouchPoints is IE specific
+        // @ts-expect-error - msMaxTouchPoints is IE specific
         navigator.msMaxTouchPoints > 0
       );
     };
@@ -288,8 +288,9 @@ export function useIsStandalone(): boolean {
     const checkStandalone = () => {
       return (
         window.matchMedia('(display-mode: standalone)').matches ||
-        // @ts-ignore - standalone is iOS specific
-        window.navigator.standalone === true
+        'standalone' in navigator ||
+        // @ts-expect-error - standalone is iOS specific
+        navigator.standalone === true
       );
     };
 

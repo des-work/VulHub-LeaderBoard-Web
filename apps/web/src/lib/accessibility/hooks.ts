@@ -28,7 +28,7 @@ export function useFocusTrap(isActive: boolean) {
   const trapRef = useRef<FocusTrap | null>(null);
 
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current) {return;}
 
     if (isActive) {
       trapRef.current = new FocusTrap(ref.current);

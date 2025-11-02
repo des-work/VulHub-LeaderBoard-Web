@@ -12,7 +12,7 @@ export const applyFont = (element: HTMLElement, fontType: keyof typeof fonts) =>
 
 // Apply font to all elements with a class
 export const applyFontToClass = (className: string, fontType: keyof typeof fonts) => {
-  if (typeof document === 'undefined') return;
+  if (typeof document === 'undefined') {return;}
   
   const elements = document.querySelectorAll(`.${className}`);
   elements.forEach(element => {

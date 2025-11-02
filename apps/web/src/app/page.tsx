@@ -1,22 +1,29 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../lib/auth/context';
 import { 
   Trophy, Users, Target, Award, Upload, BookOpen, LogOut
 } from 'lucide-react';
-import RippleGridV2 from '../components/RippleGrid/RippleGridV2';
-import Leaderboard from '../components/leaderboard/Leaderboard';
-import { LeaderboardPlayer } from '../components/leaderboard/LeaderboardRow';
-import { MobileMenu } from '../components/navigation/MobileMenu';
 import { PageLoader } from '../components/common/Loading';
 import { useLeaderboard, useUserRank } from '../lib/data/hooks';
 import { SkeletonList } from '../components/common/Loading';
 
+// Lazy load heavy components for better initial load performance
+const RippleGridV2 = lazy(() => import('../components/RippleGrid/RippleGridV2'));
+const Leaderboard = lazy(() => import('../components/leaderboard/Leaderboard'));
+const MobileMenu = lazy(() => import('../components/navigation/MobileMenu'));
+
 export default function HomePage() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading, logout } = useAuth();
+
+  // Fetch leaderboard data - MUST be called unconditionally (React Hooks rule)
+  const { data: leaderboardData, isLoading: isLoadingLeaderboard, error: leaderboardError } = useLeaderboard({ limit: 15 });
+  
+  // Fetch user's rank - MUST be called unconditionally (React Hooks rule)
+  const { data: userRankData } = useUserRank(user?.id);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -37,12 +44,6 @@ export default function HomePage() {
     router.replace('/auth');
   };
 
-  // Fetch leaderboard data
-  const { data: leaderboardData, isLoading: isLoadingLeaderboard, error: leaderboardError } = useLeaderboard({ limit: 15 });
-  
-  // Fetch user's rank
-  const { data: userRankData } = useUserRank(user?.id);
-
   // Calculate user rank
   const userRank = (userRankData && typeof userRankData === 'object' && 'rank' in userRankData) 
     ? userRankData.rank 
@@ -52,22 +53,24 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-black text-neutral-100 font-body relative">
-      {/* RippleGrid Background */}
+      {/* RippleGrid Background - Lazy loaded */}
       <div className="fixed inset-0 z-0">
-        <RippleGridV2
-          enableRainbow={false}
-          gridColor="#00ff00"
-          rippleIntensity={0.03}
-          gridSize={10}
-          gridThickness={12}
-          fadeDistance={1.5}
-          vignetteStrength={1.6}
-          glowIntensity={0.08}
-          opacity={0.08}
-          gridRotation={0}
-          mouseInteraction={true}
-          mouseInteractionRadius={1.2}
-        />
+        <Suspense fallback={<div className="w-full h-full bg-black" />}>
+          <RippleGridV2
+            enableRainbow={false}
+            gridColor="#00ff00"
+            rippleIntensity={0.03}
+            gridSize={10}
+            gridThickness={12}
+            fadeDistance={1.5}
+            vignetteStrength={1.6}
+            glowIntensity={0.08}
+            opacity={0.08}
+            gridRotation={0}
+            mouseInteraction={true}
+            mouseInteractionRadius={1.2}
+          />
+        </Suspense>
       </div>
 
       {/* Header */}
@@ -151,12 +154,14 @@ export default function HomePage() {
               </div>
             </nav>
 
-            {/* Mobile Menu */}
-            <MobileMenu 
-              userName={user.name}
-              userPoints={user.points}
-              onLogout={handleLogout}
-            />
+            {/* Mobile Menu - Lazy loaded */}
+            <Suspense fallback={null}>
+              <MobileMenu 
+                userName={user.name}
+                userPoints={user.points}
+                onLogout={handleLogout}
+              />
+            </Suspense>
           </div>
         </div>
       </header>
@@ -173,14 +178,16 @@ export default function HomePage() {
                 <p className="text-error">Failed to load leaderboard. Please try again.</p>
               </div>
             ) : (
-              <Leaderboard
-                players={leaderboardData || []}
-                currentUserId={!isNaN(Number(user?.id)) ? Number(user?.id) : 0}
-                currentUserRank={userRank || undefined}
-                currentUserName={user.name}
-                currentUserPoints={user.points}
-                maxDisplay={15}
-              />
+              <Suspense fallback={<SkeletonList items={15} />}>
+                <Leaderboard
+                  players={leaderboardData || []}
+                  currentUserId={!isNaN(Number(user?.id)) ? Number(user?.id) : 0}
+                  currentUserRank={userRank || undefined}
+                  currentUserName={user.name}
+                  currentUserPoints={user.points}
+                  maxDisplay={15}
+                />
+              </Suspense>
             )}
           </div>
 

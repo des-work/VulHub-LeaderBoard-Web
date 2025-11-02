@@ -42,7 +42,7 @@ export class ScrollAnimationManager {
    */
   addElement(selector: string, config: AnimationConfig): void {
     const element = document.querySelector(selector) as HTMLElement;
-    if (!element) return;
+    if (!element) {return;}
 
     const animationElement: AnimationElement = {
       element,

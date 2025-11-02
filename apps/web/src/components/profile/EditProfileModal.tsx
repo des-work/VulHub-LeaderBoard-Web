@@ -24,7 +24,7 @@ export const EditProfileModal: React.FC<Props> = ({ open, onClose }) => {
     }
   }, [user, open]);
 
-  if (!open) return null;
+  if (!open) {return null;}
 
   const onSave = () => {
     updateUser({ name, avatar, bio });

@@ -236,7 +236,7 @@ export function logError(error: Error, context?: any): void {
   // Use a try-catch to handle cases where process is not defined
   let isDevelopment = false;
   try {
-    // @ts-ignore - process.env is replaced by Next.js at build time
+    // @ts-expect-error - process.env is replaced by Next.js at build time
     isDevelopment = process.env.NODE_ENV === 'development';
   } catch {
     // Default to true if we can't determine

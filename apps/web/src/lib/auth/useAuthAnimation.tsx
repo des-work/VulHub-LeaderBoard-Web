@@ -99,10 +99,10 @@ export function useAuthAnimation(options: UseAuthAnimationOptions = {}) {
 
   // Start next step timer
   useEffect(() => {
-    if (!state.isAnimating || state.isComplete) return;
+    if (!state.isAnimating || state.isComplete) {return;}
 
     const step = getCurrentStep(sequence, state.currentStep);
-    if (!step) return;
+    if (!step) {return;}
 
     // If step has duration, auto-advance after duration
     if (step.duration > 0) {
@@ -132,7 +132,7 @@ export function useAuthAnimation(options: UseAuthAnimationOptions = {}) {
     }, []),
 
     skip: useCallback(() => {
-      if (!state.canSkip) return;
+      if (!state.canSkip) {return;}
 
       const targetPhase = sequence.skipToPhase || 'auth';
       const targetIndex = getPhaseIndex(sequence, targetPhase);
@@ -156,7 +156,7 @@ export function useAuthAnimation(options: UseAuthAnimationOptions = {}) {
 
     skipToPhase: useCallback((phase: AnimationPhase) => {
       const targetIndex = getPhaseIndex(sequence, phase);
-      if (targetIndex === -1) return;
+      if (targetIndex === -1) {return;}
 
       if (timerRef.current) {
         clearTimeout(timerRef.current);

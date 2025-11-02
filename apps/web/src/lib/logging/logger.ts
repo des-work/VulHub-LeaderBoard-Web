@@ -28,7 +28,7 @@ class Logger {
    * Debug level - Most verbose, development only
    */
   debug(message: string, context?: LogContext) {
-    if (!this.isDevelopment) return;
+    if (!this.isDevelopment) {return;}
     
     if (typeof window !== 'undefined' && window.console) {
       const style = 'color: #888; font-weight: normal;';
@@ -66,7 +66,7 @@ class Logger {
       if (error instanceof Error) {
         console.error(`%c[ERROR] ${message}`, style);
         console.error(error);
-        if (context) console.error(context);
+        if (context) {console.error(context);}
       } else {
         console.error(`%c[ERROR] ${message}`, style, error || context || '');
       }
@@ -77,14 +77,14 @@ class Logger {
    * Performance timing - Debug timings
    */
   time(label: string) {
-    if (!this.isDevelopment) return;
+    if (!this.isDevelopment) {return;}
     if (typeof window !== 'undefined' && window.console) {
       console.time(label);
     }
   }
 
   timeEnd(label: string) {
-    if (!this.isDevelopment) return;
+    if (!this.isDevelopment) {return;}
     if (typeof window !== 'undefined' && window.console) {
       console.timeEnd(label);
     }
@@ -94,14 +94,14 @@ class Logger {
    * Group related logs together
    */
   group(label: string) {
-    if (!this.isDevelopment) return;
+    if (!this.isDevelopment) {return;}
     if (typeof window !== 'undefined' && window.console) {
       console.group(`📦 ${label}`);
     }
   }
 
   groupEnd() {
-    if (!this.isDevelopment) return;
+    if (!this.isDevelopment) {return;}
     if (typeof window !== 'undefined' && window.console) {
       console.groupEnd();
     }

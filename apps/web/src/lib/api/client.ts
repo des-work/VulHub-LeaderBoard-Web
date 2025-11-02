@@ -14,7 +14,7 @@ class CircuitBreaker {
   private openedAt = 0;
   constructor(private readonly threshold = 3, private readonly cooldownMs = 15000) {}
   isOpen() {
-    if (this.failures < this.threshold) return false;
+    if (this.failures < this.threshold) {return false;}
     return Date.now() - this.openedAt < this.cooldownMs;
   }
   recordSuccess() {
@@ -23,7 +23,7 @@ class CircuitBreaker {
   }
   recordFailure() {
     this.failures += 1;
-    if (this.failures >= this.threshold) this.openedAt = Date.now();
+    if (this.failures >= this.threshold) {this.openedAt = Date.now();}
   }
 }
 
@@ -134,7 +134,7 @@ export class ApiClient {
       
       // Log and re-throw
       logError(e, { path, attempt });
-      if (attempt < this.retry) return this.doFetch(path, init, attempt + 1);
+      if (attempt < this.retry) {return this.doFetch(path, init, attempt + 1);}
       throw e;
     }
   }

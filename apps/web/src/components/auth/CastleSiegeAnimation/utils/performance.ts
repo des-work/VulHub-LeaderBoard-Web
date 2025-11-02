@@ -112,7 +112,7 @@ export class FrameRateManager {
    * Set quality level explicitly
    */
   setQuality(level: 'high' | 'medium' | 'low'): void {
-    if (this.qualityLevel === level) return;
+    if (this.qualityLevel === level) {return;}
 
     this.qualityLevel = level;
     this.targetFPS = this.qualityLevels[level];
@@ -267,7 +267,7 @@ export class PerformanceMonitor {
    * Check if performance is degrading
    */
   isDegrading(): boolean {
-    if (this.metrics.length < 10) return false;
+    if (this.metrics.length < 10) {return false;}
 
     const recent = this.metrics.slice(-10);
     const avgFPS = recent.reduce((sum, m) => sum + m.fps, 0) / recent.length;

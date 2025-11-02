@@ -199,7 +199,7 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({ isOpen, onClose, o
     onComplete();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   const currentStepData = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;

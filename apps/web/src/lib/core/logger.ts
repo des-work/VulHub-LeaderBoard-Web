@@ -2,7 +2,7 @@ type Level = 'debug' | 'info' | 'warn' | 'error';
 const enabled: Record<Level, boolean> = { debug: true, info: true, warn: true, error: true };
 
 function log(level: Level, msg: string, meta?: any) {
-  if (!enabled[level]) return;
+  if (!enabled[level]) {return;}
   const payload = { t: new Date().toISOString(), level, msg, ...meta };
   // eslint-disable-next-line no-console
   console[level]?.(payload);

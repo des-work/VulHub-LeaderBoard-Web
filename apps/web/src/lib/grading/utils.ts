@@ -93,8 +93,8 @@ export function sortSubmissions(
         return 0;
     }
 
-    if (aVal < bVal) return direction === 'asc' ? -1 : 1;
-    if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+    if (aVal < bVal) {return direction === 'asc' ? -1 : 1;}
+    if (aVal > bVal) {return direction === 'asc' ? 1 : -1;}
     return 0;
   });
 }

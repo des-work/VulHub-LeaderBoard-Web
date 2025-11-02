@@ -50,7 +50,7 @@ export const getFont = (type: keyof typeof fonts) => fonts[type].css;
 
 // Font loading function with proper error handling
 export const loadFonts = () => {
-  if (typeof document === 'undefined') return;
+  if (typeof document === 'undefined') {return;}
   
   // Check if fonts are already loaded
   if (document.querySelector('link[href*="fonts.googleapis.com"]')) {

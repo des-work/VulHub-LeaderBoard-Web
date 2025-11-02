@@ -57,7 +57,7 @@ export class AnimationAccessibility {
    * Initialize screen reader live region
    */
   private initializeLiveRegion(): void {
-    if (typeof document === 'undefined' || !this.config.enableScreenReader) return;
+    if (typeof document === 'undefined' || !this.config.enableScreenReader) {return;}
 
     // Create or find live region
     this.liveRegion = document.getElementById('animation-live-region');
@@ -81,7 +81,7 @@ export class AnimationAccessibility {
    * Announce message to screen readers
    */
   announce(message: string, priority: 'polite' | 'assertive' = 'polite'): void {
-    if (!this.config.enableScreenReader || !this.liveRegion) return;
+    if (!this.config.enableScreenReader || !this.liveRegion) {return;}
 
     this.announcementQueue.push(message);
 
@@ -94,13 +94,13 @@ export class AnimationAccessibility {
    * Process announcement queue to avoid overwhelming screen readers
    */
   private async processAnnouncementQueue(priority: 'polite' | 'assertive'): Promise<void> {
-    if (this.isProcessingQueue || !this.liveRegion) return;
+    if (this.isProcessingQueue || !this.liveRegion) {return;}
 
     this.isProcessingQueue = true;
 
     while (this.announcementQueue.length > 0) {
       const message = this.announcementQueue.shift();
-      if (!message) continue;
+      if (!message) {continue;}
 
       this.liveRegion.setAttribute('aria-live', priority);
       this.liveRegion.textContent = message;
@@ -116,7 +116,7 @@ export class AnimationAccessibility {
    * Announce animation phase changes
    */
   announcePhaseChange(phase: string, description?: string): void {
-    if (!this.config.announcePhaseChanges) return;
+    if (!this.config.announcePhaseChanges) {return;}
 
     const message = `Animation phase changed to ${phase}${description ? `: ${description}` : ''}`;
     this.announce(message, 'polite');
@@ -126,7 +126,7 @@ export class AnimationAccessibility {
    * Announce performance issues (only if enabled)
    */
   announcePerformanceIssue(issue: string): void {
-    if (!this.config.announcePerformanceIssues) return;
+    if (!this.config.announcePerformanceIssues) {return;}
 
     this.announce(`Performance issue detected: ${issue}`, 'assertive');
   }
@@ -135,7 +135,7 @@ export class AnimationAccessibility {
    * Provide skip instructions
    */
   announceSkipInstructions(): void {
-    if (!this.config.provideSkipInstructions) return;
+    if (!this.config.provideSkipInstructions) {return;}
 
     const message = 'Press Tab to focus skip button, or press Escape to skip animation immediately';
     this.announce(message, 'polite');

@@ -60,7 +60,7 @@ export class StarEntity extends BaseEntity implements Star {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    if (this.opacity <= 0) return;
+    if (this.opacity <= 0) {return;}
 
     ctx.save();
     ctx.globalAlpha = this.opacity;
@@ -216,7 +216,7 @@ export class ExplosionEntity extends BaseEntity implements Explosion {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    if (this.opacity <= 0 || this.scale <= 0) return;
+    if (this.opacity <= 0 || this.scale <= 0) {return;}
 
     ctx.save();
     ctx.globalAlpha = this.opacity;
@@ -301,7 +301,7 @@ export class DebrisEntity extends BaseEntity implements Debris {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    if (this.life <= 0) return;
+    if (this.life <= 0) {return;}
 
     ctx.save();
     ctx.globalAlpha = this.life;

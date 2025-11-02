@@ -130,7 +130,7 @@ export function createAriaLandmark(options: {
  * Announce to screen readers
  */
 export function announceToScreenReader(message: string, priority: 'polite' | 'assertive' = 'polite'): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {return;}
 
   const announcement = document.createElement('div');
   announcement.setAttribute('role', priority === 'assertive' ? 'alert' : 'status');
@@ -210,7 +210,7 @@ export class FocusTrap {
    * Handle tab key navigation
    */
   private handleKeyDown = (e: KeyboardEvent): void => {
-    if (e.key !== 'Tab') return;
+    if (e.key !== 'Tab') {return;}
 
     const firstElement = this.focusableElements[0];
     const lastElement = this.focusableElements[this.focusableElements.length - 1];

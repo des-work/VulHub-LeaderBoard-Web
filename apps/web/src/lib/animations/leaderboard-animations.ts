@@ -75,7 +75,7 @@ export class LeaderboardAnimationManager {
    * Initialize CSS animations and styles
    */
   private initializeStyles(): void {
-    if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined') {return;}
 
     const style = document.createElement('style');
     style.id = 'leaderboard-animations';
@@ -326,7 +326,7 @@ export class LeaderboardAnimationManager {
    */
   animateEntry(id: string, delay: number = 0): void {
     const element = this.elements.get(id);
-    if (!element || !this.config.entry.enabled) return;
+    if (!element || !this.config.entry.enabled) {return;}
 
     const { type, direction, duration, easing } = this.config.entry;
     
@@ -345,10 +345,10 @@ export class LeaderboardAnimationManager {
    */
   animateProgress(id: string, progress: number, delay: number = 0): void {
     const element = this.elements.get(id);
-    if (!element || !this.config.progress.enabled) return;
+    if (!element || !this.config.progress.enabled) {return;}
 
     const progressBar = element.querySelector('.progress-bar') as HTMLElement;
-    if (!progressBar) return;
+    if (!progressBar) {return;}
 
     const { type, duration, easing } = this.config.progress;
     
@@ -363,10 +363,10 @@ export class LeaderboardAnimationManager {
    */
   animateRankingChange(id: string, newRank: number): void {
     const element = this.elements.get(id);
-    if (!element || !this.config.ranking.enabled) return;
+    if (!element || !this.config.ranking.enabled) {return;}
 
     const rankingElement = element.querySelector('.ranking') as HTMLElement;
-    if (!rankingElement) return;
+    if (!rankingElement) {return;}
 
     const { type, duration, easing } = this.config.ranking;
     
@@ -378,7 +378,7 @@ export class LeaderboardAnimationManager {
    */
   animateLiveUpdate(id: string): void {
     const element = this.elements.get(id);
-    if (!element || !this.config.liveUpdate.enabled) return;
+    if (!element || !this.config.liveUpdate.enabled) {return;}
 
     const { type, duration, easing } = this.config.liveUpdate;
     
@@ -390,7 +390,7 @@ export class LeaderboardAnimationManager {
    */
   private addContinuousAnimation(id: string): void {
     const element = this.elements.get(id);
-    if (!element) return;
+    if (!element) {return;}
 
     const { type, duration, easing } = this.config.continuous;
     
@@ -504,7 +504,7 @@ export class LeaderboardAnimationManager {
    * Start animation sequence
    */
   startAnimationSequence(elements: string[]): void {
-    if (this.isAnimating) return;
+    if (this.isAnimating) {return;}
     this.isAnimating = true;
 
     elements.forEach((id, index) => {

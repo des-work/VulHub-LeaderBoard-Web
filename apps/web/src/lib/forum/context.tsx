@@ -17,7 +17,7 @@ type ForumAction =
 const STORAGE_KEY = 'vulhub.forum.v1';
 
 function load(): ForumState {
-  if (typeof window === 'undefined') return { topics: [], comments: [] };
+  if (typeof window === 'undefined') {return { topics: [], comments: [] };}
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? (JSON.parse(raw) as ForumState) : { topics: [], comments: [] };
@@ -37,7 +37,7 @@ function reducer(state: ForumState, action: ForumAction): ForumState {
     case 'UPSERT_TOPIC': {
       const idx = state.topics.findIndex(t => t.id === action.payload.id);
       const topics = [...state.topics];
-      if (idx >= 0) topics[idx] = action.payload; else topics.unshift(action.payload);
+      if (idx >= 0) {topics[idx] = action.payload;} else {topics.unshift(action.payload);}
       const next = { ...state, topics };
       save(next);
       return next;
@@ -45,7 +45,7 @@ function reducer(state: ForumState, action: ForumAction): ForumState {
     case 'UPSERT_COMMENT': {
       const idx = state.comments.findIndex(c => c.id === action.payload.id);
       const comments = [...state.comments];
-      if (idx >= 0) comments[idx] = action.payload; else comments.push(action.payload);
+      if (idx >= 0) {comments[idx] = action.payload;} else {comments.push(action.payload);}
       // bump topic meta
       const tIdx = state.topics.findIndex(t => t.id === action.payload.topicId);
       const topics = [...state.topics];
@@ -121,18 +121,18 @@ export const ForumProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   function toggle(list: string[], id: string) {
     const i = list.indexOf(id);
-    if (i >= 0) list.splice(i, 1); else list.push(id);
+    if (i >= 0) {list.splice(i, 1);} else {list.push(id);}
   }
 
   const award = async (authorId: string, delta: number) => {
-    if (!authorId || delta === 0) return;
+    if (!authorId || delta === 0) {return;}
     try { await updateUserPoints(authorId, delta); } catch {}
   };
 
   const toggleUpvoteTopic = (topicId: string) => {
     const u = ensureUser().id;
     const t = state.topics.find(x => x.id === topicId);
-    if (!t) return;
+    if (!t) {return;}
     const already = t.votes.upvoters.includes(u);
     const next: Topic = { ...t, votes: { ...t.votes, upvoters: [...t.votes.upvoters] } };
     toggle(next.votes.upvoters, u);
@@ -144,7 +144,7 @@ export const ForumProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const toggleLikeTopic = (topicId: string) => {
     const u = ensureUser().id;
     const t = state.topics.find(x => x.id === topicId);
-    if (!t) return;
+    if (!t) {return;}
     const already = t.votes.likers.includes(u);
     const next: Topic = { ...t, votes: { ...t.votes, likers: [...t.votes.likers] } };
     toggle(next.votes.likers, u);
@@ -156,7 +156,7 @@ export const ForumProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const toggleUpvoteComment = (commentId: string) => {
     const u = ensureUser().id;
     const c = state.comments.find(x => x.id === commentId);
-    if (!c) return;
+    if (!c) {return;}
     const already = c.votes.upvoters.includes(u);
     const next: Comment = { ...c, votes: { ...c.votes, upvoters: [...c.votes.upvoters] } };
     toggle(next.votes.upvoters, u);
@@ -168,7 +168,7 @@ export const ForumProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const toggleLikeComment = (commentId: string) => {
     const u = ensureUser().id;
     const c = state.comments.find(x => x.id === commentId);
-    if (!c) return;
+    if (!c) {return;}
     const already = c.votes.likers.includes(u);
     const next: Comment = { ...c, votes: { ...c.votes, likers: [...c.votes.likers] } };
     toggle(next.votes.likers, u);
@@ -188,8 +188,8 @@ export const ForumProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       list = list.filter(t => t.tags.some(tag => tagIds.includes(tag.id)));
     }
     list.sort((a, b) => {
-      if (sortBy === 'new') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      if (sortBy === 'top') return (b.votes.upvoters.length + b.votes.likers.length) - (a.votes.upvoters.length + a.votes.likers.length);
+      if (sortBy === 'new') {return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();}
+      if (sortBy === 'top') {return (b.votes.upvoters.length + b.votes.likers.length) - (a.votes.upvoters.length + a.votes.likers.length);}
       return new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime();
     });
     return list;
@@ -219,6 +219,6 @@ export const ForumProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 export const useForum = () => {
   const ctx = useContext(ForumContext);
-  if (!ctx) throw new Error('useForum must be used within ForumProvider');
+  if (!ctx) {throw new Error('useForum must be used within ForumProvider');}
   return ctx;
 };

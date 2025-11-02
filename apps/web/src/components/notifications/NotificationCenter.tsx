@@ -44,7 +44,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <>
