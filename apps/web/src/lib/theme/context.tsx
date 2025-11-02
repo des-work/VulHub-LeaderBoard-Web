@@ -180,8 +180,12 @@ export function useTheme() {
 
 // Hook for accessing theme values directly
 export function useThemeValue() {
-  const { theme } = useTheme();
-  return theme;
+  const context = useContext(ThemeContext);
+  // Return a default theme if no provider is found (for SSR compatibility)
+  if (context === undefined) {
+    return themePresets.matrix;
+  }
+  return context.theme;
 }
 
 // Hook for theme customization

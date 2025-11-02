@@ -34,18 +34,21 @@ export const LEADERBOARD_COLORS = {
     first: {
       primary: '#fbbf24',    // Gold
       secondary: '#f59e0b',
+      text: '#000000',
       gradient: 'from-yellow-400 to-amber-500',
       glow: 'rgba(251, 191, 36, 0.6)',
     },
     second: {
       primary: '#d1d5db',    // Silver
       secondary: '#9ca3af',
+      text: '#000000',
       gradient: 'from-gray-300 to-gray-400',
       glow: 'rgba(209, 213, 219, 0.6)',
     },
     third: {
       primary: '#d97706',    // Bronze
       secondary: '#b45309',
+      text: '#000000',
       gradient: 'from-amber-600 to-amber-700',
       glow: 'rgba(217, 119, 6, 0.6)',
     },
@@ -400,7 +403,7 @@ export const RANK_BADGE_CONFIG = {
     borderColor: LEADERBOARD_COLORS.border.matrix,
     borderWidth: LEADERBOARD_SIZING.borderWidth.thin,
     textColor: LEADERBOARD_COLORS.matrix.primary,
-    glowColor: LEADERBOARD_COLORS.glow.matrix,
+    glowColor: 'rgba(0, 255, 0, 0.5)',
     gradient: 'from-green-400 to-green-600',
     iconColor: LEADERBOARD_COLORS.matrix.bright,
     pulseEffect: false,

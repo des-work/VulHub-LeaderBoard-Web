@@ -10,7 +10,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from './query-client';
 import { leaderboardAdapter, badgesAdapter, challengesAdapter } from './adapter';
 import { LeaderboardPlayer } from '../../components/leaderboard/LeaderboardRow';
-import { BadgeData } from '../badges/types';
+import { Badge } from '../badges/types';
 import { Challenge } from '../challenges/types';
 import * as Api from '../api/endpoints';
 
@@ -83,7 +83,7 @@ export function useBadge(badgeId: string | null | undefined) {
     queryFn: async () => {
       if (!badgeId) return null;
       const badges = await badgesAdapter.fetch();
-      return badges.find(b => b.id === badgeId) || null;
+      return badges.find((b: any) => b.id === badgeId) || null;
     },
     enabled: !!badgeId,
     staleTime: 1000 * 60 * 10, // 10 minutes
@@ -123,7 +123,7 @@ export function useChallenge(challengeId: string | null | undefined) {
       } catch (error) {
         // Fallback to mock
         const challenges = await challengesAdapter.fetch();
-        return challenges.find(c => c.id === challengeId) || null;
+        return challenges.find((c: any) => c.id === challengeId) || null;
       }
     },
     enabled: !!challengeId,
@@ -156,7 +156,7 @@ export function useCreateSubmission() {
 
   return useMutation({
     mutationFn: (data: Api.SubmissionCreate) => Api.SubmissionApi.createSubmission(data),
-    onSuccess: (_, variables) => {
+    onSuccess: (_, variables: any) => {
       // Invalidate submissions list to refetch
       queryClient.invalidateQueries({ 
         queryKey: queryKeys.submissions.user(variables.userId || '') 

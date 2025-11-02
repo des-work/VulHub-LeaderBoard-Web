@@ -96,7 +96,7 @@ export const leaderboardAdapter = createDataAdapter({
       points: entry.points,
       level: entry.level || Math.floor(entry.points / 500),
       completed: 0, // TODO: Get from API
-      status: ((entry.status === 'fire' || entry.status === 'close' || entry.status === 'trending' || entry.status === 'normal') ? entry.status : 'normal') as 'fire' | 'close' | 'trending' | 'normal',
+      status: (entry.status === 'on_fire' ? 'fire' : entry.status === 'close' ? 'close' : entry.status === 'rising' ? 'trending' : 'normal') as 'fire' | 'close' | 'trending' | 'normal',
       trend: 'stable' as const,
       streak: 0, // TODO: Get from API
       change: 0, // TODO: Get from API
@@ -107,7 +107,7 @@ export const leaderboardAdapter = createDataAdapter({
 /**
  * Badges Data Adapter
  */
-import { BadgeData } from '../badges/types';
+import { Badge } from '../badges/types';
 import { getAllBadges, getUserBadges } from '../badges/data';
 
 export const badgesAdapter = createDataAdapter({
@@ -119,7 +119,7 @@ export const badgesAdapter = createDataAdapter({
       ...badge,
       unlocked: Math.random() > 0.7, // Mock: 30% unlocked
       progress: Math.floor(Math.random() * 100),
-    }));
+    })) as any;
   },
   realFn: async () => {
     // TODO: Get user ID from context
@@ -129,7 +129,7 @@ export const badgesAdapter = createDataAdapter({
       Api.BadgeApi.getUserBadges(userId),
     ]);
     
-    const userBadgeMap = new Map(userBadges.map(ub => [ub.badgeId, ub]));
+    const userBadgeMap = new Map(userBadges.map(ub => [ub.id, ub]));
     
     return allBadges.map(badge => {
       const userBadge = userBadgeMap.get(badge.id);
@@ -139,7 +139,7 @@ export const badgesAdapter = createDataAdapter({
         progress: userBadge?.progress || 0,
         unlockedAt: userBadge?.unlockedAt,
       };
-    });
+    }) as any;
   },
 });
 
@@ -156,7 +156,7 @@ export const challengesAdapter = createDataAdapter({
   },
   realFn: async () => {
     const challenges = await Api.ChallengeApi.getAllChallenges();
-    return challenges.map(challenge => ({
+    return challenges.map((challenge: any) => ({
       id: challenge.id,
       name: challenge.name,
       category: challenge.category || 'general',
@@ -165,7 +165,7 @@ export const challengesAdapter = createDataAdapter({
       description: challenge.description || '',
       vulhubLink: challenge.vulhubLink || '',
       tags: challenge.tags || [],
-    }));
+    })) as any;
   },
 });
 

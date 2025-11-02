@@ -19,6 +19,20 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
+# Windows reserved filenames (cannot be created/tracked)
+nul
+NUL
+con
+CON
+aux
+AUX
+prn
+PRN
+com[1-9]
+COM[1-9]
+lpt[1-9]
+LPT[1-9]
+
 # Env & secrets
 .env
 .env*.local

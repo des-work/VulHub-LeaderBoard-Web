@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { AuthProvider } from '../lib/auth/context';
-import { ErrorBoundary } from '../components/common/ErrorBoundary';
-import { SkipLink } from '../components/accessibility/SkipLink';
 import { QueryProvider } from '../lib/data/QueryProvider';
+import { AuthProvider } from '../lib/auth/context';
 import { NotificationProvider } from '../lib/notifications/context';
+import { ErrorBoundary } from '../components/common/ErrorBoundary';
 import { ToastContainer } from '../components/notifications/ToastContainer';
+import { SkipLink } from '../components/accessibility/SkipLink';
 import './matrix-unified.css';
 import './styles/accessibility.css';
 import './styles/responsive.css';

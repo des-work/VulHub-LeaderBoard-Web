@@ -86,8 +86,8 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
           GradingApi.listSubmissions(),
           new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), 2000))
         ]);
-        persistServer(list);
-        dispatch({ type: 'LOAD_SUCCESS', payload: list });
+        persistServer(list as any);
+        dispatch({ type: 'LOAD_SUCCESS', payload: list as any });
       } catch (error) {
         console.warn('Server submissions load failed, using local storage:', error);
         const data = loadFromStorage();
@@ -155,7 +155,7 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     // Try server; fallback to local
     try {
-      await GradingApi.grade(updated.id, { status: updated.status, pointsAwarded: input.pointsAwarded, feedback: input.feedback });
+      await GradingApi.grade(updated.id, { status: updated.status as any, pointsAwarded: input.pointsAwarded, feedback: input.feedback });
     } catch {}
     const next = [...state.submissions];
     next[idx] = updated;
@@ -173,7 +173,7 @@ export const GradingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       userId: updated.userId,
       deltaPoints: delta,
       newTotalPoints: newTotal,
-      status: updated.status,
+      status: updated.status as any,
       gradedAt: now,
     };
     return evt;

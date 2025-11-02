@@ -1,0 +1,32 @@
+/**
+ * Core Animation System Exports
+ * 
+ * Simplified: Only exports what's actually used
+ */
+
+// Main orchestrator (simplified version)
+export { AnimationOrchestrator } from './AnimationOrchestrator';
+export type { OrchestratorConfig, OrchestratorCallbacks } from './AnimationOrchestrator';
+
+// State types
+export { createInitialOrchestratorState } from './types/OrchestratorState';
+export type { OrchestratorState, AnimationState as OrchestratorAnimationState } from './types/OrchestratorState';
+
+// Action types
+export { OrchestratorActions } from './types/OrchestratorActions';
+export type { OrchestratorAction } from './types/OrchestratorActions';
+
+// Transitions (optional - can be enabled via config)
+export { TransitionManager } from './transitions/TransitionManager';
+export type {
+  TransitionConfig,
+  TransitionType,
+  TransitionState,
+  EasingFunction,
+} from './transitions/types/Transition';
+
+// Note: The following are NOT exported as they're not used:
+// - RenderQueue, RenderExecutor (Phase 2) - AnimationEngine handles rendering
+// - EntityLifecycleManager (Phase 3) - Existing entity classes work fine
+// - PluginSystem (Phase 4) - Over-engineered for our needs
+
