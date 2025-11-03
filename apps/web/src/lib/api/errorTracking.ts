@@ -145,7 +145,6 @@ function collectContext(): ErrorContext['extra'] {
     return {};
   }
 
-  // @ts-expect-error - process.env is replaced by Next.js at build time
   const environment = typeof process !== 'undefined' && process.env?.NODE_ENV 
     ? process.env.NODE_ENV 
     : 'development';
@@ -176,7 +175,6 @@ function collectContext(): ErrorContext['extra'] {
 function formatContext(context?: ErrorContext): { tags: Record<string, string>; extra: Record<string, any>; user?: any } {
   const baseContext = collectContext();
   
-  // @ts-expect-error - process.env is replaced by Next.js at build time
   const environment = typeof process !== 'undefined' && process.env?.NODE_ENV 
     ? process.env.NODE_ENV 
     : 'development';
@@ -289,10 +287,7 @@ export class SentryErrorTracker implements ErrorTrackingService {
   }
 
   setContext(key: string, context: any): void {
-    if (!this.context) {
-      this.context = {};
-    }
-    this.context[key] = context;
+    this.contexts.set(key, context);
 
     const sentry = getSentry();
     if (sentry) {

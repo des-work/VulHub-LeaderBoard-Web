@@ -227,8 +227,8 @@ export function logError(error: Error, context?: any): void {
         });
       }, 0);
     }
-  } catch {
-    // Silent catch - fallback to console
+  } catch (_error) {
+    // Silent catch - fallback to console logging below
   }
 
   // Always log to console as well for immediate visibility
@@ -236,15 +236,14 @@ export function logError(error: Error, context?: any): void {
   // Use a try-catch to handle cases where process is not defined
   let isDevelopment = false;
   try {
-    // @ts-expect-error - process.env is replaced by Next.js at build time
     isDevelopment = process.env.NODE_ENV === 'development';
   } catch {
     // Default to true if we can't determine
     isDevelopment = true;
   }
-  
+
   if (isDevelopment) {
-    // Development logging removed - errors should be tracked silently in production
+    console.warn('[Error Tracking]', error.message, context);
   }
 }
 

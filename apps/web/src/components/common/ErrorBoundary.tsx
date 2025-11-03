@@ -90,12 +90,11 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
       // Default error UI
       const { error, errorInfo } = this.state;
-      // @ts-expect-error - process.env is replaced by Next.js at build time
       const isDev = typeof process !== 'undefined' && process.env?.NODE_ENV === 'development';
       const showDetails = this.props.showDetails ?? isDev;
 
       return (
-        <div className="min-h-screen bg-black text-neutral-100 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-red-50 dark:bg-red-950 flex items-center justify-center p-4">
           <div className="max-w-2xl w-full">
             {/* Error Card */}
             <div className="matrix-card p-8 text-center">

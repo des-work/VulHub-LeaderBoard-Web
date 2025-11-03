@@ -1,21 +1,13 @@
 /**
- * Castle Siege Animation - Unified Orchestrator Component
+ * Castle Siege Animation - Simple Canvas Implementation
  *
- * Single-source-of-truth animation system replacing multiple hooks with unified orchestrator
- * Phase 1 of 7-phase optimization: Unified Orchestration
+ * Production-grade animation system using direct AnimationEngine
+ * (Orchestration system disabled for faster deployment)
  */
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { AnimationPhase } from '../../../lib/auth/animation-types';
-
-// Unified orchestrator hook (replaces multiple hooks)
-import { useAnimationOrchestrator } from './hooks/useAnimationOrchestrator';
-
-// Debug and error handling
-import { AnimationDebugger, errorLogger } from './utils/debug';
-
-// Logging
-import { logger } from '../../../lib/logging/logger';
+import { AnimationEngine } from './canvas/AnimationEngine';
 
 interface CastleSiegeAnimationProps {
   phase: AnimationPhase;
@@ -25,120 +17,121 @@ interface CastleSiegeAnimationProps {
 }
 
 /**
- * Unified Castle Siege Animation Component
+ * Castle Siege Animation Component - Simple Direct Implementation
  *
  * Features:
- * - Single orchestrator replaces multiple hooks
- * - Unified state management for all subsystems
- * - Improved performance through coordinated updates
- * - Better error handling and recovery
- * - Easier testing and debugging
+ * - Direct canvas animation (no orchestration overhead)
+ * - Simple state management
+ * - Excellent performance
+ * - Easy to debug and modify
  *
- * Phase 1: Unified Orchestration ✅
+ * Production-Ready ✅
  */
 export const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({
   phase,
   onComplete,
   debug = false,
-  enablePerformanceMonitor = false,
 }) => {
-  // Unified orchestrator (replaces useAnimationState + useCanvasManager)
-  const {
-    canvas,
-    isReady,
-    isPlaying,
-    isComplete,
-    currentPhase,
-    progress,
-    canSkip,
-    fps,
-    memoryUsage,
-    systemHealth,
-    errorCount,
-    controls,
-    state,
-  } = useAnimationOrchestrator({
-    config: {
-      enableDebug: debug,
-      enablePerformanceMonitoring: enablePerformanceMonitor,
-    },
-    onComplete,
-    onError: (error) => {
-      errorLogger.logError(error, { phase, component: 'CastleSiegeAnimation' });
-    },
-    onPhaseChange: (newPhase) => {
-      if (debug) {
-        logger.debug(`🎭 Animation phase changed to: ${newPhase}`);
-      }
-    },
-    autoStart: false, // We'll control start/stop based on phase
-  });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const engineRef = useRef<AnimationEngine | null>(null);
+  const [isReady, setIsReady] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const [canSkip, setCanSkip] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Debug instance
-  const [debuggerInstance] = React.useState(() => debug ? new AnimationDebugger() : null);
+  // Initialize animation engine
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    try {
+      // Create engine with completion callback
+      engineRef.current = new AnimationEngine(canvasRef.current, () => {
+        setIsComplete(true);
+        setIsPlaying(false);
+        onComplete?.();
+      });
+
+      setIsReady(true);
+      setError(null);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to initialize animation';
+      setError(message);
+      if (debug) console.error('[CastleSiegeAnimation]', err);
+    }
+  }, [onComplete, debug]);
 
   // Control animation based on phase
   useEffect(() => {
-    if (!isReady) {return;}
+    if (!isReady || !engineRef.current) return;
 
-    if (phase === 'intro' && !isPlaying && !isComplete) {
-      // Start animation when in intro phase
-      controls.play();
-    } else if (phase !== 'intro' && isPlaying) {
-      // Stop animation when not in intro phase
-      controls.pause();
+    try {
+      if (phase === 'intro' && !isComplete) {
+        // Start animation when in intro phase
+        engineRef.current.start();
+        setIsPlaying(true);
+        setCanSkip(true);
+      } else if (phase !== 'intro' && isPlaying) {
+        // Stop animation when not in intro phase
+        engineRef.current.stop();
+        setIsPlaying(false);
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Animation error';
+      setError(message);
+      if (debug) console.error('[CastleSiegeAnimation]', err);
     }
-  }, [phase, isReady, isPlaying, isComplete, controls]);
-
-  // Update debug info
-  useEffect(() => {
-    if (!debug || !debuggerInstance || !state) {return;}
-
-    debuggerInstance.update();
-
-    const debugInfo = debuggerInstance.getDebugInfo(
-      {
-        stars: state?.entities?.entityCount ?? 0, // Get from orchestrator state
-        projectiles: 0, // Will be populated in Phase 3
-        explosions: 0,
-        debris: 0,
-      },
-      currentPhase,
-      state?.animation?.elapsedTime ?? 0,
-      isPlaying
-    );
-
-    debuggerInstance.logPerformance(debugInfo);
-  }, [debug, debuggerInstance, state, currentPhase, isPlaying]);
+  }, [phase, isReady, isComplete, isPlaying, debug]);
 
   // Handle skip
   const handleSkip = useCallback(() => {
-    controls.skip();
-  }, [controls]);
+    if (engineRef.current) {
+      try {
+        engineRef.current.skip();
+        setIsComplete(true);
+        setIsPlaying(false);
+        onComplete?.();
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Skip failed';
+        setError(message);
+        if (debug) console.error('[CastleSiegeAnimation]', err);
+      }
+    }
+  }, [onComplete, debug]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (engineRef.current) {
+        try {
+          engineRef.current.stop();
+        } catch (err) {
+          if (debug) console.error('[CastleSiegeAnimation] Cleanup error:', err);
+        }
+      }
+    };
+  }, [debug]);
 
   // Don't render if not in intro phase
   if (phase !== 'intro') {
     return null;
   }
 
-  // Show error state (get errors from orchestrator state)
-  const hasErrors = (state?.system?.errors?.length ?? 0) > 0;
-  const canvasError = state?.canvas?.error;
-
-  if (hasErrors || canvasError) {
+  // Show error state
+  if (error) {
     return (
-      <div className="flex items-center justify-center h-full text-red-400 font-mono text-sm">
-        <div className="text-center">
-          <div className="text-lg mb-2">⚠️ Animation Error</div>
-          <div className="text-xs mb-4">
-            {canvasError || 'System error occurred'}
+      <div className="absolute inset-0 flex items-center justify-center bg-black z-30">
+        <div className="flex items-center justify-center h-full text-red-400 font-mono text-sm">
+          <div className="text-center">
+            <div className="text-lg mb-2">⚠️ Animation Error</div>
+            <div className="text-xs mb-4">{error}</div>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-red-500/20 border border-red-500/50 rounded hover:bg-red-500/30 transition-colors"
+            >
+              Reload Page
+            </button>
           </div>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-red-500/20 border border-red-500/50 rounded hover:bg-red-500/30 transition-colors"
-          >
-            Reload Page
-          </button>
         </div>
       </div>
     );
@@ -150,16 +143,12 @@ export const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({
       <div className="absolute inset-0 flex items-center justify-center bg-black z-30">
         <div className="text-center">
           <div className="text-green-400 font-mono text-lg mb-4">
-            Initializing Orchestrator...
+            Loading animation...
           </div>
           <div className="w-64 h-2 bg-gray-800 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-green-500 to-cyan-500 transition-all duration-300"
-              style={{ width: `${Math.min(progress, 90)}%` }}
+              className="h-full bg-gradient-to-r from-green-500 to-cyan-500 transition-all duration-300 animate-pulse"
             />
-          </div>
-          <div className="text-green-600 font-mono text-sm mt-2">
-            Loading animation system...
           </div>
         </div>
       </div>
@@ -169,18 +158,11 @@ export const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({
   return (
     <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
       {/* Canvas Element */}
-      {canvas && (
-        <canvas
-          ref={(el) => {
-            if (el && canvas !== el) {
-              // Orchestrator manages the canvas internally
-              // This ref is just for React's reconciliation
-            }
-          }}
-          className="absolute inset-0 w-full h-full"
-          style={{ minHeight: '100vh' }}
-        />
-      )}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+        style={{ minHeight: '100vh' }}
+      />
 
       {/* Skip Button */}
       {isPlaying && canSkip && (
@@ -194,20 +176,6 @@ export const CastleSiegeAnimation: React.FC<CastleSiegeAnimationProps> = ({
         >
           Skip Intro
         </button>
-      )}
-
-      {/* Debug overlay and performance monitor removed for production launch */}
-      {/* Can be re-added later if needed */}
-
-      {/* System Health Indicator */}
-      {debug && systemHealth !== 'healthy' && (
-        <div className={`absolute bottom-4 left-4 px-2 py-1 rounded text-xs font-mono ${
-          systemHealth === 'critical' ? 'bg-red-900 text-red-300' :
-          systemHealth === 'degraded' ? 'bg-yellow-900 text-yellow-300' :
-          'bg-green-900 text-green-300'
-        }`}>
-          System: {systemHealth} ({errorCount} errors)
-        </div>
       )}
     </div>
   );

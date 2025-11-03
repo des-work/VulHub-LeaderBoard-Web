@@ -2,19 +2,20 @@
  * Core Animation System Exports
  * 
  * Simplified: Only exports what's actually used
+ * Orchestration system disabled for production launch
  */
 
-// Main orchestrator (simplified version)
-export { AnimationOrchestrator } from './AnimationOrchestrator';
-export type { OrchestratorConfig, OrchestratorCallbacks } from './AnimationOrchestrator';
+// DISABLED FOR PRODUCTION - Using simple AnimationEngine instead
+// export { AnimationOrchestrator } from './AnimationOrchestrator';
+// export type { OrchestratorConfig, OrchestratorCallbacks } from './AnimationOrchestrator';
 
-// State types
-export { createInitialOrchestratorState } from './types/OrchestratorState';
-export type { OrchestratorState, AnimationState as OrchestratorAnimationState } from './types/OrchestratorState';
+// DISABLED FOR PRODUCTION
+// export { createInitialOrchestratorState } from './types/OrchestratorState';
+// export type { OrchestratorState, AnimationState as OrchestratorAnimationState } from './types/OrchestratorState';
 
-// Action types
-export { OrchestratorActions } from './types/OrchestratorActions';
-export type { OrchestratorAction } from './types/OrchestratorActions';
+// DISABLED FOR PRODUCTION
+// export { OrchestratorActions } from './types/OrchestratorActions';
+// export type { OrchestratorAction } from './types/OrchestratorActions';
 
 // Transitions (removed - was unused and disabled by default)
 

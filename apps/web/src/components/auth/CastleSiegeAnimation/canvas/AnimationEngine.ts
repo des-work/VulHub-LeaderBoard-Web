@@ -44,11 +44,11 @@ export class AnimationEngine {
   private explosions: Entity[] = [];
   private debris: Entity[] = [];
   
-  private castle: Castle;
+  private castle!: Castle;
   private screenShake: number = 0;
   private titleOpacity: number = 0;
   
-  private animationFrameId: number | null = null;
+  private animationFrameId: number | undefined;
   private lastFrameTime: number = 0;
   private isRunning: boolean = false;
   
@@ -81,7 +81,7 @@ export class AnimationEngine {
       position: CASTLE_CONFIG.position,
       health: CASTLE_CONFIG.maxHealth,
       maxHealth: CASTLE_CONFIG.maxHealth,
-      towers: CASTLE_CONFIG.towers.positions.map((pos, i) => ({
+      towers: CASTLE_CONFIG.towers.positions.map((pos: { x: number; y: number }, i: number) => ({
         position: pos,
         width: CASTLE_CONFIG.towers.width,
         height: CASTLE_CONFIG.towers.height,
@@ -161,9 +161,9 @@ export class AnimationEngine {
   stop(): void {
     this.isRunning = false;
     this.state.isPlaying = false;
-    if (this.animationFrameId !== null) {
+    if (this.animationFrameId !== undefined) {
       cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
+      this.animationFrameId = undefined;
     }
     // Reset frame rate manager
     frameRateManager.reset();

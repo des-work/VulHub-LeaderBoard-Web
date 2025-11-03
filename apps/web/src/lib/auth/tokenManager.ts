@@ -147,7 +147,7 @@ export class TokenRefreshManager {
     }
 
     try {
-      const response = await AuthApi.refreshToken(this.refreshToken);
+      const response = await AuthApi.refreshToken(refreshToken);
       this.onTokenRefreshed?.(response.accessToken);
       this.scheduleRefresh(response.accessToken);
     } catch (error) {
@@ -175,6 +175,24 @@ export class TokenRefreshManager {
     } catch (error) {
       // Manual refresh failed
       return false;
+    }
+  }
+
+  private async refreshTokenIfNeeded(): Promise<void> {
+    // Early exit if no refresh token
+    const refreshToken = this.refreshToken;
+    if (!refreshToken) {
+      this.onRefreshFailed?.();
+      return;
+    }
+
+    try {
+      const response = await AuthApi.refreshToken(refreshToken);
+      this.onTokenRefreshed?.(response.accessToken);
+      this.scheduleRefresh(response.accessToken);
+    } catch (error) {
+      // Token refresh failed - silently fail, will require re-login
+      this.onRefreshFailed?.();
     }
   }
 }

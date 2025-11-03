@@ -256,7 +256,7 @@ export class PerformanceMonitor {
     return {
       fps: Math.round(sums.fps / count),
       frameTime: sums.frameTime / count,
-      memoryUsage: sums.memoryUsage / count,
+      memoryUsage: sums.memoryUsage ? sums.memoryUsage / count : undefined,
       entityCount: Math.round(sums.entityCount / count),
       renderTime: sums.renderTime / count,
       updateTime: sums.updateTime / count
@@ -298,19 +298,19 @@ export class PerformanceMonitor {
 /**
  * Get current memory usage (Chrome only)
  */
-export function getMemoryUsage(): number | null {
+export function getMemoryUsage(): number | undefined {
   if (performance && (performance as any).memory) {
     return (performance as any).memory.usedJSHeapSize / 1048576; // Convert to MB
   }
-  return null;
+  return undefined;
 }
 
 /**
  * Check if memory pressure is high
  */
 export function isMemoryPressureHigh(thresholdMB: number = 100): boolean {
-  const usage = getMemoryUsage();
-  return usage !== null && usage > thresholdMB;
+  const { memoryUsage: usage } = performanceMonitor.getAverageMetrics();
+  return usage !== undefined && usage > thresholdMB;
 }
 
 /**

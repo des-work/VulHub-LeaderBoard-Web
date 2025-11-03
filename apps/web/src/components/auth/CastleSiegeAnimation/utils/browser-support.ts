@@ -72,9 +72,9 @@ export function supportsRequestAnimationFrame(): boolean {
 export function supportsPerformanceAPI(): boolean {
   return !!(
     window.performance &&
-    window.performance.now &&
-    window.performance.mark &&
-    window.performance.measure
+    typeof window.performance.now === 'function' &&
+    typeof window.performance.mark === 'function' &&
+    typeof window.performance.measure === 'function'
   );
 }
 

@@ -105,7 +105,7 @@ export const GradingDashboard: React.FC = () => {
           new Promise<Submission[]>((_, reject) => 
             setTimeout(() => reject(new Error('timeout')), 2000)
           )
-        ]);
+        ]) as Submission[];
       } catch {
         // Fallback to empty array if API fails or times out
         // Note: Using logger instead of console.warn for production

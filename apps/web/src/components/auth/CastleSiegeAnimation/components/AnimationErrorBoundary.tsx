@@ -5,7 +5,7 @@
  */
 
 import React, { Component, ReactNode, ErrorInfo } from 'react';
-import { animationErrorHandler, AnimationError } from '../utils/error-handling';
+import { animationErrorHandler, AnimationError, AnimationErrorType } from '../utils/error-handling';
 
 interface Props {
   children: ReactNode;
@@ -38,8 +38,8 @@ export class AnimationErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    const animError = {
-      type: 'unknown' as const,
+    const animError: AnimationError = {
+      type: AnimationErrorType.UNKNOWN,
       message: error.message,
       recoverable: true,
       context: {
@@ -47,7 +47,7 @@ export class AnimationErrorBoundary extends Component<Props, State> {
       },
       originalError: error,
       timestamp: Date.now(),
-      severity: 'high' as const
+      severity: 'high'
     };
 
     this.setState(prevState => ({

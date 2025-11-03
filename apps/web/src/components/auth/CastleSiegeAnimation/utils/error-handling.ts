@@ -168,8 +168,8 @@ export class AnimationErrorHandler {
   private clearMemory(): boolean {
     console.log('Clearing animation memory');
     // Trigger garbage collection if available
-    if (performance.memory) {
-      console.log(`Memory before: ${Math.round(performance.memory.usedJSHeapSize / 1048576)}MB`);
+    if ((performance as any).memory) {
+      console.log(`Memory before: ${Math.round((performance as any).memory.usedJSHeapSize / 1048576)}MB`);
     }
     const event = new CustomEvent('animation:clear-memory');
     window.dispatchEvent(event);
