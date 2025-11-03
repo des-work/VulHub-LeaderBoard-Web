@@ -114,7 +114,19 @@ const authService = {
     const USE_MOCK_AUTH = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === 'true';
 
     if (USE_MOCK_AUTH) {
-      // Return mock user data
+      // Return the actual logged-in user from localStorage (not hardcoded)
+      const storedUserData = localStorage.getItem('user_data');
+      if (storedUserData) {
+        try {
+          const parsedUser = JSON.parse(storedUserData);
+          // Return the actual user who logged in
+          return parsedUser;
+        } catch (error) {
+          // If parse fails, fall through to default
+        }
+      }
+      
+      // Fallback only if no stored user (shouldn't happen in normal flow)
       const mockUser: User = {
         id: 'mock-user-id',
         email: 'student@vulhub.com',
@@ -154,10 +166,13 @@ type AuthAction =
   | { type: 'SET_LOADING'; payload: boolean };
 
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
+  console.log('[authReducer] action:', action.type, 'current state:', { isAuthenticated: state.isAuthenticated, isLoading: state.isLoading });
+  
   switch (action.type) {
     case 'LOGIN_START':
       return { ...state, isLoading: true, error: null };
     case 'LOGIN_SUCCESS':
+      console.log('[authReducer] LOGIN_SUCCESS - updating state to authenticated');
       return {
         ...state,
         user: action.payload,
@@ -196,7 +211,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
-  isLoading: false, // Start with false to prevent initial loading state
+  isLoading: false, // Start with false - show form immediately
   error: null,
 };
 
@@ -207,12 +222,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Check for existing session on mount - optimized for speed
   useEffect(() => {
     const checkAuth = async () => {
+      const USE_MOCK_AUTH = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === 'true';
       try {
         // Check if token exists and not expired
         const { accessToken } = getStoredTokens();
         
-        if (!accessToken || isTokenExpired(accessToken)) {
-          // Token missing or expired - clear everything
+        // For mock auth, skip expiration check since mock token isn't a real JWT
+        if (!accessToken) {
+          clearTokens();
+          localStorage.removeItem('user_data');
+          dispatch({ type: 'SET_LOADING', payload: false });
+          return;
+        }
+
+        if (!USE_MOCK_AUTH && isTokenExpired(accessToken)) {
+          // Token expired (only check for real auth, not mock)
           clearTokens();
           localStorage.removeItem('user_data');
           dispatch({ type: 'SET_LOADING', payload: false });
@@ -289,16 +313,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [state.isAuthenticated]);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
+    console.log('[AuthContext] login called with:', { email: credentials.email });
     dispatch({ type: 'LOGIN_START' });
 
     try {
       const response = await authService.login(credentials);
+      console.log('[AuthContext] authService.login returned:', { user: response.user });
 
       // Store tokens and user data
       storeTokens(response.accessToken, response.refreshToken);
       localStorage.setItem('user_data', JSON.stringify(response.user));
+      console.log('[AuthContext] Tokens and user data stored');
 
       dispatch({ type: 'LOGIN_SUCCESS', payload: response.user });
+      console.log('[AuthContext] LOGIN_SUCCESS dispatched');
 
       // Set user in error tracking
       setErrorTrackingUser({
@@ -307,6 +335,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         username: response.user.email,
       });
     } catch (error: any) {
+      console.log('[AuthContext] login error:', error);
       const errorMessage = getAuthErrorMessage(error);
       dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage });
       throw error;

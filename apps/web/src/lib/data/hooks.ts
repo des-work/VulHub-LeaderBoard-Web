@@ -35,10 +35,19 @@ export function useLeaderboard(options?: {
  * Hook to fetch user's rank
  */
 export function useUserRank(userId: string | null | undefined) {
+  const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
+  
   return useQuery({
     queryKey: queryKeys.leaderboard.userRank(userId || ''),
     queryFn: async () => {
       if (!userId) {return null;}
+      
+      // If mock data is enabled, skip API call and calculate from leaderboard
+      if (USE_MOCK_DATA) {
+        const leaderboard = await leaderboardAdapter.fetch();
+        const userIndex = leaderboard.findIndex(p => p.id === parseInt(userId) || p.name === userId);
+        return userIndex >= 0 ? userIndex + 1 : null;
+      }
       
       // Try real API first, fallback to mock
       try {
