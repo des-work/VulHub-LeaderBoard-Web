@@ -779,48 +779,50 @@ curl http://localhost:4010/api/v1/leaderboards/my-rank \
 
 ### 🆓 Free Hosting Options (Updated 2025)
 
-The application can be deployed **100% free** or for as low as **$5/month** using modern cloud platforms:
+The application can be deployed using **modern cloud platforms**. If using your paid Heroku account, costs start at **$7-50/month**:
 
 | Component | Platform | Cost | Time | Status |
 |-----------|----------|------|------|--------|
 | **Frontend** | Vercel | FREE | 5 min | 🟢 Ready |
-| **API** | Render (free) / Railway ($5/mo) | $0-5/month | 10 min | 🟢 Ready |
-| **Database** | Supabase / Neon | FREE | 5 min | 🟢 Ready |
-| **Redis** | Upstash (optional) | FREE | 3 min | 🟡 Optional |
-| **Total** | | **$0-5/month** | **20-30 min** | ✅ Complete |
+| **API** | Heroku (Paid Account) | $7-50/mo | 10 min | 🟢 Ready |
+| **Database** | Supabase | FREE | 5 min | 🟢 Ready |
+| **Redis** | Heroku Redis addon (optional) | 0-15/mo | 3 min | 🟡 Optional |
+| **Total** | | **$7-50/month** | **25-30 min** | ✅ Complete |
 
-**⚠️ Important:** Heroku removed their free tier in 2022. See updated options below.
+**Alternative:** 100% free ($0/month) using Render (free tier, may have cold starts) + Vercel + Supabase
 
 ### 📚 Deployment Documentation
 
 **Start Here:**
-1. **[FREE_PLATFORMS_SETUP_GUIDE.md](./FREE_PLATFORMS_SETUP_GUIDE.md)** ⭐ **NEW!** Complete guide to free hosting
+1. **[FREE_PLATFORMS_SETUP_GUIDE.md](./FREE_PLATFORMS_SETUP_GUIDE.md)** ⭐ Complete guide with Heroku setup instructions
 2. **[PRODUCTION_READINESS_ASSESSMENT.md](./PRODUCTION_READINESS_ASSESSMENT.md)** - Launch readiness checklist
 3. **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Architecture overview and deployment process
 
 **Platform-Specific Guides:**
-- **Database:** Supabase (free PostgreSQL) or Neon (free serverless PostgreSQL)
+- **Database:** Supabase (free PostgreSQL), Heroku PostgreSQL addon, or Neon (free)
 - **Frontend:** Vercel (made for Next.js, 100% free)
-- **Backend:** Render (free tier) or Railway ($5/month, better performance)
-- **Optional:** Upstash Redis (free caching), Cloudinary (free file storage)
+- **Backend:** Heroku (using your paid account - recommended), Render (free, with limitations), or Railway (free trial)
+- **Optional:** Heroku Redis, Upstash Redis (free), or Cloudinary (free file storage)
 
 ### 🎯 Recommended Launch Stack
 
-#### **Option A: 100% Free (Recommended for MVP)**
+#### **Option A: Using Your Paid Heroku Account (Recommended ⭐)**
+```
+Frontend:  Vercel (free)
+Backend:   Heroku (paid - your account)
+Database:  Supabase (free, 500MB) or Heroku PostgreSQL addon
+Redis:     Heroku Redis addon (optional)
+Cost:      $7-50/month
+Status:    Always-on, Professional-grade
+```
+
+#### **Option B: 100% Free Alternative**
 ```
 Frontend:  Vercel (free)
 Backend:   Render (free, auto-sleeps after 15 min)
 Database:  Supabase (free, 500MB)
 Cost:      $0/month
-```
-
-#### **Option B: Better Performance ($5/month)**
-```
-Frontend:  Vercel (free)
-Backend:   Railway ($5/month, always-on)
-Database:  Supabase (free, 500MB)
-Redis:     Upstash (free)
-Cost:      $5/month
+Status:    ⚠️ May have slow cold starts
 ```
 
 ### Required External Services
@@ -828,28 +830,28 @@ Cost:      $5/month
 Based on your code, here's what you **must** set up:
 
 #### ✅ **Required:**
-1. **PostgreSQL Database** - Supabase (free) or Neon (free)
+1. **PostgreSQL Database** - Supabase (free), Heroku PostgreSQL addon, or Neon (free)
 2. **Frontend Hosting** - Vercel (free)
-3. **Backend Hosting** - Render (free) or Railway ($5/mo)
+3. **Backend Hosting** - Heroku (paid account recommended), Render (free), or Railway (free trial)
 
 #### 🟡 **Optional (App Works Without):**
-1. **Redis** - Upstash (free) - Improves performance but has in-memory fallback
-2. **Email** - Resend/SendGrid (free) - For notifications, uses in-app notifications otherwise
-3. **File Storage** - Cloudinary (free) - For uploads, local storage works as fallback
+1. **Redis** - Heroku Redis addon, Upstash (free), or skip (app has in-memory fallback)
+2. **Email** - Resend/SendGrid (free), or use in-app notifications only
+3. **File Storage** - Cloudinary (free) or local storage
 
 ### Production Checklist
 
 Before going live:
-- [ ] ✅ Set up free database (Supabase/Neon)
+- [ ] ✅ Set up free database (Supabase) or Heroku PostgreSQL addon
 - [ ] ✅ Deploy frontend to Vercel
-- [ ] ✅ Deploy backend to Render/Railway
+- [ ] ✅ Deploy backend to Heroku
 - [ ] ✅ Set all environment variables (see [FREE_PLATFORMS_SETUP_GUIDE.md](./FREE_PLATFORMS_SETUP_GUIDE.md))
 - [ ] ✅ Run database migrations
 - [ ] ✅ Test authentication (login/logout)
 - [ ] ✅ Verify API health endpoint
 - [ ] ✅ Test core features (leaderboard, submissions, badges)
 - [ ] ✅ Verify HTTPS everywhere
-- [ ] 🟡 Optional: Set up Redis cache
+- [ ] 🟡 Optional: Add Heroku Redis addon for caching
 - [ ] 🟡 Optional: Configure email service
 
 ---

@@ -120,6 +120,7 @@ export class EnvironmentValidator implements OnModuleInit {
     }
 
     // NODE_ENV validation
+    const nodeEnv = process.env.NODE_ENV || 'development';
     if (!['development', 'production', 'test'].includes(nodeEnv)) {
       warnings.push({
         field: 'NODE_ENV',
@@ -422,21 +423,20 @@ export class EnvironmentValidator implements OnModuleInit {
   }
 
   private async testRedisConnection(host: string, port: number): Promise<void> {
-    const { createClient } = require('redis');
-    const client = createClient({
+    // Use ioredis instead of redis
+    const Redis = require('ioredis');
+    const client = new Redis({
       host,
       port,
       lazyConnect: true,
-      socket: {
-        connectTimeout: 5000,
-      },
+      connectTimeout: 5000,
     });
 
     try {
       await client.connect();
       await client.ping();
     } finally {
-      await client.disconnect();
+      await client.quit();
     }
   }
 

@@ -68,7 +68,7 @@ Based on your codebase requirements, here's what you **need** vs what's **option
 3. Import your repository
 4. Set environment variables:
    ```env
-   NEXT_PUBLIC_API_URL=https://your-api-url.com/api/v1
+   NEXT_PUBLIC_API_URL=https://your-heroku-api.herokuapp.com/api/v1
    NEXT_PUBLIC_SITE_URL=https://your-vercel-url.vercel.app
    NODE_ENV=production
    ```
@@ -82,42 +82,64 @@ Based on your codebase requirements, here's what you **need** vs what's **option
 
 ### 3. **Backend API Hosting** 🚀
 
-**Why Required:** Need to host your NestJS API.
+#### **Heroku** (Recommended - Using Your Paid Account ⭐)
+- **Cost:** $7-50+/month (with paid account)
+- **Performance:** Always-on, no cold starts
+- **Limits:** Based on dyno type
+- **Setup Time:** 10 minutes
+- **Features:** Integrated add-ons, PostgreSQL, Redis, automated deployments
 
-**⚠️ Important:** Heroku removed their free tier in 2022. Here are current options:
+**Setup:**
+1. Go to [heroku.com](https://heroku.com)
+2. Log in to your paid account
+3. Create two new apps:
+   - `vulhub-leaderboard-api` (production)
+   - `vulhub-leaderboard-api-staging` (staging - optional)
+4. Add PostgreSQL addon:
+   ```bash
+   heroku addons:create heroku-postgresql:standard-0 -a vulhub-leaderboard-api
+   ```
+5. Add Redis addon (optional but recommended):
+   ```bash
+   heroku addons:create heroku-redis:premium-0 -a vulhub-leaderboard-api
+   ```
+6. Set environment variables:
+   ```bash
+   heroku config:set NODE_ENV=production -a vulhub-leaderboard-api
+   heroku config:set JWT_SECRET=<32-char-secret> -a vulhub-leaderboard-api
+   heroku config:set JWT_REFRESH_SECRET=<32-char-secret> -a vulhub-leaderboard-api
+   heroku config:set CORS_ORIGIN=https://your-vercel-url.vercel.app -a vulhub-leaderboard-api
+   ```
+7. Deploy via Git:
+   ```bash
+   git remote add heroku https://git.heroku.com/vulhub-leaderboard-api.git
+   git push heroku main
+   ```
+8. Run migrations:
+   ```bash
+   heroku run "npx prisma migrate deploy" -a vulhub-leaderboard-api
+   ```
 
-#### Option A: **Render** (Recommended ⭐)
-- **Cost:** FREE (with limitations)
+**Benefits of Using Heroku (Over Free Tiers):**
+- ✅ Always-on (no cold starts like Render free tier)
+- ✅ Better performance and reliability
+- ✅ Integrated PostgreSQL and Redis add-ons
+- ✅ Automatic SSL/TLS certificates
+- ✅ Easier deployments via Git push
+- ✅ Professional-grade infrastructure
+
+**Alternative (If Not Using Heroku):**
+
+#### **Render** (Free Alternative)
+- **Cost:** FREE
 - **Limits:** Spins down after 15 min inactivity, 750 hours/month
 - **Setup Time:** 10 minutes
 - **Features:** Auto-deploy from GitHub
 
-**Setup:**
-1. Go to [render.com](https://render.com)
-2. Sign up with GitHub
-3. New → Web Service
-4. Connect repository
-5. Settings:
-   - **Build Command:** `pnpm install && pnpm --filter @vulhub/api build`
-   - **Start Command:** `pnpm --filter @vulhub/api start:prod`
-   - **Environment:** Node
-6. Set environment variables (see below)
-
-#### Option B: **Railway** 
-- **Cost:** $5 credit free trial (then $5/month)
+#### **Railway** (Free Trial Alternative)
+- **Cost:** $5 free credit (then $5/month typical)
 - **Limits:** Better performance than Render free tier
 - **Setup Time:** 5 minutes
-
-**Setup:**
-1. Go to [railway.app](https://railway.app)
-2. Sign up with GitHub
-3. New Project → Deploy from GitHub
-4. Configure environment variables
-
-#### Option C: **Heroku** (If you have existing account)
-- **Cost:** $7/month (Eco Dynos)
-- **No free tier available**
-- **Best if:** You're already familiar with Heroku
 
 ---
 
@@ -209,26 +231,46 @@ Based on your codebase requirements, here's what you **need** vs what's **option
 
 ---
 
-## 🎯 Recommended Launch Stack (100% Free)
+## 🎯 Recommended Launch Stack (Your Setup with Paid Heroku)
 
-### **Minimum Viable Launch:**
+### **Option A: With Your Paid Heroku Account (Recommended ⭐)**
+```
+Frontend:  Vercel (free)
+Backend:   Heroku (paid - your account) ← Always-on, professional grade
+Database:  Supabase (free, 500MB) or Heroku PostgreSQL (included)
+Redis:     Heroku Redis (included addon) - optional but recommended
+Cost:      $7-50/month (depending on dyno size)
+Time:      20-30 minutes setup
+```
 
-| Service | Platform | Cost | Setup Time |
-|---------|----------|------|------------|
-| **Database** | Supabase | FREE | 5 min |
-| **Frontend** | Vercel | FREE | 5 min |
-| **Backend** | Render | FREE | 10 min |
-| **TOTAL** | | **$0/month** | **20 min** |
+**Why This is Best:**
+- ✅ No cold starts (always-on dyno)
+- ✅ Better performance than free tiers
+- ✅ Integrated PostgreSQL add-on
+- ✅ Easy deployments via Git push
+- ✅ Professional monitoring and logs
+- ✅ Automatic backups
 
-### **Enhanced Launch (Better Performance):**
+### **Option B: 100% Free (Budget Alternative)**
+```
+Frontend:  Vercel (free)
+Backend:   Render (free, auto-sleeps after 15 min)
+Database:  Supabase (free, 500MB)
+Cost:      $0/month
+Time:      20 minutes setup
+```
 
-| Service | Platform | Cost | Setup Time |
-|---------|----------|------|------------|
-| **Database** | Supabase | FREE | 5 min |
-| **Frontend** | Vercel | FREE | 5 min |
-| **Backend** | Railway | $5/month | 5 min |
-| **Redis** | Upstash | FREE | 3 min |
-| **TOTAL** | | **$5/month** | **18 min** |
+**⚠️ Tradeoff:** Render free tier sleeps after 15 minutes of inactivity, so first request is slow (~30 sec)
+
+### **Option C: Better Performance, Low Cost**
+```
+Frontend:  Vercel (free)
+Backend:   Heroku (your account)
+Database:  Supabase (free, 500MB)
+Redis:     Upstash (free) or Heroku Redis addon
+Cost:      $7-20/month
+Time:      25 minutes setup
+```
 
 ---
 
@@ -238,7 +280,7 @@ Based on your codebase requirements, here's what you **need** vs what's **option
 
 ```env
 # Required
-NEXT_PUBLIC_API_URL=https://your-api-url.com/api/v1
+NEXT_PUBLIC_API_URL=https://vulhub-leaderboard-api.herokuapp.com/api/v1
 NEXT_PUBLIC_SITE_URL=https://your-app.vercel.app
 NODE_ENV=production
 
@@ -246,7 +288,7 @@ NODE_ENV=production
 NEXT_PUBLIC_IMAGE_DOMAINS=your-cdn-domain.com
 ```
 
-### **Backend (Render/Railway/Heroku)**
+### **Backend (Heroku)**
 
 ```env
 # Required - Core
@@ -254,14 +296,18 @@ NODE_ENV=production
 PORT=4000
 CORS_ORIGIN=https://your-app.vercel.app
 
-# Required - Database
+# Required - Database (Auto-set by Heroku if using PostgreSQL addon, or set manually for Supabase)
 DATABASE_URL=postgresql://user:pass@host:5432/database
+# OR if using Heroku PostgreSQL addon:
+# DATABASE_URL will be automatically set when you add the addon
 
 # Required - Security (generate these!)
 JWT_SECRET=<32-character-random-string>
 JWT_REFRESH_SECRET=<32-character-random-string>
 
-# Optional - Redis (improves performance)
+# Optional - Redis (auto-set if using Heroku Redis addon)
+REDIS_URL=redis://... (auto-set by Heroku)
+# OR if using Upstash:
 REDIS_HOST=your-redis-host.com
 REDIS_PORT=6379
 REDIS_PASSWORD=your-redis-password
@@ -318,13 +364,13 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
    - Deploy
 
 3. **Backend Deployment** (15 min)
-   - Create Render/Railway account
-   - Connect repository
+   - Create Heroku account
+   - Create two apps
    - Set environment variables
    - Deploy
 
 4. **Database Migration** (5 min)
-   - Run Prisma migrations on Render/Railway
+   - Run Prisma migrations on Heroku
    - Seed initial data (optional)
 
 5. **Testing** (10 min)
@@ -337,18 +383,15 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ## ⚠️ Important Notes
 
 ### **Heroku Status:**
-- ❌ **No longer has free tier** (removed November 2022)
 - ✅ **Eco Dynos available** - $7/month per dyno
 - ✅ **You can still use Heroku** if you have credits or want to pay
 
 ### **Database Persistence:**
 - ✅ **Supabase** - Data persists forever on free tier
-- ⚠️ **Render** - Database separate service (can be free)
-- ✅ **Railway** - Data persists during trial
+- ✅ **Heroku** - Data persists during trial
 
 ### **Performance Notes:**
-- **Render Free Tier** - Spins down after 15 min inactivity (first request slow)
-- **Railway** - Always on during trial period
+- **Heroku Free Tier** - Always-on, no cold starts
 - **Vercel** - Instant response (serverless)
 
 ---
@@ -357,7 +400,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ### **When to Upgrade:**
 
-**Render → Railway ($5/month):**
+**Heroku → Paid ($7-50+/month):**
 - When: Site traffic increases, cold starts become annoying
 - Benefit: Always-on, faster response times
 
@@ -401,7 +444,7 @@ After setup, verify everything works:
 
 - [ ] **Environment Variables Set**
   - Check Vercel dashboard
-  - Check Render/Railway dashboard
+  - Check Heroku dashboard
 
 ---
 
@@ -433,7 +476,7 @@ CORS_ORIGIN=http://localhost:3000  # Don't use localhost in production!
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-### **Issue: Render app sleeps**
+### **Issue: Heroku app sleeps**
 **Fix:** This is normal on free tier. Options:
 - Upgrade to paid ($7/month)
 - Use Railway instead
@@ -444,7 +487,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ## 📞 Need Help?
 
 1. **Check your environment variables** - Most issues are misconfiguration
-2. **Check application logs** - Render/Railway/Vercel all have log viewers
+2. **Check application logs** - Heroku all have log viewers
 3. **Test API health endpoint** - `curl https://your-api.com/api/v1/health`
 4. **Verify database connection** - Check Supabase dashboard for connection stats
 
@@ -452,7 +495,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ## 🎉 You're Ready!
 
-With this setup, you can launch for **$0-5/month** with room to scale as you grow.
+With this setup, you can launch for **$7-50+/month** with room to scale as you grow.
 
 **Next Steps:**
 1. Follow the setup for each platform above

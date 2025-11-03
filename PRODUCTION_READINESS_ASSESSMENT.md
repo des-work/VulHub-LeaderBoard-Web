@@ -402,21 +402,31 @@ The application is:
 ## 🚀 Next Steps
 
 ### Immediate (Before Launch)
-1. ✅ **Set up free external services** (20-30 min)
-   - Database: Supabase or Neon (free PostgreSQL)
+1. ✅ **Set up external services** (20-30 min)
+   - Database: Supabase (free) or Heroku PostgreSQL addon
    - Frontend: Vercel (free Next.js hosting)
-   - Backend: Render (free) or Railway ($5/mo)
+   - Backend: Heroku (using your paid account)
    - See: [FREE_PLATFORMS_SETUP_GUIDE.md](./FREE_PLATFORMS_SETUP_GUIDE.md)
 
-2. ✅ **Configure environment variables** (15 min)
+2. ✅ **Configure Heroku and environment variables** (15 min)
+   - Create Heroku app: `heroku create vulhub-leaderboard-api`
+   - Add PostgreSQL addon: `heroku addons:create heroku-postgresql:standard-0 -a vulhub-leaderboard-api`
    - Generate JWT secrets (2x 32-char strings)
-   - Set database connection URL
-   - Configure CORS and API URLs
+   - Set all environment variables:
+     ```bash
+     heroku config:set NODE_ENV=production -a vulhub-leaderboard-api
+     heroku config:set JWT_SECRET=<your-secret> -a vulhub-leaderboard-api
+     heroku config:set JWT_REFRESH_SECRET=<your-secret> -a vulhub-leaderboard-api
+     heroku config:set CORS_ORIGIN=https://your-app.vercel.app -a vulhub-leaderboard-api
+     ```
 
-3. ✅ **Run database migrations** (5 min)
+3. ✅ **Deploy and run database migrations** (5 min)
    ```bash
-   # On Render/Railway console:
-   npx prisma migrate deploy
+   # Deploy to Heroku:
+   git push heroku main
+   
+   # Run migrations:
+   heroku run "npx prisma migrate deploy" -a vulhub-leaderboard-api
    ```
 
 4. ✅ **Create Open Graph image** (30 min)
@@ -424,9 +434,9 @@ The application is:
    - Add VulHub Leaderboard branding
 
 5. ✅ **Test production deployment** (15 min)
-   - Verify health endpoint
-   - Test login
-   - Check API connectivity
+   - Verify health endpoint: `curl https://vulhub-leaderboard-api.herokuapp.com/api/v1/health`
+   - Test login via Vercel frontend
+   - Check API connectivity and database
 
 ### Short-Term (First Week)
 1. ⚠️ Monitor error rates (check Vercel/Render dashboards)

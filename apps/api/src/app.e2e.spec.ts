@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from './app.module';
 import { PrismaService } from './adapters/database/prisma.service';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';

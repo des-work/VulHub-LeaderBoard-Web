@@ -8,7 +8,7 @@ import {
 import { DatabaseHealthIndicator } from './database.health';
 import { RedisHealthIndicator } from './redis.health';
 import { ProductionHealthService } from './production-health.service';
-import { EnvironmentValidator } from '../config/environment-validator';
+import { EnvironmentValidator } from '../../config/environment-validator';
 
 @ApiTags('health')
 @Controller('health')
