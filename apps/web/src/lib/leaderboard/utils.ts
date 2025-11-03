@@ -146,10 +146,10 @@ export function getBadgeSizeStyles(size: 'small' | 'medium' | 'large' = 'medium'
  * Create ring effect for current user
  */
 export function createCurrentUserRing() {
-  const config = getRowConfig(1, true);
+  const config = getRowConfig(1, true) as any;
   
   return {
-    boxShadow: `0 0 0 ${config.ringWidth} ${config.ringColor}, 0 0 0 ${parseInt(config.ringWidth!) + parseInt(config.ringOffset!)}px ${config.ringOffsetColor}`,
+    boxShadow: `0 0 0 ${config.ringWidth || '2px'} ${config.ringColor || 'transparent'}, 0 0 0 ${(parseInt(config.ringWidth || '2') + parseInt(config.ringOffset || '2'))}px ${config.ringOffsetColor || 'transparent'}`,
     animation: config.pulseEffect ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none',
   };
 }
