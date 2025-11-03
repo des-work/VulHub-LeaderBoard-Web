@@ -29,7 +29,6 @@ export class ValidationPipe implements PipeTransform<any> {
     const errors = await validate(object, {
       whitelist: true, // Strip properties that do not have decorators
       forbidNonWhitelisted: true, // Throw error if non-whitelisted properties are present
-      transform: true, // Transform payloads to DTO instances
       skipMissingProperties: false, // Don't skip validation of missing properties
     });
 

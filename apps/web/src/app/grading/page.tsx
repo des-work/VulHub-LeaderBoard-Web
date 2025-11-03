@@ -49,10 +49,14 @@ export default function GradingDashboard() {
   });
   
   // Consolidated filter/search/sort state
-  const [viewState, setViewState] = useState({
-    filter: { status: 'pending' } as Filter,
+  const [viewState, setViewState] = useState<{
+    filter: Filter;
+    search: string;
+    sort: SortConfig;
+  }>({
+    filter: { status: 'pending' },
     search: '',
-    sort: { key: 'date' as const, direction: 'desc' as const },
+    sort: { key: 'date', direction: 'desc' },
   });
   
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());

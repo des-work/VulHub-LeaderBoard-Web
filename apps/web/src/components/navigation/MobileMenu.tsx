@@ -156,3 +156,5 @@ export function MobileMenu({ userName, userPoints, onLogout }: MobileMenuProps) 
   );
 }
 
+export default MobileMenu;
+

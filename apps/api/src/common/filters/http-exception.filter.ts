@@ -51,7 +51,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const responseObj = exceptionResponse as any;
         message = responseObj.message || exception.message;
         error = responseObj.error || exception.name;
-        userFriendlyMessage = Array.isArray(message) ? message.join(', ') : message;
+        
+        // Type-safe message handling
+        if (Array.isArray(message)) {
+          userFriendlyMessage = message.join(', ');
+        } else if (typeof message === 'string') {
+          userFriendlyMessage = message;
+        } else if (typeof message === 'object' && message !== null) {
+          userFriendlyMessage = JSON.stringify(message);
+        } else {
+          userFriendlyMessage = String(message || 'An error occurred');
+        }
       }
     } else if (exception && typeof exception === 'object' && 'code' in exception) {
       // Handle Prisma errors
