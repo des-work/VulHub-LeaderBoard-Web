@@ -29,7 +29,10 @@
     "prod:stack:down": "docker-compose --env-file .env -f docker-compose.yml down -v",
     "storybook": "pnpm --filter @vulhub/ui storybook",
     "gen:module": "node scripts/generate-module.js",
-    "gen:feature": "node scripts/generate-feature.js"
+    "gen:feature": "node scripts/generate-feature.js",
+    "dev:local": "node scripts/start-local.js",
+    "dev:stop": "node scripts/stop-local.js",
+    "dev:cleanup": "node scripts/cleanup-local.js"
   },
   "devDependencies": {
     "@turbo/gen": "^1.10.12",

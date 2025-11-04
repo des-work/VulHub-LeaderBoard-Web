@@ -314,9 +314,55 @@ The API follows RESTful principles with the following structure:
 
 ---
 
+## 📚 Documentation
+
+> **🚀 New to VulHub?** Check out our comprehensive documentation below!
+
+### Quick Start Guides
+
+| Guide | Purpose | Time | Best For |
+|-------|---------|------|----------|
+| **[README_STARTUP_SIMPLIFIED.md](./README_STARTUP_SIMPLIFIED.md)** ⭐ | **START HERE!** Simple one-command startup | 2 min | Everyone |
+| [QUICK_START_LOCAL_DEVELOPMENT.md](./QUICK_START_LOCAL_DEVELOPMENT.md) | Detailed local development setup | 10 min | First-time users |
+| [STARTUP_COMMANDS_CHEATSHEET.md](./STARTUP_COMMANDS_CHEATSHEET.md) | Quick reference for common commands | 1 min | Quick lookup |
+| [STARTUP_IMPROVEMENT_SUMMARY.md](./STARTUP_IMPROVEMENT_SUMMARY.md) | Technical details of startup system | 5 min | Developers |
+
+### Testing & Deployment
+
+| Guide | Purpose |
+|-------|---------|
+| [LOCAL_TESTING_GUIDE.md](./LOCAL_TESTING_GUIDE.md) | Complete testing checklist |
+| [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) | Production deployment instructions |
+
+### Authentication System
+
+| Guide | Purpose |
+|-------|---------|
+| [AUTH_TESTING_GUIDE.md](./AUTH_TESTING_GUIDE.md) | Authentication testing procedures |
+| [DEEP_DIVE_AUTH_ISSUES.md](./DEEP_DIVE_AUTH_ISSUES.md) | Auth system analysis and fixes |
+| [PERFECT_FIX_IMPLEMENTATION_PLAN.md](./PERFECT_FIX_IMPLEMENTATION_PLAN.md) | Detailed auth implementation |
+| [FIX_IMPLEMENTATION_COMPLETE.md](./FIX_IMPLEMENTATION_COMPLETE.md) | Auth completion report |
+
+### Architecture & Design
+
+| Guide | Purpose |
+|-------|---------|
+| [PROJECT_DOCUMENTATION.md](./PROJECT_DOCUMENTATION.md) | Complete architecture overview |
+| [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) | UI/UX design system |
+| [SECURITY.md](./SECURITY.md) | Security policies and best practices |
+
+### Latest Updates
+
+| Document | Purpose |
+|----------|---------|
+| [FINAL_COMPLETION_REPORT.md](./FINAL_COMPLETION_REPORT.md) | Most recent improvements and status |
+| [DOCUMENTATION_CLEANUP_PLAN.md](./DOCUMENTATION_CLEANUP_PLAN.md) | Documentation consolidation details |
+
+---
+
 ## Getting Started
 
-> **🚀 New to the project?** Start with [QUICK_START.md](./QUICK_START.md) for a 10-minute setup guide!
+> **⚡ Fastest way to start:** Just run `npm run dev:local` (see [README_STARTUP_SIMPLIFIED.md](./README_STARTUP_SIMPLIFIED.md))
 
 ### Prerequisites
 

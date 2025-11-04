@@ -109,6 +109,7 @@ export default function SubmissionsPage() {
   const [submissionDescription, setSubmissionDescription] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -123,6 +124,10 @@ export default function SubmissionsPage() {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     setUploadedFiles(prev => [...prev, ...files]);
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
   };
 
   const removeFile = (index: number) => {
@@ -400,20 +405,21 @@ export default function SubmissionsPage() {
                   <p className="text-neutral-400 mb-2">Upload screenshots, videos, or documents as proof</p>
                   <p className="text-xs text-neutral-500 mb-4">PNG, JPG, MP4, PDF, TXT files accepted</p>
                   <input
+                    ref={fileInputRef}
                     type="file"
                     multiple
                     accept="image/*,video/*,.pdf,.txt,.md"
                     onChange={handleFileUpload}
                     className="hidden"
-                    id="file-upload"
                   />
-                  <label
-                    htmlFor="file-upload"
-                    className="inline-flex items-center px-4 py-2 bg-primary text-black rounded font-medium cursor-pointer hover:bg-primary/90"
+                  <button
+                    onClick={triggerFileUpload}
+                    type="button"
+                    className="inline-flex items-center px-4 py-2 bg-primary text-white font-bold rounded cursor-pointer hover:bg-primary/90 transition-colors"
                   >
                     <Upload className="h-4 w-4 mr-2" />
                     Choose Files
-                  </label>
+                  </button>
                 </div>
 
                 {/* Uploaded Files */}
