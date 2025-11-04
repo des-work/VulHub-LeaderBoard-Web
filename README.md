@@ -1059,6 +1059,12 @@ This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE
 
 ## Acknowledgments
 
+### Special Thanks
+
+**🎓 VulHub Team** - A huge thank you to the VulHub team who created the exceptional cybersecurity activities, challenges, and vulnerability labs that make this leaderboard platform possible. Their dedication to hands-on security education provides the foundation for this gamified learning experience.
+
+### Technology & Tools
+
 - Built with [Next.js](https://nextjs.org/), [NestJS](https://nestjs.com/), and [PostgreSQL](https://www.postgresql.org/)
 - UI components styled with [Tailwind CSS](https://tailwindcss.com/)
 - Icons from [Lucide React](https://lucide.dev/)
