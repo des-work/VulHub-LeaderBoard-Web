@@ -4,8 +4,8 @@
   "description": "NestJS API for VulHub Leaderboard",
   "main": "dist/main.js",
   "scripts": {
-    "prebuild": "prisma generate",
-    "build": "npx -y @nestjs/cli@latest build",
+    "prisma:generate": "prisma generate",
+    "build": "prisma generate && npx -y @nestjs/cli@latest build",
     "dev": "pnpm exec nest start --watch",
     "start": "node dist/main",
     "start:dev": "pnpm exec nest start --watch",
