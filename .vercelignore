@@ -1,47 +1,70 @@
 # Dependencies
 node_modules/
 .pnpm-store/
+pnpm-lock.yaml
 
 # Build outputs
 dist/
 .next/
 out/
 coverage/
+build/
 
 # Environment files (handled by Vercel)
 .env
 .env*.local
+.env.example
 
 # Development files
 *.log
+logs/
 .DS_Store
 Thumbs.db
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # Testing
 test-results/
 playwright-report/
 .jest-cache/
+jest-coverage/
 
-# Docker
+# Docker (not needed for Vercel)
 docker-compose*.yml
-Dockerfile
+Dockerfile*
+.dockerignore
 
-# Documentation (optional - remove if you want docs deployed)
+# Documentation (optional - set to false if you want docs deployed)
+docs/
 *.md
 !README.md
 
-# Scripts
+# Local scripts (not needed on Vercel)
 scripts/
 
 # Local database files (will be created in /tmp on Vercel)
 *.db
 *.sqlite
 *.db-journal
+prisma/dev.db*
 
-# Prisma migrations (keep migrations, but not local DB)
+# Prisma artifacts
 prisma/migrations/.DS_Store
+.prisma/
+
+# K8s configs
+k8s/
+infra/
+
+# Build artifacts
+apps/api/dist/
+apps/web/.next/
+
+# Cache files
+.turbo/
+.eslintcache
 
