@@ -34,19 +34,19 @@ export class ErrorHandlerService {
     if (error instanceof DomainError) {
       severity = this.getDomainErrorSeverity(error);
       shouldNotify = severity === 'high' || severity === 'critical';
-    } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    } else if (error instanceof PrismaClientKnownRequestError) {
       severity = this.getPrismaErrorSeverity(error);
       shouldNotify = severity === 'high' || severity === 'critical';
-    } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+    } else if (error instanceof PrismaClientUnknownRequestError) {
       severity = 'high';
       shouldNotify = true;
-    } else if (error instanceof Prisma.PrismaClientRustPanicError) {
+    } else if (error instanceof PrismaClientRustPanicError) {
       severity = 'critical';
       shouldNotify = true;
-    } else if (error instanceof Prisma.PrismaClientInitializationError) {
+    } else if (error instanceof PrismaClientInitializationError) {
       severity = 'critical';
       shouldNotify = true;
-    } else if (error instanceof Prisma.PrismaClientValidationError) {
+    } else if (error instanceof PrismaClientValidationError) {
       severity = 'medium';
       shouldNotify = false;
     } else {
@@ -93,7 +93,7 @@ export class ErrorHandlerService {
   /**
    * Get severity for Prisma errors
    */
-  private getPrismaErrorSeverity(error: Prisma.PrismaClientKnownRequestError): 'low' | 'medium' | 'high' | 'critical' {
+  private getPrismaErrorSeverity(error: PrismaClientKnownRequestError): 'low' | 'medium' | 'high' | 'critical' {
     switch (error.code) {
       case 'P2002': // Unique constraint violation
         return 'medium';
@@ -230,7 +230,7 @@ export class ErrorHandlerService {
       return false;
     }
 
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error instanceof PrismaClientKnownRequestError) {
       // Some Prisma errors might be retryable
       switch (error.code) {
         case 'P1001': // Connection refused
@@ -241,7 +241,7 @@ export class ErrorHandlerService {
       }
     }
 
-    if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+    if (error instanceof PrismaClientUnknownRequestError) {
       return true; // Unknown errors might be transient
     }
 

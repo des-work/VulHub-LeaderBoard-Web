@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "prisma:generate": "prisma generate",
-    "prebuild": "cd ../../packages/schema && npx tsc && cd ../../packages/config && npx tsc && cd ../../packages/utils && npx tsc && cd ../../apps/api && prisma generate",
+    "prebuild": "node -e \"const{execSync}=require('child_process');['schema','utils'].forEach(p=>{console.log('Building',p);execSync('cd packages/'+p+'&&npx tsc',{stdio:'inherit',cwd:process.cwd()+'/../..'})});execSync('prisma generate',{stdio:'inherit'});\"",
     "build": "npx -y @nestjs/cli@latest build",
     "dev": "pnpm exec nest start --watch",
     "start": "node dist/main",
