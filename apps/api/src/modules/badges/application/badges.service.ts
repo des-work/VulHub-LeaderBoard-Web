@@ -34,13 +34,15 @@ export class BadgesService {
   /**
    * Create a new badge
    */
-  async create(createBadgeDto: CreateBadgeDto, tenantId: string) {
+  async create(createBadgeDto: CreateBadgeDto) {
     try {
       this.logger.log(`Creating badge: ${createBadgeDto.name}`);
 
       return await this.badgesRepository.create({
         ...createBadgeDto,
-        tenant: { connect: { id: tenantId } },
+        criteria: typeof createBadgeDto.criteria === 'string' 
+          ? createBadgeDto.criteria 
+          : JSON.stringify(createBadgeDto.criteria),
       });
     } catch (error) {
       this.logger.error('Failed to create badge:', error);
@@ -52,7 +54,6 @@ export class BadgesService {
    * Get all badges with pagination
    */
   async findAll(
-    tenantId: string,
     page: number = 1,
     limit: number = 20,
     category?: string,
@@ -62,7 +63,6 @@ export class BadgesService {
       const skip = (page - 1) * limit;
       
       const where = {
-        tenantId,
         ...(category && { category }),
         ...(difficulty && { difficulty }),
       };
@@ -97,10 +97,10 @@ export class BadgesService {
   /**
    * Get badge by ID
    */
-  async findOne(id: string, tenantId: string) {
+  async findOne(id: string) {
     try {
       const badge = await this.badgesRepository.findUnique({
-        where: { id, tenantId },
+        where: { id },
         include: {
           _count: {
             select: {
@@ -124,10 +124,10 @@ export class BadgesService {
   /**
    * Update badge
    */
-  async update(id: string, updateBadgeDto: UpdateBadgeDto, tenantId: string) {
+  async update(id: string, updateBadgeDto: UpdateBadgeDto) {
     try {
       const badge = await this.badgesRepository.findUnique({
-        where: { id, tenantId },
+        where: { id },
       });
 
       if (!badge) {
@@ -135,7 +135,7 @@ export class BadgesService {
       }
 
       return await this.badgesRepository.update({
-        where: { id, tenantId },
+        where: { id },
         data: updateBadgeDto,
       });
     } catch (error) {
@@ -147,10 +147,10 @@ export class BadgesService {
   /**
    * Delete badge
    */
-  async remove(id: string, tenantId: string) {
+  async remove(id: string) {
     try {
       const badge = await this.badgesRepository.findUnique({
-        where: { id, tenantId },
+        where: { id },
       });
 
       if (!badge) {
@@ -158,7 +158,7 @@ export class BadgesService {
       }
 
       return await this.badgesRepository.delete({
-        where: { id, tenantId },
+        where: { id },
       });
     } catch (error) {
       this.logger.error(`Failed to delete badge ${id}:`, error);
@@ -169,9 +169,9 @@ export class BadgesService {
   /**
    * Get user's badges
    */
-  async getUserBadges(userId: string, tenantId: string) {
+  async getUserBadges(userId: string) {
     try {
-      return await this.badgesRepository.getUserBadges(userId, tenantId);
+      return await this.badgesRepository.getUserBadges(userId);
     } catch (error) {
       this.logger.error(`Failed to get user badges for ${userId}:`, error);
       throw error;
@@ -181,16 +181,16 @@ export class BadgesService {
   /**
    * Get user's badge progress
    */
-  async getUserBadgeProgress(userId: string, tenantId: string): Promise<BadgeProgress[]> {
+  async getUserBadgeProgress(userId: string): Promise<BadgeProgress[]> {
     try {
-      const cacheKey = `user:badge-progress:${userId}:${tenantId}`;
+      const cacheKey = `user:badge-progress:${userId}`;
       const cached = await this.redisService.get(cacheKey);
       
       if (cached) {
         return JSON.parse(cached);
       }
 
-      const progress = await this.badgesRepository.getUserBadgeProgress(userId, tenantId);
+      const progress = await this.badgesRepository.getUserBadgeProgress(userId);
       
       // Cache for 5 minutes
       await this.redisService.set(cacheKey, JSON.stringify(progress), 300);
@@ -205,7 +205,7 @@ export class BadgesService {
   /**
    * Assign badge to user
    */
-  async assignBadge(assignBadgeDto: AssignBadgeDto, tenantId: string) {
+  async assignBadge(assignBadgeDto: AssignBadgeDto) {
     try {
       this.logger.log(`Assigning badge ${assignBadgeDto.badgeId} to user ${assignBadgeDto.userId}`);
 
@@ -213,7 +213,6 @@ export class BadgesService {
       const existingBadge = await this.badgesRepository.findUserBadge(
         assignBadgeDto.userId,
         assignBadgeDto.badgeId,
-        tenantId,
       );
 
       if (existingBadge) {
@@ -223,12 +222,11 @@ export class BadgesService {
       const userBadge = await this.badgesRepository.assignBadge({
         user: { connect: { id: assignBadgeDto.userId } },
         badge: { connect: { id: assignBadgeDto.badgeId } },
-        tenant: { connect: { id: tenantId } },
         earnedAt: new Date(),
       });
 
       // Clear user badge progress cache
-      await this.redisService.del(`user:badge-progress:${assignBadgeDto.userId}:${tenantId}`);
+      await this.redisService.del(`user:badge-progress:${assignBadgeDto.userId}`);
 
       // Broadcast badge earned event
       this.webSocketGateway.server.to(`user:${assignBadgeDto.userId}`).emit('badge:earned', {
@@ -246,12 +244,12 @@ export class BadgesService {
   /**
    * Check and award badges automatically
    */
-  async checkAndAwardBadges(userId: string, tenantId: string) {
+  async checkAndAwardBadges(userId: string) {
     try {
       this.logger.log(`Checking badges for user ${userId}`);
 
       const badges = await this.badgesRepository.findMany({
-        where: { tenantId, isActive: true },
+        where: { isActive: true },
       });
 
       const awardedBadges = [];
@@ -260,14 +258,13 @@ export class BadgesService {
         const progress = await this.badgesRepository.getBadgeProgressForUser(
           badge.id,
           userId,
-          tenantId,
         );
 
         if (progress.isEarned) {
-          await this.assignBadge(
-            { userId, badgeId: badge.id },
-            tenantId,
-          );
+          await this.assignBadge({
+            userId,
+            badgeId: badge.id,
+          });
           awardedBadges.push(badge);
         }
       }
@@ -286,16 +283,16 @@ export class BadgesService {
   /**
    * Get badge statistics
    */
-  async getBadgeStats(tenantId: string) {
+  async getBadgeStats() {
     try {
-      const cacheKey = `badge:stats:${tenantId}`;
+      const cacheKey = `badge:stats`;
       const cached = await this.redisService.get(cacheKey);
       
       if (cached) {
         return JSON.parse(cached);
       }
 
-      const stats = await this.badgesRepository.getBadgeStats(tenantId);
+      const stats = await this.badgesRepository.getBadgeStats();
       
       // Cache for 10 minutes
       await this.redisService.set(cacheKey, JSON.stringify(stats), 600);
@@ -310,9 +307,9 @@ export class BadgesService {
   /**
    * Get most earned badges
    */
-  async getMostEarnedBadges(tenantId: string, limit: number = 10) {
+  async getMostEarnedBadges(limit: number = 10) {
     try {
-      return await this.badgesRepository.getMostEarnedBadges(tenantId, limit);
+      return await this.badgesRepository.getMostEarnedBadges(limit);
     } catch (error) {
       this.logger.error('Failed to get most earned badges:', error);
       throw error;
@@ -322,9 +319,9 @@ export class BadgesService {
   /**
    * Get recent badge awards
    */
-  async getRecentBadgeAwards(tenantId: string, limit: number = 20) {
+  async getRecentBadgeAwards(limit: number = 20) {
     try {
-      return await this.badgesRepository.getRecentBadgeAwards(tenantId, limit);
+      return await this.badgesRepository.getRecentBadgeAwards(limit);
     } catch (error) {
       this.logger.error('Failed to get recent badge awards:', error);
       throw error;
