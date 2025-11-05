@@ -11,15 +11,14 @@ export class ProjectsService {
   /**
    * Create a new project
    */
-  async create(createProjectDto: CreateProjectDto, tenantId: string) {
+  async create(createProjectDto: CreateProjectDto) {
     try {
       this.logger.log(`Creating project: ${createProjectDto.name}`);
       
-      // Check if project with same vulhubId already exists in tenant
+      // Check if project with same vulhubId already exists
       const existingProject = await this.projectsRepository.findFirst({
         where: {
           vulhubId: createProjectDto.vulhubId,
-          tenantId,
         },
       });
 
@@ -27,10 +26,7 @@ export class ProjectsService {
         throw new Error('Project with this VulHub ID already exists');
       }
 
-      return await this.projectsRepository.create({
-        ...createProjectDto,
-        tenant: { connect: { id: tenantId } },
-      });
+      return await this.projectsRepository.create(createProjectDto);
     } catch (error) {
       this.logger.error('Failed to create project:', error);
       throw error;
@@ -41,7 +37,6 @@ export class ProjectsService {
    * Get all projects with pagination and filtering
    */
   async findAll(
-    tenantId: string,
     searchDto: ProjectSearchDto,
     page: number = 1,
     limit: number = 20,
@@ -51,7 +46,6 @@ export class ProjectsService {
       
       // Simplified search - just basic filtering
       const where = {
-        tenantId,
         ...(searchDto.query && { name: { contains: searchDto.query } }),
         ...(searchDto.category && { category: searchDto.category }),
         ...(searchDto.difficulty && { difficulty: searchDto.difficulty }),
@@ -89,10 +83,10 @@ export class ProjectsService {
   /**
    * Get project by ID
    */
-  async findOne(id: string, tenantId: string) {
+  async findOne(id: string) {
     try {
       const project = await this.projectsRepository.findUnique({
-        where: { id, tenantId },
+        where: { id },
         include: {
           _count: {
             select: {
@@ -116,10 +110,10 @@ export class ProjectsService {
   /**
    * Update project
    */
-  async update(id: string, updateProjectDto: UpdateProjectDto, tenantId: string) {
+  async update(id: string, updateProjectDto: UpdateProjectDto) {
     try {
       const project = await this.projectsRepository.findUnique({
-        where: { id, tenantId },
+        where: { id },
       });
 
       if (!project) {
@@ -127,7 +121,7 @@ export class ProjectsService {
       }
 
       return await this.projectsRepository.update({
-        where: { id, tenantId },
+        where: { id },
         data: updateProjectDto,
       });
     } catch (error) {
@@ -139,10 +133,10 @@ export class ProjectsService {
   /**
    * Delete project
    */
-  async remove(id: string, tenantId: string) {
+  async remove(id: string) {
     try {
       const project = await this.projectsRepository.findUnique({
-        where: { id, tenantId },
+        where: { id },
       });
 
       if (!project) {
@@ -150,7 +144,7 @@ export class ProjectsService {
       }
 
       return await this.projectsRepository.delete({
-        where: { id, tenantId },
+        where: { id },
       });
     } catch (error) {
       this.logger.error(`Failed to delete project ${id}:`, error);
@@ -161,10 +155,10 @@ export class ProjectsService {
   /**
    * Get project statistics
    */
-  async getStats(id: string, tenantId: string) {
+  async getStats(id: string) {
     try {
       const project = await this.projectsRepository.findUnique({
-        where: { id, tenantId },
+        where: { id },
       });
 
       if (!project) {
@@ -194,10 +188,10 @@ export class ProjectsService {
   /**
    * Get projects by category
    */
-  async findByCategory(category: string, tenantId: string) {
+  async findByCategory(category: string) {
     try {
       return await this.projectsRepository.findMany({
-        where: { category, tenantId, isActive: true },
+        where: { category, isActive: true },
         orderBy: { createdAt: 'desc' },
       });
     } catch (error) {
@@ -209,10 +203,10 @@ export class ProjectsService {
   /**
    * Get projects by difficulty
    */
-  async findByDifficulty(difficulty: string, tenantId: string) {
+  async findByDifficulty(difficulty: string) {
     try {
       return await this.projectsRepository.findMany({
-        where: { difficulty, tenantId, isActive: true },
+        where: { difficulty, isActive: true },
         orderBy: { createdAt: 'desc' },
       });
     } catch (error) {
@@ -224,10 +218,10 @@ export class ProjectsService {
   /**
    * Toggle project active status
    */
-  async toggleActive(id: string, tenantId: string) {
+  async toggleActive(id: string) {
     try {
       const project = await this.projectsRepository.findUnique({
-        where: { id, tenantId },
+        where: { id },
       });
 
       if (!project) {
@@ -235,7 +229,7 @@ export class ProjectsService {
       }
 
       return await this.projectsRepository.update({
-        where: { id, tenantId },
+        where: { id },
         data: { isActive: !project.isActive },
       });
     } catch (error) {
