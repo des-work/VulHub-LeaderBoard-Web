@@ -363,10 +363,10 @@ export class UsersService extends BaseService {
   /**
    * Update user preferences
    */
-  async updatePreferences(id: string, preferences: any, tenantId: string) {
+  async updatePreferences(id: string, preferences: any) {
     try {
       const user = await this.usersRepository.findUnique({
-        where: { id, tenantId },
+        where: { id },
       });
 
       if (!user) {
@@ -374,7 +374,7 @@ export class UsersService extends BaseService {
       }
 
       return await this.usersRepository.update({
-        where: { id, tenantId },
+        where: { id },
         data: {
           preferences: {
             ...(user.preferences as Record<string, any> || {}),
@@ -392,32 +392,29 @@ export class UsersService extends BaseService {
    * Get user statistics
    */
   @HandleErrors('UsersService.getStats')
-  async getStats(userId: string, tenantId: string): Promise<any> {
-    this.validateInput({ userId, tenantId }, (data) => {
+  async getStats(userId: string): Promise<any> {
+    this.validateInput({ userId }, (data) => {
       if (!data.userId || data.userId.trim().length === 0) {
         throw new ValidationError('userId', 'User ID is required');
-      }
-      if (!data.tenantId || data.tenantId.trim().length === 0) {
-        throw new ValidationError('tenantId', 'Tenant ID is required');
       }
     });
 
     return this.handleOperation(
       async () => {
-        this.logOperationStart('getStats', { userId, tenantId });
+        this.logOperationStart('getStats', { userId });
         
         const stats = await this.prisma.submission.count({
-          where: { userId, tenantId },
+          where: { userId },
         });
         
         return {
           submissions: stats,
-          totalProjects: 0, // Placeholder
-          lastLogin: null, // Placeholder
+          totalProjects: 0,
+          lastLogin: null,
         };
       },
       'UsersService.getStats',
-      { userId, tenantId }
+      { userId }
     );
   }
 }
