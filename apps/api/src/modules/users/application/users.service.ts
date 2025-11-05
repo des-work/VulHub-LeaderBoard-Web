@@ -18,6 +18,20 @@ export class UsersService extends BaseService {
   }
 
   /**
+   * Parse preferences from database string
+   */
+  private parsePreferences(preferencesStr: string | null): Record<string, any> {
+    if (!preferencesStr) {
+      return {};
+    }
+    try {
+      return typeof preferencesStr === 'string' ? JSON.parse(preferencesStr) : preferencesStr;
+    } catch {
+      return {};
+    }
+  }
+
+  /**
    * Create a new user
    */
   @HandleErrors('UsersService.create')
@@ -49,7 +63,7 @@ export class UsersService extends BaseService {
            avatarUrl: user.avatarUrl || '',
            status: user.status as any,
            role: user.role as any,
-           preferences: user.preferences as Record<string, any> || {},
+           preferences: this.parsePreferences(user.preferences),
            lastLoginAt: user.lastLoginAt?.toISOString() || '',
            createdAt: user.createdAt.toISOString(),
            updatedAt: user.updatedAt.toISOString(),
@@ -110,7 +124,7 @@ export class UsersService extends BaseService {
            avatarUrl: user.avatarUrl || '',
            status: user.status as any,
            role: user.role as any,
-           preferences: user.preferences as Record<string, any> || {},
+           preferences: this.parsePreferences(user.preferences),
            lastLoginAt: user.lastLoginAt?.toISOString() || '',
            createdAt: user.createdAt.toISOString(),
            updatedAt: user.updatedAt.toISOString(),
@@ -168,7 +182,7 @@ export class UsersService extends BaseService {
            avatarUrl: user.avatarUrl || '',
            status: user.status as any,
            role: user.role as any,
-           preferences: user.preferences as Record<string, any> || {},
+           preferences: this.parsePreferences(user.preferences),
            lastLoginAt: user.lastLoginAt?.toISOString() || '',
            createdAt: user.createdAt.toISOString(),
            updatedAt: user.updatedAt.toISOString(),
@@ -211,7 +225,7 @@ export class UsersService extends BaseService {
             ...updateUserDto,
             preferences: updateUserDto.preferences
               ? {
-                  ...(user.preferences as Record<string, any> || {}),
+                  ...this.parsePreferences(user.preferences),
                   ...updateUserDto.preferences,
                 }
               : user.preferences,
@@ -227,7 +241,7 @@ export class UsersService extends BaseService {
           avatarUrl: updatedUser.avatarUrl || '',
           status: updatedUser.status as any,
           role: updatedUser.role as any,
-          preferences: updatedUser.preferences as Record<string, any> || {},
+          preferences: this.parsePreferences(updatedUser.preferences),
           lastLoginAt: updatedUser.lastLoginAt?.toISOString() || '',
           createdAt: updatedUser.createdAt.toISOString(),
           updatedAt: updatedUser.updatedAt.toISOString(),
@@ -272,7 +286,7 @@ export class UsersService extends BaseService {
           avatarUrl: deletedUser.avatarUrl || '',
           status: deletedUser.status as any,
           role: deletedUser.role as any,
-          preferences: deletedUser.preferences as Record<string, any> || {},
+          preferences: this.parsePreferences(deletedUser.preferences),
           lastLoginAt: deletedUser.lastLoginAt?.toISOString() || '',
           createdAt: deletedUser.createdAt.toISOString(),
           updatedAt: deletedUser.updatedAt.toISOString(),
@@ -315,7 +329,7 @@ export class UsersService extends BaseService {
           avatarUrl: user.avatarUrl || '',
           status: user.status as any,
           role: user.role as any,
-          preferences: user.preferences as Record<string, any> || {},
+          preferences: this.parsePreferences(user.preferences),
           lastLoginAt: user.lastLoginAt?.toISOString() || '',
           createdAt: user.createdAt.toISOString(),
           updatedAt: user.updatedAt.toISOString(),
@@ -346,7 +360,7 @@ export class UsersService extends BaseService {
         where: { id },
         data: {
           preferences: JSON.stringify({
-            ...(typeof user.preferences === 'string' ? JSON.parse(user.preferences) : user.preferences || {}),
+            ...this.parsePreferences(user.preferences),
             ...preferences,
           }),
         },

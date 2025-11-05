@@ -134,9 +134,18 @@ export class BadgesService {
         throw new NotFoundException('Badge not found');
       }
 
+      const updateData = {
+        ...updateBadgeDto,
+        ...(updateBadgeDto.criteria && {
+          criteria: typeof updateBadgeDto.criteria === 'string' 
+            ? updateBadgeDto.criteria 
+            : JSON.stringify(updateBadgeDto.criteria)
+        }),
+      };
+
       return await this.badgesRepository.update({
         where: { id },
-        data: updateBadgeDto,
+        data: updateData,
       });
     } catch (error) {
       this.logger.error(`Failed to update badge ${id}:`, error);
