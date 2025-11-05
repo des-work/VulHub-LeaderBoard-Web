@@ -3,7 +3,6 @@ import { PrismaService } from '../../adapters/database/prisma.service';
 
 export interface AuditLogEntry {
   userId?: string;
-  tenantId: string;
   action: string;
   resource: string;
   resourceId?: string;
@@ -30,11 +29,10 @@ export class AuditLoggerService {
       await this.prisma.auditLog.create({
         data: {
           userId: entry.userId,
-          tenantId: entry.tenantId,
           action: entry.action,
           resource: entry.resource,
           resourceId: entry.resourceId,
-          details: entry.details,
+          details: entry.details ? JSON.stringify(entry.details) : null,
           ipAddress: entry.ipAddress,
           userAgent: entry.userAgent,
           timestamp: entry.timestamp,
@@ -47,7 +45,6 @@ export class AuditLoggerService {
       const logLevel = entry.success ? 'log' : 'error';
       this.logger[logLevel](`Audit: ${entry.action} on ${entry.resource}`, {
         userId: entry.userId,
-        tenantId: entry.tenantId,
         resourceId: entry.resourceId,
         success: entry.success,
         errorMessage: entry.errorMessage,
@@ -64,7 +61,6 @@ export class AuditLoggerService {
   async logAuthEvent(
     action: 'login' | 'logout' | 'register' | 'password_change' | 'token_refresh',
     userId: string,
-    tenantId: string,
     success: boolean,
     details?: Record<string, any>,
     ipAddress?: string,
@@ -72,7 +68,6 @@ export class AuditLoggerService {
   ): Promise<void> {
     await this.log({
       userId,
-      tenantId,
       action,
       resource: 'auth',
       details,
@@ -91,7 +86,6 @@ export class AuditLoggerService {
     resource: string,
     resourceId: string,
     userId: string,
-    tenantId: string,
     success: boolean,
     details?: Record<string, any>,
     ipAddress?: string,
@@ -99,7 +93,6 @@ export class AuditLoggerService {
   ): Promise<void> {
     await this.log({
       userId,
-      tenantId,
       action,
       resource,
       resourceId,
@@ -117,14 +110,12 @@ export class AuditLoggerService {
   async logSecurityEvent(
     action: 'unauthorized_access' | 'rate_limit_exceeded' | 'suspicious_activity' | 'data_breach_attempt',
     userId: string | undefined,
-    tenantId: string,
     details: Record<string, any>,
     ipAddress?: string,
     userAgent?: string
   ): Promise<void> {
     await this.log({
       userId,
-      tenantId,
       action,
       resource: 'security',
       details,
@@ -140,11 +131,9 @@ export class AuditLoggerService {
    */
   async logSystemEvent(
     action: 'startup' | 'shutdown' | 'error' | 'maintenance',
-    tenantId: string,
     details?: Record<string, any>
   ): Promise<void> {
     await this.log({
-      tenantId,
       action,
       resource: 'system',
       details,
@@ -158,13 +147,12 @@ export class AuditLoggerService {
    */
   async getUserAuditLogs(
     userId: string,
-    tenantId: string,
     limit: number = 100,
     offset: number = 0
   ): Promise<any[]> {
     try {
       return await this.prisma.auditLog.findMany({
-        where: { userId, tenantId },
+        where: { userId },
         orderBy: { timestamp: 'desc' },
         take: limit,
         skip: offset,
@@ -188,17 +176,16 @@ export class AuditLoggerService {
   }
 
   /**
-   * Get audit logs for a tenant
+   * Get all audit logs
    */
-  async getTenantAuditLogs(
-    tenantId: string,
+  async getAllAuditLogs(
     limit: number = 1000,
     offset: number = 0,
     fromDate?: Date,
     toDate?: Date
   ): Promise<any[]> {
     try {
-      const where: any = { tenantId };
+      const where: any = {};
       
       if (fromDate || toDate) {
         where.timestamp = {};
@@ -226,7 +213,7 @@ export class AuditLoggerService {
         },
       });
     } catch (error) {
-      this.logger.error('Failed to get tenant audit logs:', error);
+      this.logger.error('Failed to get audit logs:', error);
       return [];
     }
   }
@@ -235,14 +222,12 @@ export class AuditLoggerService {
    * Get security audit logs
    */
   async getSecurityAuditLogs(
-    tenantId: string,
     limit: number = 500,
     offset: number = 0
   ): Promise<any[]> {
     try {
       return await this.prisma.auditLog.findMany({
         where: {
-          tenantId,
           resource: 'security',
         },
         orderBy: { timestamp: 'desc' },
@@ -269,9 +254,9 @@ export class AuditLoggerService {
   /**
    * Get audit statistics
    */
-  async getAuditStatistics(tenantId: string, fromDate?: Date, toDate?: Date) {
+  async getAuditStatistics(fromDate?: Date, toDate?: Date) {
     try {
-      const where: any = { tenantId };
+      const where: any = {};
       
       if (fromDate || toDate) {
         where.timestamp = {};

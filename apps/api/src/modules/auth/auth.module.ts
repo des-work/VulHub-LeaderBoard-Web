@@ -8,7 +8,6 @@ import { AuthService } from './application/auth.service';
 import { JwtStrategy } from './infrastructure/jwt.strategy';
 import { LocalStrategy } from './infrastructure/local.strategy';
 import { TokenBlacklistService } from '../../common/services/token-blacklist.service';
-import { TenantGuard } from '../../common/guards/tenant.guard';
 import { RateLimitGuard } from '../../common/guards/rate-limit.guard';
 import { UsersModule } from '../users/users.module';
 import { RedisModule } from '../../adapters/redis/redis.module';
@@ -35,9 +34,8 @@ import { RedisModule } from '../../adapters/redis/redis.module';
     JwtStrategy, 
     LocalStrategy,
     TokenBlacklistService,
-    TenantGuard,
     RateLimitGuard,
   ],
-  exports: [AuthService, TokenBlacklistService, TenantGuard, RateLimitGuard],
+  exports: [AuthService, TokenBlacklistService, RateLimitGuard],
 })
 export class AuthModule {}
