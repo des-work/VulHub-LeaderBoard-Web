@@ -130,10 +130,10 @@ export class SubmissionsService extends BaseService {
   /**
    * Get submission by ID
    */
-  async findOne(id: string, tenantId: string) {
+  async findOne(id: string) {
     try {
       const submission = await this.submissionsRepository.findUnique({
-        where: { id, tenantId },
+        where: { id },
         include: {
           user: {
             select: {
@@ -169,10 +169,10 @@ export class SubmissionsService extends BaseService {
   /**
    * Update submission
    */
-  async update(id: string, updateSubmissionDto: UpdateSubmissionDto, tenantId: string) {
+  async update(id: string, updateSubmissionDto: UpdateSubmissionDto) {
     try {
       const submission = await this.submissionsRepository.findUnique({
-        where: { id, tenantId },
+        where: { id },
       });
 
       if (!submission) {
@@ -184,7 +184,7 @@ export class SubmissionsService extends BaseService {
       }
 
       return await this.submissionsRepository.update({
-        where: { id, tenantId },
+        where: { id },
         data: updateSubmissionDto,
       });
     } catch (error) {
@@ -197,8 +197,8 @@ export class SubmissionsService extends BaseService {
    * Review submission (instructor/admin only)
    */
   @HandleErrors('SubmissionsService.review')
-  async review(id: string, reviewDto: SubmissionReviewDto, reviewerId: string, tenantId: string) {
-    this.validateInput({ id, reviewDto, reviewerId, tenantId }, (data) => {
+  async review(id: string, reviewDto: SubmissionReviewDto, reviewerId: string) {
+    this.validateInput({ id, reviewDto, reviewerId }, (data) => {
       if (!data.id || data.id.trim().length === 0) {
         throw new ValidationError('id', 'Submission ID is required');
       }
@@ -215,10 +215,10 @@ export class SubmissionsService extends BaseService {
 
     return this.handleOperation(
       async () => {
-        this.logOperationStart('review', { id, reviewerId, tenantId, status: reviewDto.status });
+        this.logOperationStart('review', { id, reviewerId, status: reviewDto.status });
         
         const submission = await this.submissionsRepository.findUnique({
-          where: { id, tenantId },
+          where: { id },
           include: {
             user: true,
             project: true,
@@ -234,7 +234,7 @@ export class SubmissionsService extends BaseService {
         }
 
         const updatedSubmission = await this.submissionsRepository.update({
-          where: { id, tenantId },
+          where: { id },
           data: {
             status: reviewDto.status,
             score: reviewDto.score,
@@ -250,7 +250,6 @@ export class SubmissionsService extends BaseService {
         this.logOperationSuccess('review', { 
           id, 
           reviewerId, 
-          tenantId, 
           status: reviewDto.status,
           score: reviewDto.score 
         });
@@ -258,17 +257,17 @@ export class SubmissionsService extends BaseService {
         return updatedSubmission;
       },
       'SubmissionsService.review',
-      { id, reviewerId, tenantId, status: reviewDto.status }
+      { id, reviewerId, status: reviewDto.status }
     );
   }
 
   /**
    * Delete submission
    */
-  async remove(id: string, tenantId: string) {
+  async remove(id: string) {
     try {
       const submission = await this.submissionsRepository.findUnique({
-        where: { id, tenantId },
+        where: { id },
       });
 
       if (!submission) {
@@ -280,7 +279,7 @@ export class SubmissionsService extends BaseService {
       }
 
       return await this.submissionsRepository.delete({
-        where: { id, tenantId },
+        where: { id },
       });
     } catch (error) {
       this.logger.error(`Failed to delete submission ${id}:`, error);
@@ -291,10 +290,10 @@ export class SubmissionsService extends BaseService {
   /**
    * Get user's submissions
    */
-  async findByUser(userId: string, tenantId: string) {
+  async findByUser(userId: string) {
     try {
       return await this.submissionsRepository.findMany({
-        where: { userId, tenantId },
+        where: { userId },
         orderBy: { createdAt: 'desc' },
         include: {
           project: {
@@ -316,10 +315,10 @@ export class SubmissionsService extends BaseService {
   /**
    * Get project submissions
    */
-  async findByProject(projectId: string, tenantId: string) {
+  async findByProject(projectId: string) {
     try {
       return await this.submissionsRepository.findMany({
-        where: { projectId, tenantId },
+        where: { projectId },
         orderBy: { createdAt: 'desc' },
         include: {
           user: {
@@ -341,13 +340,13 @@ export class SubmissionsService extends BaseService {
   /**
    * Get submission statistics
    */
-  async getStats(tenantId: string) {
+  async getStats() {
     try {
       const [total, pending, approved, rejected] = await Promise.all([
-        this.submissionsRepository.count({ where: { tenantId } }),
-        this.submissionsRepository.count({ where: { tenantId, status: 'PENDING' } }),
-        this.submissionsRepository.count({ where: { tenantId, status: 'APPROVED' } }),
-        this.submissionsRepository.count({ where: { tenantId, status: 'REJECTED' } }),
+        this.submissionsRepository.count({ where: {} }),
+        this.submissionsRepository.count({ where: { status: 'PENDING' } }),
+        this.submissionsRepository.count({ where: { status: 'APPROVED' } }),
+        this.submissionsRepository.count({ where: { status: 'REJECTED' } }),
       ]);
 
       return {
