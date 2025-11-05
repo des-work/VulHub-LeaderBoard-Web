@@ -8,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "cd apps/api && prisma generate",
+    "postinstall": "npx tsc -p packages/schema/tsconfig.json && npx tsc -p packages/utils/tsconfig.json && cd apps/api && prisma generate",
     "dev": "turbo run dev",
     "build": "turbo run build",
     "test": "turbo run test",
