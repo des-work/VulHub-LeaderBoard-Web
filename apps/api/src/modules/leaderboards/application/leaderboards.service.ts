@@ -40,19 +40,18 @@ export class LeaderboardsService {
    * Get overall leaderboard
    */
   async getOverallLeaderboard(
-    tenantId: string,
     page: number = 1,
     limit: number = 50,
     timeRange?: 'week' | 'month' | 'all',
   ) {
     try {
-      this.logger.log(`Getting overall leaderboard for tenant ${tenantId}`);
+      this.logger.log(`Getting overall leaderboard`);
 
       // Use cache service with getOrSet pattern
-      const cacheKey = `leaderboard:overall:${tenantId}:${timeRange || 'all'}`;
+      const cacheKey = `leaderboard:overall:${timeRange || 'all'}`;
       const leaderboard = await this.cacheService.getOrSet(
         cacheKey,
-        () => this.leaderboardsRepository.calculateOverallLeaderboard(tenantId, timeRange),
+        () => this.leaderboardsRepository.calculateOverallLeaderboard(timeRange),
         { ttl: 300, prefix: 'leaderboard' } // 5 minutes cache
       );
 
@@ -68,7 +67,6 @@ export class LeaderboardsService {
    */
   async getProjectLeaderboard(
     projectId: string,
-    tenantId: string,
     page: number = 1,
     limit: number = 50,
   ) {
@@ -78,7 +76,7 @@ export class LeaderboardsService {
       const cacheKey = `leaderboard:project:${projectId}`;
       const leaderboard = await this.cacheService.getOrSet(
         cacheKey,
-        () => this.leaderboardsRepository.calculateProjectLeaderboard(projectId, tenantId),
+        () => this.leaderboardsRepository.calculateProjectLeaderboard(projectId),
         { ttl: 120, prefix: 'leaderboard' } // 2 minutes cache
       );
 
@@ -94,17 +92,16 @@ export class LeaderboardsService {
    */
   async getCategoryLeaderboard(
     category: string,
-    tenantId: string,
     page: number = 1,
     limit: number = 50,
   ) {
     try {
       this.logger.log(`Getting category leaderboard for category ${category}`);
 
-      const cacheKey = `leaderboard:category:${category}:${tenantId}`;
+      const cacheKey = `leaderboard:category:${category}`;
       const leaderboard = await this.cacheService.getOrSet(
         cacheKey,
-        () => this.leaderboardsRepository.calculateCategoryLeaderboard(category, tenantId),
+        () => this.leaderboardsRepository.calculateCategoryLeaderboard(category),
         { ttl: 300, prefix: 'leaderboard' } // 5 minutes cache
       );
 
@@ -118,12 +115,12 @@ export class LeaderboardsService {
   /**
    * Get user's rank and statistics
    */
-  async getUserRank(userId: string, tenantId: string) {
+  async getUserRank(userId: string) {
     try {
-      const cacheKey = `user:rank:${userId}:${tenantId}`;
+      const cacheKey = `user:rank:${userId}`;
       const userRank = await this.cacheService.getOrSet(
         cacheKey,
-        () => this.leaderboardsRepository.getUserRank(userId, tenantId),
+        () => this.leaderboardsRepository.getUserRank(userId),
         { ttl: 60, prefix: 'user' } // 1 minute cache
       );
 
@@ -137,12 +134,12 @@ export class LeaderboardsService {
   /**
    * Get leaderboard statistics
    */
-  async getLeaderboardStats(tenantId: string): Promise<LeaderboardStats> {
+  async getLeaderboardStats(): Promise<LeaderboardStats> {
     try {
-      const cacheKey = `leaderboard:stats:${tenantId}`;
+      const cacheKey = `leaderboard:stats`;
       const stats = await this.cacheService.getOrSet(
         cacheKey,
-        () => this.leaderboardsRepository.getLeaderboardStats(tenantId),
+        () => this.leaderboardsRepository.getLeaderboardStats(),
         { ttl: 300, prefix: 'leaderboard' } // 5 minutes cache
       );
 
@@ -156,15 +153,15 @@ export class LeaderboardsService {
   /**
    * Update leaderboard when submission is approved
    */
-  async updateLeaderboardOnSubmission(submissionId: string, tenantId: string) {
+  async updateLeaderboardOnSubmission(submissionId: string) {
     try {
       this.logger.log(`Updating leaderboard for submission ${submissionId}`);
 
       // Clear relevant caches
-      await this.clearLeaderboardCaches(tenantId);
+      await this.clearLeaderboardCaches();
 
       // Recalculate and broadcast updates
-      await this.broadcastLeaderboardUpdate(tenantId);
+      await this.broadcastLeaderboardUpdate();
 
       this.logger.log('Leaderboard updated successfully');
     } catch (error) {
@@ -176,12 +173,12 @@ export class LeaderboardsService {
   /**
    * Get top performers
    */
-  async getTopPerformers(tenantId: string, limit: number = 10) {
+  async getTopPerformers(limit: number = 10) {
     try {
-      const cacheKey = `leaderboard:top:${tenantId}:${limit}`;
+      const cacheKey = `leaderboard:top:${limit}`;
       const topPerformers = await this.cacheService.getOrSet(
         cacheKey,
-        () => this.leaderboardsRepository.getTopPerformers(tenantId, limit),
+        () => this.leaderboardsRepository.getTopPerformers(limit),
         { ttl: 120, prefix: 'leaderboard' } // 2 minutes cache
       );
 
@@ -195,9 +192,9 @@ export class LeaderboardsService {
   /**
    * Get recent activity
    */
-  async getRecentActivity(tenantId: string, limit: number = 20) {
+  async getRecentActivity(limit: number = 20) {
     try {
-      return await this.leaderboardsRepository.getRecentActivity(tenantId, limit);
+      return await this.leaderboardsRepository.getRecentActivity(limit);
     } catch (error) {
       this.logger.error('Failed to get recent activity:', error);
       throw error;
@@ -228,15 +225,15 @@ export class LeaderboardsService {
   /**
    * Clear leaderboard caches
    */
-  private async clearLeaderboardCaches(tenantId: string) {
+  private async clearLeaderboardCaches() {
     try {
       const patterns = [
-        `leaderboard:overall:${tenantId}:*`,
+        `leaderboard:overall:*`,
         `leaderboard:project:*`,
-        `leaderboard:category:*:${tenantId}`,
-        `leaderboard:stats:${tenantId}`,
-        `leaderboard:top:${tenantId}:*`,
-        `user:rank:*:${tenantId}`,
+        `leaderboard:category:*`,
+        `leaderboard:stats`,
+        `leaderboard:top:*`,
+        `user:rank:*`,
       ];
 
       for (const pattern of patterns) {
@@ -251,20 +248,20 @@ export class LeaderboardsService {
   /**
    * Broadcast leaderboard updates via WebSocket
    */
-  private async broadcastLeaderboardUpdate(tenantId: string) {
+  private async broadcastLeaderboardUpdate() {
     try {
       // Get updated leaderboard data
-      const leaderboard = await this.getOverallLeaderboard(tenantId, 1, 10);
-      const stats = await this.getLeaderboardStats(tenantId);
+      const leaderboard = await this.getOverallLeaderboard(1, 10);
+      const stats = await this.getLeaderboardStats();
 
-      // Broadcast to all connected clients in the tenant
-      this.webSocketGateway.server.to(`tenant:${tenantId}`).emit('leaderboard:update', {
+      // Broadcast to all connected clients
+      this.webSocketGateway.server.emit('leaderboard:update', {
         leaderboard: leaderboard.data,
         stats,
         timestamp: new Date().toISOString(),
       });
 
-      this.logger.log(`Broadcasted leaderboard update for tenant ${tenantId}`);
+      this.logger.log(`Broadcasted leaderboard update`);
     } catch (error) {
       this.logger.error('Failed to broadcast leaderboard update:', error);
     }

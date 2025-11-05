@@ -32,7 +32,6 @@ export class LeaderboardsController {
     @Query('timeRange') timeRange?: 'week' | 'month' | 'all',
   ) {
     return this.leaderboardsService.getOverallLeaderboard(
-      req.user.tenantId,
       page,
       limit,
       timeRange,
@@ -53,7 +52,6 @@ export class LeaderboardsController {
   ) {
     return this.leaderboardsService.getProjectLeaderboard(
       projectId,
-      req.user.tenantId,
       page,
       limit,
     );
@@ -73,7 +71,6 @@ export class LeaderboardsController {
   ) {
     return this.leaderboardsService.getCategoryLeaderboard(
       category,
-      req.user.tenantId,
       page,
       limit,
     );
@@ -84,7 +81,7 @@ export class LeaderboardsController {
   @ApiResponse({ status: 200, description: 'User rank retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getMyRank(@Request() req) {
-    return this.leaderboardsService.getUserRank(req.user.id, req.user.tenantId);
+    return this.leaderboardsService.getUserRank(req.user.id);
   }
 
   @Get('stats')
@@ -92,7 +89,7 @@ export class LeaderboardsController {
   @ApiResponse({ status: 200, description: 'Statistics retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getStats(@Request() req) {
-    return this.leaderboardsService.getLeaderboardStats(req.user.tenantId);
+    return this.leaderboardsService.getLeaderboardStats();
   }
 
   @Get('top-performers')
@@ -104,7 +101,7 @@ export class LeaderboardsController {
     @Request() req,
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10,
   ) {
-    return this.leaderboardsService.getTopPerformers(req.user.tenantId, limit);
+    return this.leaderboardsService.getTopPerformers(limit);
   }
 
   @Get('recent-activity')
@@ -116,6 +113,6 @@ export class LeaderboardsController {
     @Request() req,
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 20,
   ) {
-    return this.leaderboardsService.getRecentActivity(req.user.tenantId, limit);
+    return this.leaderboardsService.getRecentActivity(limit);
   }
 }
