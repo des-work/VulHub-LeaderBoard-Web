@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { SubmissionsRepository } from '../infrastructure/submissions.repository';
 import { EmailService } from '../../../adapters/email/email.service';
+import { FileStorageService } from '../../../adapters/storage/file-storage.service';
 import { CreateSubmissionDto, UpdateSubmissionDto, SubmissionReviewDto } from '@vulhub/schema';
 import { BaseService } from '../../../common/services/base.service';
 import { ErrorHandlerService } from '../../../common/errors/error-handler.service';
@@ -12,6 +13,7 @@ export class SubmissionsService extends BaseService {
   constructor(
     private submissionsRepository: SubmissionsRepository,
     private emailService: EmailService,
+    private fileStorageService: FileStorageService,
     errorHandler: ErrorHandlerService,
   ) {
     super(submissionsRepository, errorHandler);
@@ -60,6 +62,66 @@ export class SubmissionsService extends BaseService {
       });
     } catch (error) {
       this.logger.error('Failed to create submission:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new submission with file uploads
+   */
+  async createWithFiles(
+    createSubmissionDto: CreateSubmissionDto,
+    userId: string,
+    files?: Express.Multer.File[],
+  ) {
+    try {
+      this.logger.log(`Creating submission with files for user ${userId}`);
+
+      // Validate project exists and is active
+      const project = await this.submissionsRepository.findProject(createSubmissionDto.projectId);
+      if (!project || !project.isActive) {
+        throw new BadRequestException('Project not found or not active');
+      }
+
+      // Check if user already has a submission for this project
+      const existingSubmission = await this.submissionsRepository.findFirst({
+        where: {
+          userId,
+          projectId: createSubmissionDto.projectId,
+        },
+      });
+
+      if (existingSubmission) {
+        throw new BadRequestException('Submission already exists for this project');
+      }
+
+      // Upload evidence files if provided
+      const evidenceUrls: string[] = [];
+      
+      if (files && files.length > 0) {
+        const uploadResults = await this.fileStorageService.uploadMultipleEvidence(
+          userId,
+          createSubmissionDto.projectId,
+          files,
+        );
+        evidenceUrls.push(...uploadResults.map(r => r.path));
+      } else if (createSubmissionDto.evidenceUrls) {
+        // Handle existing URL strings
+        const parsed = typeof createSubmissionDto.evidenceUrls === 'string' 
+          ? JSON.parse(createSubmissionDto.evidenceUrls) 
+          : createSubmissionDto.evidenceUrls;
+        evidenceUrls.push(...parsed);
+      }
+
+      return await this.submissionsRepository.create({
+        ...createSubmissionDto,
+        user: { connect: { id: userId } },
+        project: { connect: { id: createSubmissionDto.projectId } },
+        evidenceUrls: JSON.stringify(evidenceUrls),  // Store as JSON string
+        status: 'PENDING',
+      });
+    } catch (error) {
+      this.logger.error('Failed to create submission with files:', error);
       throw error;
     }
   }

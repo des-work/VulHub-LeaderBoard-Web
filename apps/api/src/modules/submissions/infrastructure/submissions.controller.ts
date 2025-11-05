@@ -10,8 +10,11 @@ import {
   Request,
   Query,
   ParseIntPipe,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { SubmissionsService } from '../application/submissions.service';
 import { JwtAuthGuard } from '../../auth/infrastructure/jwt-auth.guard';
 import { CreateSubmissionDto, UpdateSubmissionDto, SubmissionReviewDto } from '@vulhub/schema';
@@ -24,11 +27,42 @@ export class SubmissionsController {
   constructor(private readonly submissionsService: SubmissionsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new submission' })
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'evidence', maxCount: 10 }, // Allow up to 10 evidence files
+    ]),
+  )
+  @ApiOperation({ summary: 'Create a new submission with optional file uploads' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        projectId: { type: 'string' },
+        notes: { type: 'string' },
+        evidence: {
+          type: 'array',
+          items: { type: 'string', format: 'binary' },
+        },
+      },
+    },
+  })
   @ApiResponse({ status: 201, description: 'Submission created successfully' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  create(@Body() createSubmissionDto: CreateSubmissionDto, @Request() req) {
+  create(
+    @Body() createSubmissionDto: CreateSubmissionDto,
+    @UploadedFiles() files: { evidence?: Express.Multer.File[] },
+    @Request() req,
+  ) {
+    const evidenceFiles = files?.evidence || [];
+    if (evidenceFiles.length > 0) {
+      return this.submissionsService.createWithFiles(
+        createSubmissionDto,
+        req.user.id,
+        evidenceFiles,
+      );
+    }
     return this.submissionsService.create(createSubmissionDto, req.user.id);
   }
 
