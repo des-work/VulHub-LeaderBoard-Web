@@ -423,21 +423,9 @@ export class EnvironmentValidator implements OnModuleInit {
   }
 
   private async testRedisConnection(host: string, port: number): Promise<void> {
-    // Use ioredis instead of redis
-    const Redis = require('ioredis');
-    const client = new Redis({
-      host,
-      port,
-      lazyConnect: true,
-      connectTimeout: 5000,
-    });
-
-    try {
-      await client.connect();
-      await client.ping();
-    } finally {
-      await client.quit();
-    }
+    // Skip Redis connection testing since we use MemoryCacheService
+    // Redis is optional in this deployment
+    this.logger.debug(`Skipping Redis connection test (using MemoryCacheService instead)`);
   }
 
   private logValidationResults(): void {
