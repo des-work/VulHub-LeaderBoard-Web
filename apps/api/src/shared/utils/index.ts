@@ -4,6 +4,5 @@ export * from './array';
 export * from './date';
 export * from './format';
 export * from './object';
-export * from './react';
 export * from './string';
 export * from './validation';
