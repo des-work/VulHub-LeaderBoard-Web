@@ -7,7 +7,6 @@ export const CreateUserSchema = z.object({
   firstName: z.string().min(1).max(50),
   lastName: z.string().min(1).max(50),
   password: z.string().min(8).max(100),
-  tenantId: z.string().cuid(),
   role: z.nativeEnum(UserRole).default(UserRole.STUDENT),
 });
 
@@ -26,7 +25,6 @@ export const UserResponseSchema = z.object({
   avatarUrl: z.string().url().nullable(),
   status: z.nativeEnum(UserStatus),
   role: z.nativeEnum(UserRole),
-  tenantId: z.string().cuid(),
   lastLoginAt: z.string().datetime().nullable(),
   preferences: z.record(z.any()).nullable(),
   createdAt: z.string().datetime(),

@@ -5,6 +5,7 @@ import { User, AuthState, LoginCredentials, RegisterData } from './types';
 import { AuthApi, transformApiUserToFrontendUser } from '../api/endpoints';
 import { TokenRefreshManager, storeTokens, clearTokens, getStoredTokens, isTokenExpired } from './tokenManager';
 import { setErrorTrackingUser } from '../api/errorTracking';
+import { validateTestCredentials } from './testCredentials';
 
 // Helper function for better error messages
 function getAuthErrorMessage(error: any): string {
@@ -38,13 +39,22 @@ const authService = {
       // Mock implementation for development
       await new Promise(resolve => setTimeout(resolve, 200));
 
+      // Validate credentials against test accounts
+      const testAccount = validateTestCredentials(credentials.email, credentials.password);
+      
+      if (!testAccount) {
+        // Invalid credentials - throw error
+        throw new Error('Invalid email or password. Please check your credentials.');
+      }
+
+      // Valid credentials - create user from test account
       const mockUser: User = {
         id: Date.now().toString(),
-        email: credentials.email,
-        name: credentials.email === 'admin@vulhub.com' ? 'Admin User' : 'Student User',
-        role: credentials.email === 'admin@vulhub.com' ? 'admin' : 'student',
-        points: credentials.email === 'admin@vulhub.com' ? 0 : 1000,
-        level: credentials.email === 'admin@vulhub.com' ? 1 : 3,
+        email: testAccount.email,
+        name: testAccount.name,
+        role: testAccount.role,
+        points: testAccount.points,
+        level: testAccount.level,
         joinDate: new Date(),
         lastActive: new Date(),
         completedActivities: [],

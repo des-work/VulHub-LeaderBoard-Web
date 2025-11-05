@@ -220,7 +220,7 @@ export function checkDailyRateLimit(
 function isValidChallengeId(id: string): boolean {
   // Accept any non-empty string for now
   // Can be enhanced to check against known challenge IDs
-  return id && id.length > 0 && id.length <= 255;
+  return Boolean(id && id.length > 0 && id.length <= 255);
 }
 
 /**

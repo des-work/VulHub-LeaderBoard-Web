@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../lib/auth/context';
 import { useRouter } from 'next/navigation';
+import { TEST_ACCOUNTS } from '../../lib/auth/testCredentials';
 
 export default function AuthPage() {
   const { isAuthenticated, isLoading, login } = useAuth();
@@ -199,6 +200,71 @@ export default function AuthPage() {
             {isSubmitting ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
+
+        {/* Test Credentials Helper */}
+        {process.env.NEXT_PUBLIC_USE_MOCK_AUTH === 'true' && (
+          <div style={{
+            marginTop: '24px',
+            padding: '16px',
+            backgroundColor: 'rgba(0, 255, 0, 0.05)',
+            border: '1px solid rgba(0, 255, 0, 0.3)',
+            borderRadius: '4px'
+          }}>
+            <h3 style={{
+              fontSize: '12px',
+              marginBottom: '12px',
+              color: '#0f0',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              letterSpacing: '1px'
+            }}>
+              🔑 Test Accounts (Dev Mode)
+            </h3>
+            <div style={{ fontSize: '11px', color: '#888', lineHeight: '1.6' }}>
+              {TEST_ACCOUNTS.map((account, idx) => (
+                <div 
+                  key={idx}
+                  style={{
+                    marginBottom: '8px',
+                    padding: '8px',
+                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                    borderRadius: '3px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onClick={() => {
+                    setEmail(account.email);
+                    setPassword(account.password);
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
+                    e.currentTarget.style.borderLeft = '3px solid #0f0';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+                    e.currentTarget.style.borderLeft = 'none';
+                  }}
+                >
+                  <div style={{ color: '#0f0', marginBottom: '2px' }}>
+                    <strong>{account.role.toUpperCase()}</strong>: {account.name}
+                  </div>
+                  <div style={{ color: '#666', fontSize: '10px' }}>
+                    {account.email} / {account.password}
+                  </div>
+                </div>
+              ))}
+              <div style={{ 
+                marginTop: '12px', 
+                fontSize: '10px', 
+                color: '#666',
+                fontStyle: 'italic',
+                textAlign: 'center'
+              }}>
+                💡 Click any account to auto-fill the form
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

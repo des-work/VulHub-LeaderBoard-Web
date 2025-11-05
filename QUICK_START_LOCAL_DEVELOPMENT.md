@@ -141,9 +141,15 @@ npm run dev:local
 
 ### 1. Check Frontend
 - Open http://localhost:3000
-- You should see the login page
-- Login with test credentials
-- Should redirect to home/leaderboard
+- You should see the login page with test credentials displayed
+- Login with any of these test accounts:
+  - **Admin**: `admin@vulhub.com` / `admin123`
+  - **Grader**: `grader@vulhub.com` / `grader123`
+  - **Student**: `student@vulhub.com` / `student123`
+  - **Neo**: `neo@matrix.io` / `matrix123`
+  - **Trinity**: `trinity@matrix.io` / `matrix123`
+- Should redirect to home/leaderboard after successful login
+- Invalid credentials should show an error notification
 
 ### 2. Check Backend
 - Open http://localhost:4010/api/v1/health

@@ -158,7 +158,7 @@ export function createCurrentUserRing() {
  * Create rank badge background
  */
 export function createRankBadgeBackground(rank: number) {
-  const config = getRankConfig(rank);
+  const config = getRankConfig(rank) as any;
   
   if ('gradient' in config) {
     return {
@@ -168,9 +168,9 @@ export function createRankBadgeBackground(rank: number) {
   }
   
   return {
-    backgroundColor: config.backgroundColor,
-    borderColor: config.borderColor,
-    borderWidth: config.borderWidth,
+    backgroundColor: config.backgroundColor || 'transparent',
+    borderColor: config.borderColor || 'transparent',
+    borderWidth: config.borderWidth || '1px',
   };
 }
 
