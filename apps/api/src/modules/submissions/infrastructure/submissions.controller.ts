@@ -29,7 +29,7 @@ export class SubmissionsController {
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   create(@Body() createSubmissionDto: CreateSubmissionDto, @Request() req) {
-    return this.submissionsService.create(createSubmissionDto, req.user.id, req.user.tenantId);
+    return this.submissionsService.create(createSubmissionDto, req.user.id);
   }
 
   @Get()
@@ -49,7 +49,7 @@ export class SubmissionsController {
     @Query('projectId') projectId?: string,
     @Query('userId') userId?: string,
   ) {
-    return this.submissionsService.findAll(req.user.tenantId, page, limit, status, projectId, userId);
+    return this.submissionsService.findAll(page, limit, status, projectId, userId);
   }
 
   @Get('my-submissions')
@@ -57,7 +57,7 @@ export class SubmissionsController {
   @ApiResponse({ status: 200, description: 'User submissions retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findMySubmissions(@Request() req) {
-    return this.submissionsService.findByUser(req.user.id, req.user.tenantId);
+    return this.submissionsService.findByUser(req.user.id);
   }
 
   @Get('project/:projectId')
@@ -65,7 +65,7 @@ export class SubmissionsController {
   @ApiResponse({ status: 200, description: 'Project submissions retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findByProject(@Param('projectId') projectId: string, @Request() req) {
-    return this.submissionsService.findByProject(projectId, req.user.tenantId);
+    return this.submissionsService.findByProject(projectId);
   }
 
   @Get('stats')
@@ -73,7 +73,7 @@ export class SubmissionsController {
   @ApiResponse({ status: 200, description: 'Statistics retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getStats(@Request() req) {
-    return this.submissionsService.getStats(req.user.tenantId);
+    return this.submissionsService.getStats();
   }
 
   @Get(':id')
@@ -82,7 +82,7 @@ export class SubmissionsController {
   @ApiResponse({ status: 404, description: 'Submission not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findOne(@Param('id') id: string, @Request() req) {
-    return this.submissionsService.findOne(id, req.user.tenantId);
+    return this.submissionsService.findOne(id);
   }
 
   @Patch(':id')
@@ -91,7 +91,7 @@ export class SubmissionsController {
   @ApiResponse({ status: 404, description: 'Submission not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   update(@Param('id') id: string, @Body() updateSubmissionDto: UpdateSubmissionDto, @Request() req) {
-    return this.submissionsService.update(id, updateSubmissionDto, req.user.tenantId);
+    return this.submissionsService.update(id, updateSubmissionDto);
   }
 
   @Patch(':id/review')
@@ -100,7 +100,7 @@ export class SubmissionsController {
   @ApiResponse({ status: 404, description: 'Submission not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   review(@Param('id') id: string, @Body() reviewDto: SubmissionReviewDto, @Request() req) {
-    return this.submissionsService.review(id, reviewDto, req.user.id, req.user.tenantId);
+    return this.submissionsService.review(id, reviewDto, req.user.id);
   }
 
   @Delete(':id')
@@ -109,6 +109,6 @@ export class SubmissionsController {
   @ApiResponse({ status: 404, description: 'Submission not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   remove(@Param('id') id: string, @Request() req) {
-    return this.submissionsService.remove(id, req.user.tenantId);
+    return this.submissionsService.remove(id);
   }
 }

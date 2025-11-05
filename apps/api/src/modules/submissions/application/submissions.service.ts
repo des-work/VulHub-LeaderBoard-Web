@@ -22,12 +22,12 @@ export class SubmissionsService extends BaseService {
   /**
    * Create a new submission
    */
-  async create(createSubmissionDto: CreateSubmissionDto, userId: string, tenantId: string) {
+  async create(createSubmissionDto: CreateSubmissionDto, userId: string) {
     try {
       this.logger.log(`Creating submission for user ${userId}`);
 
       // Validate project exists and is active
-      const project = await this.submissionsRepository.findProject(createSubmissionDto.projectId, tenantId);
+      const project = await this.submissionsRepository.findProject(createSubmissionDto.projectId);
       if (!project || !project.isActive) {
         throw new BadRequestException('Project not found or not active');
       }
@@ -37,7 +37,6 @@ export class SubmissionsService extends BaseService {
         where: {
           userId,
           projectId: createSubmissionDto.projectId,
-          tenantId,
         },
       });
 
@@ -54,7 +53,6 @@ export class SubmissionsService extends BaseService {
       return await this.submissionsRepository.create({
         ...createSubmissionDto,
         user: { connect: { id: userId } },
-        tenant: { connect: { id: tenantId } },
         project: { connect: { id: createSubmissionDto.projectId } },
         evidenceUrls,
         status: 'PENDING',
@@ -69,7 +67,6 @@ export class SubmissionsService extends BaseService {
    * Get all submissions with pagination and filtering
    */
   async findAll(
-    tenantId: string,
     page: number = 1,
     limit: number = 20,
     status?: string,
@@ -80,7 +77,6 @@ export class SubmissionsService extends BaseService {
       const skip = (page - 1) * limit;
       
       const where = {
-        tenantId,
         ...(status && { status: status as 'PENDING' | 'APPROVED' | 'REJECTED' }),
         ...(projectId && { projectId }),
         ...(userId && { userId }),

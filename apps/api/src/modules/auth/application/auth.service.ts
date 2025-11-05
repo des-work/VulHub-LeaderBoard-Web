@@ -22,16 +22,10 @@ export class AuthService {
   /**
    * Validate user credentials
    */
-  async validateUser(email: string, password: string, tenantId: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<any> {
     try {
       const user = await this.prisma.user.findUnique({
-        where: { 
-          email_tenantId: {
-            email,
-            tenantId
-          }
-        },
-        include: { tenant: true },
+        where: { email },
       });
 
       if (!user) {
@@ -64,14 +58,13 @@ export class AuthService {
   /**
    * Login user and generate tokens
    */
-  async login(loginDto: LoginDto, tenantId: string) {
+  async login(loginDto: LoginDto) {
     try {
-      const user = await this.validateUser(loginDto.email, loginDto.password, tenantId);
+      const user = await this.validateUser(loginDto.email, loginDto.password);
       
       const payload = {
         sub: user.id,
         email: user.email,
-        tenantId: user.tenantId,
         role: user.role,
       };
 
@@ -91,7 +84,6 @@ export class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
           role: user.role,
-          tenantId: user.tenantId,
           avatarUrl: user.avatarUrl,
         },
         accessToken,
@@ -110,12 +102,7 @@ export class AuthService {
     try {
       // Check if user already exists
       const existingUser = await this.prisma.user.findUnique({
-        where: { 
-          email_tenantId: {
-            email: registerDto.email,
-            tenantId: registerDto.tenantId
-          }
-        },
+        where: { email: registerDto.email },
       });
 
       if (existingUser) {
@@ -135,11 +122,9 @@ export class AuthService {
           password: hashedPassword,
           firstName: registerDto.firstName,
           lastName: registerDto.lastName,
-          tenantId: registerDto.tenantId,
           role: 'STUDENT',
           status: 'ACTIVE',
         },
-        include: { tenant: true },
       });
 
       const { password: _, ...result } = user;

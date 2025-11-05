@@ -10,26 +10,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  domain    String?  @unique
+  settings  String? @default("{}")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users        User[]
+  projects     Project[]
+        submissions  Submission[]
+        badges       Badge[]
+        userBadges   UserBadge[]
+        leaderboards Leaderboard[]
+        events       EventStore[]
+        auditLogs    AuditLog[]
+
+  @@map("tenants")
+}
+
 model User {
   id           String   @id @default(cuid())
-  email        String   @unique
+  email        String
   firstName    String
   lastName     String
   avatarUrl    String?
   password     String?
   status       UserStatus @default(ACTIVE)
   role         UserRole @default(STUDENT)
+  tenantId     String
   lastLoginAt  DateTime?
   preferences  String? @default("{}")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   // Relations
-  submissions Submission[]
-  userBadges  UserBadge[]
-  leaderboards Leaderboard[]
-  auditLogs   AuditLog[]
+  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+        submissions Submission[]
+        userBadges  UserBadge[]
+        leaderboards Leaderboard[]
+        auditLogs   AuditLog[]
 
+  @@unique([email, tenantId])
   @@map("users")
 }
 
@@ -44,10 +69,12 @@ model Project {
   isActive    Boolean @default(true)
   isPublic    Boolean @default(true)
   tags        String[]
+  tenantId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   // Relations
+  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   submissions Submission[]
 
   @@map("projects")
@@ -57,6 +84,7 @@ model Submission {
   id           String           @id @default(cuid())
   projectId    String
   userId       String
+  tenantId     String
   status       SubmissionStatus @default(PENDING)
   score        Int?
   feedback     String?
@@ -70,6 +98,7 @@ model Submission {
   // Relations
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@map("submissions")
 }
@@ -83,10 +112,12 @@ model Badge {
   difficulty  String?
   criteria    String?
   isActive    Boolean @default(true)
+  tenantId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   // Relations
+  tenant     Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   userBadges UserBadge[]
 
   @@map("badges")
@@ -96,33 +127,60 @@ model UserBadge {
   id       String   @id @default(cuid())
   userId   String
   badgeId  String
+  tenantId String
   earnedAt DateTime @default(now())
 
   // Relations
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   badge  Badge  @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, badgeId])
+  @@unique([userId, badgeId, tenantId])
   @@map("user_badges")
 }
 
 model Leaderboard {
   id        String   @id @default(cuid())
   userId    String
+  tenantId  String
   score     Int @default(0)
   rank      Int @default(0)
   updatedAt DateTime @updatedAt
 
   // Relations
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@unique([userId])
+  @@unique([userId, tenantId])
   @@map("leaderboards")
+}
+
+model EventStore {
+  id           String   @id @default(cuid())
+  eventId      String   @unique
+  eventType    String
+  aggregateId  String
+  aggregateType String
+  eventData    String
+  occurredOn   DateTime
+  version      Int
+  tenantId     String
+  createdAt    DateTime @default(now())
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([aggregateId])
+  @@index([eventType])
+  @@index([tenantId])
+  @@index([occurredOn])
+  @@map("event_store")
 }
 
 model AuditLog {
   id           String    @id @default(cuid())
   userId       String?
+  tenantId     String
   action       String
   resource     String
   resourceId   String?
@@ -134,9 +192,11 @@ model AuditLog {
   errorMessage String?
 
   // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId])
+  @@index([tenantId])
   @@index([action])
   @@index([resource])
   @@index([timestamp])

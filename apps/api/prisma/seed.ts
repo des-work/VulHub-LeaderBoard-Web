@@ -6,36 +6,10 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Starting database seeding...');
 
-  // Create default tenant
-  const tenant = await prisma.tenant.upsert({
-    where: { id: 'default-tenant' },
-    update: {},
-    create: {
-      id: 'default-tenant',
-      name: 'VulHub Academy',
-      domain: 'localhost',
-      settings: {
-        theme: 'default',
-        features: {
-          leaderboards: true,
-          badges: true,
-          notifications: true,
-        },
-      },
-    },
-  });
-
-  console.log('✅ Created default tenant');
-
   // Create admin user
   const hashedPassword = await bcrypt.hash('admin123', 12);
   const admin = await prisma.user.upsert({
-    where: { 
-      email_tenantId: {
-        email: 'admin@vulhub.com',
-        tenantId: tenant.id,
-      },
-    },
+    where: { email: 'admin@vulhub.com' },
     update: {},
     create: {
       email: 'admin@vulhub.com',
@@ -44,7 +18,6 @@ async function main() {
       password: hashedPassword,
       role: 'ADMIN',
       status: 'ACTIVE',
-      tenantId: tenant.id,
       preferences: {
         theme: 'dark',
         notifications: true,
@@ -56,12 +29,7 @@ async function main() {
 
   // Create instructor user
   const instructor = await prisma.user.upsert({
-    where: { 
-      email_tenantId: {
-        email: 'instructor@vulhub.com',
-        tenantId: tenant.id,
-      },
-    },
+    where: { email: 'instructor@vulhub.com' },
     update: {},
     create: {
       email: 'instructor@vulhub.com',
@@ -70,7 +38,6 @@ async function main() {
       password: hashedPassword,
       role: 'INSTRUCTOR',
       status: 'ACTIVE',
-      tenantId: tenant.id,
       preferences: {
         theme: 'light',
         notifications: true,
@@ -83,12 +50,7 @@ async function main() {
   // Create sample students
   const students = await Promise.all([
     prisma.user.upsert({
-      where: { 
-        email_tenantId: {
-          email: 'student1@vulhub.com',
-          tenantId: tenant.id,
-        },
-      },
+      where: { email: 'student1@vulhub.com' },
       update: {},
       create: {
         email: 'student1@vulhub.com',
@@ -97,7 +59,6 @@ async function main() {
         password: hashedPassword,
         role: 'STUDENT',
         status: 'ACTIVE',
-        tenantId: tenant.id,
         preferences: {
           theme: 'auto',
           notifications: true,
@@ -105,12 +66,7 @@ async function main() {
       },
     }),
     prisma.user.upsert({
-      where: { 
-        email_tenantId: {
-          email: 'student2@vulhub.com',
-          tenantId: tenant.id,
-        },
-      },
+      where: { email: 'student2@vulhub.com' },
       update: {},
       create: {
         email: 'student2@vulhub.com',
@@ -119,7 +75,6 @@ async function main() {
         password: hashedPassword,
         role: 'STUDENT',
         status: 'ACTIVE',
-        tenantId: tenant.id,
         preferences: {
           theme: 'dark',
           notifications: false,
@@ -142,7 +97,6 @@ async function main() {
         isActive: true,
         isPublic: true,
         tags: ['SQL', 'Injection', 'Web', 'Database'],
-        tenantId: tenant.id,
       },
     }),
     prisma.project.create({
@@ -155,7 +109,6 @@ async function main() {
         isActive: true,
         isPublic: true,
         tags: ['XSS', 'JavaScript', 'Web', 'Validation'],
-        tenantId: tenant.id,
       },
     }),
     prisma.project.create({
@@ -168,7 +121,6 @@ async function main() {
         isActive: true,
         isPublic: true,
         tags: ['Buffer Overflow', 'Memory', 'Exploitation', 'Assembly'],
-        tenantId: tenant.id,
       },
     }),
     prisma.project.create({
@@ -181,7 +133,6 @@ async function main() {
         isActive: true,
         isPublic: true,
         tags: ['Network', 'Analysis', 'Wireshark', 'Traffic'],
-        tenantId: tenant.id,
       },
     }),
     prisma.project.create({
@@ -194,7 +145,6 @@ async function main() {
         isActive: true,
         isPublic: true,
         tags: ['Crypto', 'Encryption', 'Decryption', 'Puzzles'],
-        tenantId: tenant.id,
       },
     }),
   ]);
@@ -215,7 +165,6 @@ async function main() {
           requiredProjects: [],
         },
         isActive: true,
-        tenantId: tenant.id,
       },
     }),
     prisma.badge.create({
@@ -230,7 +179,6 @@ async function main() {
           requiredProjects: ['Web Security'],
         },
         isActive: true,
-        tenantId: tenant.id,
       },
     }),
     prisma.badge.create({
@@ -246,7 +194,6 @@ async function main() {
           minScore: 80,
         },
         isActive: true,
-        tenantId: tenant.id,
       },
     }),
     prisma.badge.create({
@@ -261,7 +208,6 @@ async function main() {
           timeUnit: 'hours',
         },
         isActive: true,
-        tenantId: tenant.id,
       },
     }),
   ]);
@@ -274,13 +220,12 @@ async function main() {
       data: {
         projectId: projects[0].id,
         userId: students[0].id,
-        tenantId: tenant.id,
         status: 'APPROVED',
         score: 95,
         feedback: 'Excellent work! You demonstrated a solid understanding of SQL injection concepts.',
         evidenceUrls: ['https://example.com/evidence1.png'],
-        submittedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-        reviewedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+        submittedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
         reviewedBy: instructor.id,
       },
     }),
@@ -288,23 +233,21 @@ async function main() {
       data: {
         projectId: projects[1].id,
         userId: students[0].id,
-        tenantId: tenant.id,
         status: 'PENDING',
         evidenceUrls: ['https://example.com/evidence2.png'],
-        submittedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+        submittedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       },
     }),
     prisma.submission.create({
       data: {
         projectId: projects[0].id,
         userId: students[1].id,
-        tenantId: tenant.id,
         status: 'APPROVED',
         score: 88,
         feedback: 'Good work! Minor improvements needed in the prevention section.',
         evidenceUrls: ['https://example.com/evidence3.png'],
-        submittedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-        reviewedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+        submittedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+        reviewedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
         reviewedBy: instructor.id,
       },
     }),
@@ -317,7 +260,6 @@ async function main() {
     data: {
       userId: students[0].id,
       badgeId: badges[0].id,
-      tenantId: tenant.id,
       earnedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
     },
   });
@@ -329,7 +271,6 @@ async function main() {
     prisma.leaderboard.create({
       data: {
         userId: students[0].id,
-        tenantId: tenant.id,
         score: 95,
         rank: 1,
       },
@@ -337,7 +278,6 @@ async function main() {
     prisma.leaderboard.create({
       data: {
         userId: students[1].id,
-        tenantId: tenant.id,
         score: 88,
         rank: 2,
       },
@@ -351,7 +291,6 @@ async function main() {
     prisma.auditLog.create({
       data: {
         userId: admin.id,
-        tenantId: tenant.id,
         action: 'CREATE',
         resource: 'PROJECT',
         resourceId: projects[0].id,
@@ -367,7 +306,6 @@ async function main() {
     prisma.auditLog.create({
       data: {
         userId: instructor.id,
-        tenantId: tenant.id,
         action: 'REVIEW',
         resource: 'SUBMISSION',
         resourceId: submissions[0].id,
@@ -387,7 +325,6 @@ async function main() {
   console.log('🎉 Database seeding completed successfully!');
   console.log('');
   console.log('📋 Created:');
-  console.log(`- 1 tenant: ${tenant.name}`);
   console.log(`- 4 users: 1 admin, 1 instructor, 2 students`);
   console.log(`- ${projects.length} projects`);
   console.log(`- ${badges.length} badges`);

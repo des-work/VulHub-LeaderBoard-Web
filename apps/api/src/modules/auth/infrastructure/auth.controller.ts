@@ -28,14 +28,14 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
-  @UseGuards(TenantGuard, RateLimitGuard)
+  @UseGuards(RateLimitGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'User login' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   @ApiResponse({ status: 429, description: 'Too many requests' })
-  async login(@Body() loginDto: LoginDto, @Tenant() tenantId: string) {
-    return this.authService.login(loginDto, tenantId);
+  async login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
   }
 
   @Post('register')
