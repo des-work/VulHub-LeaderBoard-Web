@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "cd apps/web && npm run build",
-  "installCommand": "npm install",
+  "buildCommand": "npm run build --workspace=@vulhub/web",
   "outputDirectory": "apps/web/.next"
 }
