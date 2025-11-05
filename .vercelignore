@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.next/
+out/
+coverage/
+
+# Environment files (handled by Vercel)
+.env
+.env*.local
+
+# Development files
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Testing
+test-results/
+playwright-report/
+.jest-cache/
+
+# Docker
+docker-compose*.yml
+Dockerfile
+
+# Documentation (optional - remove if you want docs deployed)
+*.md
+!README.md
+
+# Scripts
+scripts/
+
+# Local database files (will be created in /tmp on Vercel)
+*.db
+*.sqlite
+*.db-journal
+
+# Prisma migrations (keep migrations, but not local DB)
+prisma/migrations/.DS_Store
+

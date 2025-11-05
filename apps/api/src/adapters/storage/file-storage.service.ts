@@ -14,7 +14,7 @@ export interface FileUploadResult {
 @Injectable()
 export class FileStorageService {
   private readonly logger = new Logger(FileStorageService.name);
-  private readonly uploadDir = path.join(process.cwd(), '../web/public/uploads');
+  private readonly uploadDir = this.getUploadDirectory();
   private readonly maxFileSize = 5 * 1024 * 1024; // 5MB
   private readonly allowedMimeTypes = [
     'image/jpeg',
@@ -27,6 +27,23 @@ export class FileStorageService {
 
   constructor() {
     this.ensureUploadDirectories();
+  }
+
+  private getUploadDirectory(): string {
+    // For Vercel serverless: use /tmp (writable)
+    // For local/dev: use web/public/uploads
+    if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+      // Check if we're in a serverless environment
+      const isServerless = !fs.existsSync(path.join(process.cwd(), '../web'));
+      
+      if (isServerless) {
+        // Vercel serverless: use /tmp
+        return '/tmp/uploads';
+      }
+    }
+    
+    // Local development: use web/public/uploads
+    return path.join(process.cwd(), '../web/public/uploads');
   }
 
   /**
@@ -66,13 +83,13 @@ export class FileStorageService {
       fs.writeFileSync(filepath, file.buffer);
       this.logger.log(`Uploaded evidence file: ${filename}`);
 
-      return {
-        filename,
-        path: `/uploads/submissions/evidence/${filename}`,
-        size: file.size,
-        mimetype: file.mimetype,
-        uploadedAt: new Date(),
-      };
+        return {
+          filename,
+          path: this.getPublicPath('submissions/evidence', filename),
+          size: file.size,
+          mimetype: file.mimetype,
+          uploadedAt: new Date(),
+        };
     } catch (error) {
       this.logger.error(`Failed to upload file: ${error.message}`);
       throw new BadRequestException('Failed to upload file');
@@ -115,13 +132,13 @@ export class FileStorageService {
       fs.writeFileSync(filepath, file.buffer);
       this.logger.log(`Uploaded avatar for user: ${userId}`);
 
-      return {
-        filename,
-        path: `/uploads/avatars/${filename}`,
-        size: file.size,
-        mimetype: file.mimetype,
-        uploadedAt: new Date(),
-      };
+        return {
+          filename,
+          path: this.getPublicPath('avatars', filename),
+          size: file.size,
+          mimetype: file.mimetype,
+          uploadedAt: new Date(),
+        };
     } catch (error) {
       this.logger.error(`Failed to upload avatar: ${error.message}`);
       throw new BadRequestException('Failed to upload avatar');
@@ -222,6 +239,17 @@ export class FileStorageService {
   /**
    * Get MIME type from file extension
    */
+  private getPublicPath(subdir: string, filename: string): string {
+    // If using /tmp (Vercel serverless), return a path that can be served
+    // For local dev, return /uploads path
+    if (this.uploadDir.startsWith('/tmp')) {
+      // For serverless, files in /tmp are ephemeral
+      // Consider using external storage or returning a URL
+      return `/uploads/${subdir}/${filename}`;
+    }
+    return `/uploads/${subdir}/${filename}`;
+  }
+
   private getMimeType(filepath: string): string {
     const ext = path.extname(filepath).toLowerCase();
     const mimeTypes: Record<string, string> = {

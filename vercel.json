@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "buildCommand": "pnpm build",
+  "buildCommand": "cd apps/web && pnpm build",
   "installCommand": "pnpm install",
+  "framework": "nextjs",
+  "rootDirectory": "apps/web",
   "env": {
     "NEXT_PUBLIC_API_URL": "@next_public_api_url"
   },
-  "envPrefix": "NEXT_",
   "git": {
     "deploymentEnabled": {
       "main": true

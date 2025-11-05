@@ -20,11 +20,35 @@ export const validationSchema = Joi.object({
 
   // Database
   DATABASE_URL: Joi.string()
-    .pattern(/^postgresql:\/\/.+:.+@.+:\d+\/.+$/)
     .when('NODE_ENV', {
       is: 'production',
       then: Joi.required(),
-      otherwise: Joi.optional().default('file:./dev.db') // SQLite for local dev
+      otherwise: Joi.optional().default('file:./prisma/dev.db') // SQLite for local dev
+    })
+    .custom((value, helpers) => {
+      // SQLite file paths
+      if (value.startsWith('file:')) {
+        const pattern = /^file:(\.\/|\/tmp\/|\/var\/|\.\/prisma\/).+\.db$/;
+        if (!pattern.test(value)) {
+          return helpers.error('string.pattern.base', {
+            pattern: 'file:./path/to/db.db or file:/tmp/db.db'
+          });
+        }
+        return value;
+      }
+      // PostgreSQL URLs
+      if (value.startsWith('postgresql://')) {
+        const pattern = /^postgresql:\/\/.+:.+@.+:\d+\/.+$/;
+        if (!pattern.test(value)) {
+          return helpers.error('string.pattern.base', {
+            pattern: 'postgresql://user:password@host:port/database'
+          });
+        }
+        return value;
+      }
+      return helpers.error('string.custom', {
+        message: 'DATABASE_URL must start with file: or postgresql://'
+      });
     }),
   DATABASE_MAX_CONNECTIONS: Joi.number()
     .integer()
