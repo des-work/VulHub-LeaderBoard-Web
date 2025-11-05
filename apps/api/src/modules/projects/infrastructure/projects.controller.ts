@@ -14,7 +14,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { ProjectsService } from '../application/projects.service';
 import { JwtAuthGuard } from '../../auth/infrastructure/jwt-auth.guard';
-import { CreateProjectDto, UpdateProjectDto, ProjectSearchDto } from '@vulhub/schema';
+import { CreateProjectDto, UpdateProjectDto, ProjectSearchDto } from '../../../shared';
 
 @ApiTags('projects')
 @Controller('projects')

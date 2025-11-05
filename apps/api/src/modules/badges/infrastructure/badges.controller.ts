@@ -14,7 +14,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { BadgesService } from '../application/badges.service';
 import { JwtAuthGuard } from '../../auth/infrastructure/jwt-auth.guard';
-import { CreateBadgeDto, UpdateBadgeDto, AssignBadgeDto } from '@vulhub/schema';
+import { CreateBadgeDto, UpdateBadgeDto, AssignBadgeDto } from '../../../shared';
 
 @ApiTags('badges')
 @Controller('badges')

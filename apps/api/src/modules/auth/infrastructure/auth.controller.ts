@@ -16,7 +16,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { RateLimitGuard } from '../../../common/guards/rate-limit.guard';
 import { ValidationPipe } from '../../../common/pipes/validation.pipe';
 import { SanitizeInterceptor } from '../../../common/interceptors/sanitize.interceptor';
-import { LoginDto, RegisterDto, RefreshTokenDto } from '@vulhub/schema';
+import { LoginDto, RegisterDto, RefreshTokenDto } from '../../../shared';
 
 @ApiTags('auth')
 @Controller('auth')

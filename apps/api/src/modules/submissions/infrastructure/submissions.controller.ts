@@ -17,7 +17,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { SubmissionsService } from '../application/submissions.service';
 import { JwtAuthGuard } from '../../auth/infrastructure/jwt-auth.guard';
-import { CreateSubmissionDto, UpdateSubmissionDto, SubmissionReviewDto } from '@vulhub/schema';
+import { CreateSubmissionDto, UpdateSubmissionDto, SubmissionReviewDto } from '../../../shared';
 
 @ApiTags('submissions')
 @Controller('submissions')

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { ProjectsRepository } from '../infrastructure/projects.repository';
-import { CreateProjectDto, UpdateProjectDto, ProjectSearchDto } from '@vulhub/schema';
+import { CreateProjectDto, UpdateProjectDto, ProjectSearchDto } from '../../../shared';
 
 @Injectable()
 export class ProjectsService {

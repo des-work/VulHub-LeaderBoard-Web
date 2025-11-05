@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../../adapters/database/prisma.service';
 import { UsersService } from '../../users/application/users.service';
 import { TokenBlacklistService } from '../../../common/services/token-blacklist.service';
-import { LoginDto, RegisterDto } from '@vulhub/schema';
+import { LoginDto, RegisterDto } from '../../../shared';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()

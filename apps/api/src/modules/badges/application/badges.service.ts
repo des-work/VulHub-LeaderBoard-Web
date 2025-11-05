@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { BadgesRepository } from '../infrastructure/badges.repository';
 import { MemoryCacheService } from '../../../adapters/cache/memory-cache.service';
 import { WebSocketGateway } from '../../../ws/websocket.gateway';
-import { CreateBadgeDto, UpdateBadgeDto, AssignBadgeDto } from '@vulhub/schema';
+import { CreateBadgeDto, UpdateBadgeDto, AssignBadgeDto } from '../../../shared';
 
 export interface BadgeCriteria {
   type: 'submission_count' | 'score_threshold' | 'project_completion' | 'streak' | 'category_mastery';

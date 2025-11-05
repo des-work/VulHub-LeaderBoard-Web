@@ -1,7 +1,6 @@
 'use client';
 
-import { Button } from '@vulhub/ui';
-import { UnifiedIcon, Terminology, VisualEffect } from '@vulhub/ui';
+import { Button, UnifiedIcon, Terminology, VisualEffect } from '../../ui-library';
 import { Trophy, Users, Target, Award } from 'lucide-react';
 
 interface BannerProps {

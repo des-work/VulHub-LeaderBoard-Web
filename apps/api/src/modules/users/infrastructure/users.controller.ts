@@ -14,7 +14,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { UsersService } from '../application/users.service';
 import { JwtAuthGuard } from '../../auth/infrastructure/jwt-auth.guard';
-import { CreateUserDto, UpdateUserDto } from '@vulhub/schema';
+import { CreateUserDto, UpdateUserDto } from '../../../shared';
 
 @ApiTags('users')
 @Controller('users')

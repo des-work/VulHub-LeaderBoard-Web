@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../../adapters/database/prisma.service';
 import { UsersRepository } from '../infrastructure/users.repository';
-import { CreateUserDto, UpdateUserDto, UserProfile } from '@vulhub/schema';
+import { CreateUserDto, UpdateUserDto, UserProfile } from '../../../shared';
 import { BaseService } from '../../../common/services/base.service';
 import { ErrorHandlerService } from '../../../common/errors/error-handler.service';
 import { HandleErrors } from '../../../common/decorators/handle-errors.decorator';

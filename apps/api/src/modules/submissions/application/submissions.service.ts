@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { SubmissionsRepository } from '../infrastructure/submissions.repository';
 import { EmailService } from '../../../adapters/email/email.service';
 import { FileStorageService } from '../../../adapters/storage/file-storage.service';
-import { CreateSubmissionDto, UpdateSubmissionDto, SubmissionReviewDto } from '@vulhub/schema';
+import { CreateSubmissionDto, UpdateSubmissionDto, SubmissionReviewDto } from '../../../shared';
 import { BaseService } from '../../../common/services/base.service';
 import { ErrorHandlerService } from '../../../common/errors/error-handler.service';
 import { HandleErrors } from '../../../common/decorators/handle-errors.decorator';

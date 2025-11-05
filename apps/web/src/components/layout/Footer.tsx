@@ -1,6 +1,6 @@
 'use client';
 
-import { UnifiedIcon, Terminology, VisualEffect } from '@vulhub/ui';
+import { UnifiedIcon, Terminology, VisualEffect } from '../../ui-library';
 import { Trophy, Github, Twitter, Linkedin, MessageCircle } from 'lucide-react';
 
 interface FooterProps {
