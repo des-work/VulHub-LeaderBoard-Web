@@ -1,1 +1,0 @@
-web: cd apps/api && pnpm install && pnpm exec nest start
