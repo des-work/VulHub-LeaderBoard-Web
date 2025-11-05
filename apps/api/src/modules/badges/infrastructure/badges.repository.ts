@@ -31,9 +31,9 @@ export class BadgesRepository {
     return this.prisma.badge.count(args);
   }
 
-  async getUserBadges(userId: string, tenantId: string) {
+  async getUserBadges(userId: string) {
     return this.prisma.userBadge.findMany({
-      where: { userId, tenantId },
+      where: { userId },
       include: {
         badge: true,
       },
@@ -41,24 +41,24 @@ export class BadgesRepository {
     });
   }
 
-  async getUserBadgeProgress(userId: string, tenantId: string): Promise<BadgeProgress[]> {
+  async getUserBadgeProgress(userId: string): Promise<BadgeProgress[]> {
     const badges = await this.prisma.badge.findMany({
-      where: { tenantId, isActive: true },
+      where: { isActive: true },
     });
 
     const progress: BadgeProgress[] = [];
 
     for (const badge of badges) {
-      const userProgress = await this.getBadgeProgressForUser(badge.id, userId, tenantId);
+      const userProgress = await this.getBadgeProgressForUser(badge.id, userId);
       progress.push(userProgress);
     }
 
     return progress;
   }
 
-  async getBadgeProgressForUser(badgeId: string, userId: string, tenantId: string): Promise<BadgeProgress> {
+  async getBadgeProgressForUser(badgeId: string, userId: string): Promise<BadgeProgress> {
     const badge = await this.prisma.badge.findUnique({
-      where: { id: badgeId, tenantId },
+      where: { id: badgeId },
     });
 
     if (!badge) {
@@ -66,7 +66,7 @@ export class BadgesRepository {
     }
 
     // Check if user already has this badge
-    const existingBadge = await this.findUserBadge(userId, badgeId, tenantId);
+    const existingBadge = await this.findUserBadge(userId, badgeId);
     const isAssigned = !!existingBadge;
 
     // Simplified badge progress calculation
@@ -75,7 +75,7 @@ export class BadgesRepository {
 
     // Simple criteria handling - just check submission count for now
     currentValue = await this.prisma.submission.count({
-      where: { userId, tenantId, status: 'APPROVED' },
+      where: { userId, status: 'APPROVED' },
     });
     targetValue = 5; // Default target
 
@@ -92,9 +92,9 @@ export class BadgesRepository {
     };
   }
 
-  async findUserBadge(userId: string, badgeId: string, tenantId: string) {
+  async findUserBadge(userId: string, badgeId: string) {
     return this.prisma.userBadge.findFirst({
-      where: { userId, badgeId, tenantId },
+      where: { userId, badgeId },
     });
   }
 
@@ -102,12 +102,11 @@ export class BadgesRepository {
     return this.prisma.userBadge.create({ data });
   }
 
-  async getBadgeStats(tenantId: string) {
+  async getBadgeStats() {
     const [totalBadges, totalAwards, mostEarned] = await Promise.all([
-      this.prisma.badge.count({ where: { tenantId } }),
-      this.prisma.userBadge.count({ where: { tenantId } }),
+      this.prisma.badge.count({}),
+      this.prisma.userBadge.count({}),
       this.prisma.badge.findFirst({
-        where: { tenantId },
         include: {
           _count: {
             select: { userBadges: true },
@@ -127,9 +126,8 @@ export class BadgesRepository {
     };
   }
 
-  async getMostEarnedBadges(tenantId: string, limit: number) {
+  async getMostEarnedBadges(limit: number) {
     return this.prisma.badge.findMany({
-      where: { tenantId },
       include: {
         _count: {
           select: { userBadges: true },
@@ -142,9 +140,8 @@ export class BadgesRepository {
     });
   }
 
-  async getRecentBadgeAwards(tenantId: string, limit: number) {
+  async getRecentBadgeAwards(limit: number) {
     return this.prisma.userBadge.findMany({
-      where: { tenantId },
       take: limit,
       orderBy: { earnedAt: 'desc' },
       include: {

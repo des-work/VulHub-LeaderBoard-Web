@@ -18,10 +18,10 @@ async function main() {
       password: hashedPassword,
       role: 'ADMIN',
       status: 'ACTIVE',
-      preferences: {
+      preferences: JSON.stringify({
         theme: 'dark',
         notifications: true,
-      },
+      }),
     },
   });
 
@@ -38,10 +38,10 @@ async function main() {
       password: hashedPassword,
       role: 'INSTRUCTOR',
       status: 'ACTIVE',
-      preferences: {
+      preferences: JSON.stringify({
         theme: 'light',
         notifications: true,
-      },
+      }),
     },
   });
 
@@ -59,10 +59,10 @@ async function main() {
         password: hashedPassword,
         role: 'STUDENT',
         status: 'ACTIVE',
-        preferences: {
+        preferences: JSON.stringify({
           theme: 'auto',
           notifications: true,
-        },
+        }),
       },
     }),
     prisma.user.upsert({
@@ -75,10 +75,10 @@ async function main() {
         password: hashedPassword,
         role: 'STUDENT',
         status: 'ACTIVE',
-        preferences: {
+        preferences: JSON.stringify({
           theme: 'dark',
           notifications: false,
-        },
+        }),
       },
     }),
   ]);
@@ -160,10 +160,10 @@ async function main() {
         icon: '🎯',
         category: 'Achievement',
         difficulty: 'Beginner',
-        criteria: {
+        criteria: JSON.stringify({
           minSubmissions: 1,
           requiredProjects: [],
-        },
+        }),
         isActive: true,
       },
     }),
@@ -174,10 +174,10 @@ async function main() {
         icon: '🕸️',
         category: 'Specialization',
         difficulty: 'Intermediate',
-        criteria: {
+        criteria: JSON.stringify({
           minSubmissions: 5,
           requiredProjects: ['Web Security'],
-        },
+        }),
         isActive: true,
       },
     }),
@@ -188,11 +188,11 @@ async function main() {
         icon: '🔐',
         category: 'Expertise',
         difficulty: 'Advanced',
-        criteria: {
+        criteria: JSON.stringify({
           minSubmissions: 3,
           requiredProjects: ['Cryptography'],
           minScore: 80,
-        },
+        }),
         isActive: true,
       },
     }),
@@ -203,10 +203,10 @@ async function main() {
         icon: '⚡',
         category: 'Performance',
         difficulty: 'Intermediate',
-        criteria: {
+        criteria: JSON.stringify({
           timeLimit: 24,
           timeUnit: 'hours',
-        },
+        }),
         isActive: true,
       },
     }),
@@ -294,10 +294,10 @@ async function main() {
         action: 'CREATE',
         resource: 'PROJECT',
         resourceId: projects[0].id,
-        details: {
+        details: JSON.stringify({
           projectName: projects[0].name,
           category: projects[0].category,
-        },
+        }),
         ipAddress: '127.0.0.1',
         userAgent: 'VulHub-Admin/1.0',
         success: true,
@@ -309,10 +309,10 @@ async function main() {
         action: 'REVIEW',
         resource: 'SUBMISSION',
         resourceId: submissions[0].id,
-        details: {
+        details: JSON.stringify({
           score: submissions[0].score,
           status: submissions[0].status,
-        },
+        }),
         ipAddress: '127.0.0.1',
         userAgent: 'VulHub-Instructor/1.0',
         success: true,

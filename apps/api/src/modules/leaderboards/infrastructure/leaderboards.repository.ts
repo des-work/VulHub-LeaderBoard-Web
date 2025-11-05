@@ -10,13 +10,12 @@ export class LeaderboardsRepository {
    * Calculate overall leaderboard
    */
   async calculateOverallLeaderboard(
-    tenantId: string,
     timeRange?: 'week' | 'month' | 'all',
   ): Promise<LeaderboardEntry[]> {
     const dateFilter = this.getDateFilter(timeRange);
 
     // Build query with proper parameterization
-    const dateCondition = dateFilter ? 'AND s."createdAt" >= $2' : '';
+    const dateCondition = dateFilter ? 'AND s."createdAt" >= $1' : '';
     const query = `
       SELECT 
         u.id as "userId",
@@ -31,14 +30,14 @@ export class LeaderboardsRepository {
         COUNT(b.id) as badges,
         MAX(s."createdAt") as "lastSubmissionAt"
       FROM "User" u
-      LEFT JOIN "Submission" s ON u.id = s."userId" AND s."tenantId" = $1 ${dateCondition}
-      LEFT JOIN "Badge" b ON u.id = b."userId" AND b."tenantId" = $1
-      WHERE u."tenantId" = $1 AND u.status = 'ACTIVE'
+      LEFT JOIN "Submission" s ON u.id = s."userId" ${dateCondition}
+      LEFT JOIN "Badge" b ON u.id = b.id
+      WHERE u.status = 'ACTIVE'
       GROUP BY u.id, u."firstName", u."lastName", u.email, u."avatarUrl"
       ORDER BY "totalScore" DESC, "approvedSubmissions" DESC, "averageScore" DESC
     `;
     
-    const params = dateFilter ? [tenantId, dateFilter] : [tenantId];
+    const params = dateFilter ? [dateFilter] : [];
     const results = await this.prisma.$queryRawUnsafe(query, ...params) as any[];
 
     return results.map((row, index) => ({
@@ -62,7 +61,6 @@ export class LeaderboardsRepository {
    */
   async calculateProjectLeaderboard(
     projectId: string,
-    tenantId: string,
   ): Promise<LeaderboardEntry[]> {
     const query = `
       SELECT 
@@ -79,15 +77,14 @@ export class LeaderboardsRepository {
         MAX(s."createdAt") as "lastSubmissionAt"
       FROM "User" u
       LEFT JOIN "Submission" s ON u.id = s."userId" 
-        AND s."projectId" = $1 
-        AND s."tenantId" = $2
-      LEFT JOIN "Badge" b ON u.id = b."userId" AND b."tenantId" = $2
-      WHERE u."tenantId" = $2 AND u.status = 'ACTIVE'
+        AND s."projectId" = $1
+      LEFT JOIN "Badge" b ON u.id = b.id
+      WHERE u.status = 'ACTIVE'
       GROUP BY u.id, u."firstName", u."lastName", u.email, u."avatarUrl"
       ORDER BY "totalScore" DESC, "approvedSubmissions" DESC, "averageScore" DESC
     `;
     
-    const results = await this.prisma.$queryRawUnsafe(query, projectId, tenantId) as any[];
+    const results = await this.prisma.$queryRawUnsafe(query, projectId) as any[];
 
     return results.map((row, index) => ({
       userId: row.userId,
@@ -110,7 +107,6 @@ export class LeaderboardsRepository {
    */
   async calculateCategoryLeaderboard(
     category: string,
-    tenantId: string,
   ): Promise<LeaderboardEntry[]> {
     const query = `
       SELECT 
@@ -126,15 +122,15 @@ export class LeaderboardsRepository {
         COUNT(b.id) as badges,
         MAX(s."createdAt") as "lastSubmissionAt"
       FROM "User" u
-      LEFT JOIN "Submission" s ON u.id = s."userId" AND s."tenantId" = $1
-      LEFT JOIN "Project" p ON s."projectId" = p.id AND p.category = $2
-      LEFT JOIN "Badge" b ON u.id = b."userId" AND b."tenantId" = $1
-      WHERE u."tenantId" = $1 AND u.status = 'ACTIVE'
+      LEFT JOIN "Submission" s ON u.id = s."userId"
+      LEFT JOIN "Project" p ON s."projectId" = p.id AND p.category = $1
+      LEFT JOIN "Badge" b ON u.id = b.id
+      WHERE u.status = 'ACTIVE'
       GROUP BY u.id, u."firstName", u."lastName", u.email, u."avatarUrl"
       ORDER BY "totalScore" DESC, "approvedSubmissions" DESC, "averageScore" DESC
     `;
     
-    const results = await this.prisma.$queryRawUnsafe(query, tenantId, category) as any[];
+    const results = await this.prisma.$queryRawUnsafe(query, category) as any[];
 
     return results.map((row, index) => ({
       userId: row.userId,
@@ -155,7 +151,7 @@ export class LeaderboardsRepository {
   /**
    * Get user's rank and statistics
    */
-  async getUserRank(userId: string, tenantId: string) {
+  async getUserRank(userId: string) {
     const query = `
       WITH user_stats AS (
         SELECT 
@@ -165,8 +161,8 @@ export class LeaderboardsRepository {
           COUNT(CASE WHEN s.status = 'APPROVED' THEN 1 END) as "approvedSubmissions",
           COALESCE(AVG(CASE WHEN s.status = 'APPROVED' THEN s.score END), 0) as "averageScore"
         FROM "User" u
-        LEFT JOIN "Submission" s ON u.id = s."userId" AND s."tenantId" = $1
-        WHERE u.id = $2 AND u."tenantId" = $1
+        LEFT JOIN "Submission" s ON u.id = s."userId"
+        WHERE u.id = $1
         GROUP BY u.id
       ),
       ranked_users AS (
@@ -180,8 +176,8 @@ export class LeaderboardsRepository {
               COALESCE(AVG(CASE WHEN s.status = 'APPROVED' THEN s.score END), 0) DESC
           ) as rank
         FROM "User" u
-        LEFT JOIN "Submission" s ON u.id = s."userId" AND s."tenantId" = $1
-        WHERE u."tenantId" = $1 AND u.status = 'ACTIVE'
+        LEFT JOIN "Submission" s ON u.id = s."userId"
+        WHERE u.status = 'ACTIVE'
         GROUP BY u.id
       )
       SELECT 
@@ -191,7 +187,7 @@ export class LeaderboardsRepository {
       JOIN ranked_users ru ON us.id = ru.id
     `;
     
-    const result = await this.prisma.$queryRawUnsafe(query, tenantId, userId) as any[];
+    const result = await this.prisma.$queryRawUnsafe(query, userId) as any[];
 
     return result[0] || null;
   }
@@ -199,7 +195,7 @@ export class LeaderboardsRepository {
   /**
    * Get leaderboard statistics
    */
-  async getLeaderboardStats(tenantId: string): Promise<LeaderboardStats> {
+  async getLeaderboardStats(): Promise<LeaderboardStats> {
     const query = `
       SELECT 
         COUNT(DISTINCT u.id) as "totalUsers",
@@ -207,11 +203,11 @@ export class LeaderboardsRepository {
         COALESCE(AVG(CASE WHEN s.status = 'APPROVED' THEN s.score END), 0) as "averageScore",
         COALESCE(MAX(CASE WHEN s.status = 'APPROVED' THEN s.score END), 0) as "topScore"
       FROM "User" u
-      LEFT JOIN "Submission" s ON u.id = s."userId" AND s."tenantId" = $1
-      WHERE u."tenantId" = $1 AND u.status = 'ACTIVE'
+      LEFT JOIN "Submission" s ON u.id = s."userId"
+      WHERE u.status = 'ACTIVE'
     `;
     
-    const result = await this.prisma.$queryRawUnsafe(query, tenantId) as any[];
+    const result = await this.prisma.$queryRawUnsafe(query) as any[];
 
     const stats = result[0];
     return {
@@ -226,7 +222,7 @@ export class LeaderboardsRepository {
   /**
    * Get top performers
    */
-  async getTopPerformers(tenantId: string, limit: number) {
+  async getTopPerformers(limit: number) {
     const query = `
       SELECT 
         u.id as "userId",
@@ -238,14 +234,14 @@ export class LeaderboardsRepository {
         COUNT(s.id) as "totalSubmissions",
         COUNT(CASE WHEN s.status = 'APPROVED' THEN 1 END) as "approvedSubmissions"
       FROM "User" u
-      LEFT JOIN "Submission" s ON u.id = s."userId" AND s."tenantId" = $1
-      WHERE u."tenantId" = $1 AND u.status = 'ACTIVE'
+      LEFT JOIN "Submission" s ON u.id = s."userId"
+      WHERE u.status = 'ACTIVE'
       GROUP BY u.id, u."firstName", u."lastName", u.email, u."avatarUrl"
       ORDER BY "totalScore" DESC, "approvedSubmissions" DESC
-      LIMIT $2
+      LIMIT $1
     `;
     
-    const results = await this.prisma.$queryRawUnsafe(query, tenantId, limit) as any[];
+    const results = await this.prisma.$queryRawUnsafe(query, limit) as any[];
 
     return results.map((row, index) => ({
       userId: row.userId,
@@ -263,9 +259,9 @@ export class LeaderboardsRepository {
   /**
    * Get recent activity
    */
-  async getRecentActivity(tenantId: string, limit: number) {
+  async getRecentActivity(limit: number) {
     return await this.prisma.submission.findMany({
-      where: { tenantId, status: 'APPROVED' },
+      where: { status: 'APPROVED' },
       take: limit,
       orderBy: { reviewedAt: 'desc' },
       include: {

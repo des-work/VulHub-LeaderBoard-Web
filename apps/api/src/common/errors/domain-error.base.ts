@@ -104,27 +104,14 @@ export class BadgeNotEarnedError extends DomainError {
 
 // Leaderboard Domain Errors
 export class LeaderboardNotFoundError extends DomainError {
-  constructor(tenantId: string) {
-    super(`Leaderboard for tenant ${tenantId} not found`, 'LEADERBOARD_NOT_FOUND', 404);
+  constructor() {
+    super(`Leaderboard not found`, 'LEADERBOARD_NOT_FOUND', 404);
   }
 }
 
 export class InvalidLeaderboardTypeError extends DomainError {
   constructor(leaderboardType: string) {
     super(`Invalid leaderboard type: ${leaderboardType}`, 'INVALID_LEADERBOARD_TYPE', 400);
-  }
-}
-
-// Tenant Domain Errors
-export class TenantNotFoundError extends DomainError {
-  constructor(tenantId: string) {
-    super(`Tenant with ID ${tenantId} not found`, 'TENANT_NOT_FOUND', 404);
-  }
-}
-
-export class TenantInactiveError extends DomainError {
-  constructor(tenantId: string) {
-    super(`Tenant ${tenantId} is inactive`, 'TENANT_INACTIVE', 403);
   }
 }
 

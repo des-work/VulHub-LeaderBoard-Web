@@ -31,25 +31,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     }
   }
 
-  /**
-   * Get tenant-scoped Prisma client
-   */
-  withTenant(tenantId: string) {
-    return this.$extends({
-      query: {
-        $allOperations({ model, operation, args, query }) {
-          // Add tenant filter to all queries except for Tenant model
-          if (model !== 'Tenant' && args.where) {
-            args.where.tenantId = tenantId;
-          } else if (model !== 'Tenant') {
-            args.where = { tenantId };
-          }
-          return query(args);
-        },
-      },
-    });
-  }
-
   async isHealthy(): Promise<boolean> {
     try {
       await this.$queryRaw`SELECT 1`;

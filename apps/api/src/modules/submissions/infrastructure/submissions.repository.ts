@@ -34,9 +34,9 @@ export class SubmissionsRepository {
     return this.prisma.submission.count(args);
   }
 
-  async findProject(projectId: string, tenantId: string) {
+  async findProject(projectId: string) {
     return this.prisma.project.findUnique({
-      where: { id: projectId, tenantId },
+      where: { id: projectId },
     });
   }
 }
