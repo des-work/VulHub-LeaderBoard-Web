@@ -32,7 +32,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
       const user = await this.prisma.user.findUnique({
         where: { id: payload.sub },
-        include: { tenant: true },
       });
 
       if (!user || user.status !== 'ACTIVE') {
@@ -42,9 +41,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       return {
         id: user.id,
         email: user.email,
-        tenantId: user.tenantId,
         role: user.role,
-        tenant: user.tenant,
       };
     } catch (error) {
       throw new UnauthorizedException('Invalid token');

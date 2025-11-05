@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { SubmissionsRepository } from '../infrastructure/submissions.repository';
-import { StorageService } from '../../../adapters/storage/storage.service';
 import { EmailService } from '../../../adapters/email/email.service';
 import { CreateSubmissionDto, UpdateSubmissionDto, SubmissionReviewDto } from '@vulhub/schema';
 import { BaseService } from '../../../common/services/base.service';
@@ -12,7 +11,6 @@ import { SubmissionNotFoundError, ValidationError, InvalidSubmissionStatusError 
 export class SubmissionsService extends BaseService {
   constructor(
     private submissionsRepository: SubmissionsRepository,
-    private storageService: StorageService,
     private emailService: EmailService,
     errorHandler: ErrorHandlerService,
   ) {
