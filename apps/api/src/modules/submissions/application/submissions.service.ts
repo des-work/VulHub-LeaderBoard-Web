@@ -1,3 +1,4 @@
+import type { Express } from 'express';
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { SubmissionsRepository } from '../infrastructure/submissions.repository';
 import { EmailService } from '../../../adapters/email/email.service';
