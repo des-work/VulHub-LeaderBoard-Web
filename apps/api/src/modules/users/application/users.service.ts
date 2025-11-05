@@ -21,7 +21,7 @@ export class UsersService extends BaseService {
    * Create a new user
    */
   @HandleErrors('UsersService.create')
-  async create(createUserDto: CreateUserDto, tenantId: string): Promise<UserProfile> {
+  async create(createUserDto: CreateUserDto): Promise<UserProfile> {
     this.validateInput(createUserDto, (data) => {
       if (!data.email || !data.email.includes('@')) {
         throw new ValidationError('email', 'Invalid email format');
@@ -36,12 +36,9 @@ export class UsersService extends BaseService {
 
     return this.handleOperation(
       async () => {
-        this.logOperationStart('create', { tenantId, email: createUserDto.email });
+        this.logOperationStart('create', { email: createUserDto.email });
         
-         const user = await this.usersRepository.create({
-           ...createUserDto,
-           tenant: { connect: { id: tenantId } },
-         });
+         const user = await this.usersRepository.create(createUserDto);
          
          // Map Prisma user to UserProfile
          const userProfile: UserProfile = {
@@ -52,26 +49,25 @@ export class UsersService extends BaseService {
            avatarUrl: user.avatarUrl || '',
            status: user.status as any,
            role: user.role as any,
-           tenantId: user.tenantId,
            preferences: user.preferences as Record<string, any> || {},
            lastLoginAt: user.lastLoginAt?.toISOString() || '',
            createdAt: user.createdAt.toISOString(),
            updatedAt: user.updatedAt.toISOString(),
          };
          
-         this.logOperationSuccess('create', { userId: user.id, tenantId });
+         this.logOperationSuccess('create', { userId: user.id });
          return userProfile;
       },
       'UsersService.create',
-      { tenantId, email: createUserDto.email }
+      { email: createUserDto.email }
     );
   }
 
   /**
-   * Get all users for a tenant
+   * Get all users
    */
   @HandleErrors('UsersService.findAll')
-  async findAll(tenantId: string, page: number = 1, limit: number = 20): Promise<{
+  async findAll(page: number = 1, limit: number = 20): Promise<{
     data: UserProfile[];
     pagination: {
       page: number;
@@ -93,17 +89,16 @@ export class UsersService extends BaseService {
 
     return this.handleOperation(
       async () => {
-        this.logOperationStart('findAll', { tenantId, page, limit });
+        this.logOperationStart('findAll', { page, limit });
         
          const skip = (page - 1) * limit;
          const [users, total] = await Promise.all([
            this.usersRepository.findMany({
-             where: { tenantId },
              skip,
              take: limit,
              orderBy: { createdAt: 'desc' },
            }),
-           this.usersRepository.count({ where: { tenantId } }),
+           this.usersRepository.count({}),
          ]);
 
          // Map Prisma users to UserProfile
@@ -115,7 +110,6 @@ export class UsersService extends BaseService {
            avatarUrl: user.avatarUrl || '',
            status: user.status as any,
            role: user.role as any,
-           tenantId: user.tenantId,
            preferences: user.preferences as Record<string, any> || {},
            lastLoginAt: user.lastLoginAt?.toISOString() || '',
            createdAt: user.createdAt.toISOString(),
@@ -134,11 +128,11 @@ export class UsersService extends BaseService {
            },
          };
          
-         this.logOperationSuccess('findAll', { tenantId, count: users.length, total });
+         this.logOperationSuccess('findAll', { count: users.length, total });
          return result;
       },
       'UsersService.findAll',
-      { tenantId, page, limit }
+      { page, limit }
     );
   }
 
@@ -146,31 +140,19 @@ export class UsersService extends BaseService {
    * Get user by ID
    */
   @HandleErrors('UsersService.findOne')
-  async findOne(id: string, tenantId: string): Promise<UserProfile> {
-    this.validateInput({ id, tenantId }, (data) => {
+  async findOne(id: string): Promise<UserProfile> {
+    this.validateInput({ id }, (data) => {
       if (!data.id || data.id.trim().length === 0) {
         throw new ValidationError('id', 'User ID is required');
-      }
-      if (!data.tenantId || data.tenantId.trim().length === 0) {
-        throw new ValidationError('tenantId', 'Tenant ID is required');
       }
     });
 
     return this.handleOperation(
       async () => {
-        this.logOperationStart('findOne', { id, tenantId });
+        this.logOperationStart('findOne', { id });
         
          const user = await this.usersRepository.findUnique({
-           where: { id, tenantId },
-           include: {
-             tenant: {
-               select: {
-                 id: true,
-                 name: true,
-                 domain: true,
-               },
-             },
-           },
+           where: { id },
          });
 
          if (!user) {
@@ -186,18 +168,17 @@ export class UsersService extends BaseService {
            avatarUrl: user.avatarUrl || '',
            status: user.status as any,
            role: user.role as any,
-           tenantId: user.tenantId,
            preferences: user.preferences as Record<string, any> || {},
            lastLoginAt: user.lastLoginAt?.toISOString() || '',
            createdAt: user.createdAt.toISOString(),
            updatedAt: user.updatedAt.toISOString(),
          };
 
-         this.logOperationSuccess('findOne', { id, tenantId, email: user.email });
+         this.logOperationSuccess('findOne', { id, email: user.email });
          return userProfile;
       },
       'UsersService.findOne',
-      { id, tenantId }
+      { id }
     );
   }
 
@@ -205,13 +186,10 @@ export class UsersService extends BaseService {
    * Update user
    */
   @HandleErrors('UsersService.update')
-  async update(id: string, updateUserDto: UpdateUserDto, tenantId: string): Promise<UserProfile> {
-    this.validateInput({ id, updateUserDto, tenantId }, (data) => {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserProfile> {
+    this.validateInput({ id, updateUserDto }, (data) => {
       if (!data.id || data.id.trim().length === 0) {
         throw new ValidationError('id', 'User ID is required');
-      }
-      if (!data.tenantId || data.tenantId.trim().length === 0) {
-        throw new ValidationError('tenantId', 'Tenant ID is required');
       }
       if (Object.keys(data.updateUserDto).length === 0) {
         throw new ValidationError('updateUserDto', 'Update data cannot be empty');
@@ -220,15 +198,15 @@ export class UsersService extends BaseService {
 
     return this.handleOperation(
       async () => {
-        this.logOperationStart('update', { id, tenantId, updateData: updateUserDto });
+        this.logOperationStart('update', { id, updateData: updateUserDto });
         
-        const user = await this.usersRepository.findUnique({ where: { id, tenantId } });
+        const user = await this.usersRepository.findUnique({ where: { id } });
         if (!user) {
           throw new UserNotFoundError(id);
         }
 
         const updatedUser = await this.usersRepository.update({
-          where: { id, tenantId },
+          where: { id },
           data: {
             ...updateUserDto,
             preferences: updateUserDto.preferences
@@ -249,18 +227,17 @@ export class UsersService extends BaseService {
           avatarUrl: updatedUser.avatarUrl || '',
           status: updatedUser.status as any,
           role: updatedUser.role as any,
-          tenantId: updatedUser.tenantId,
           preferences: updatedUser.preferences as Record<string, any> || {},
           lastLoginAt: updatedUser.lastLoginAt?.toISOString() || '',
           createdAt: updatedUser.createdAt.toISOString(),
           updatedAt: updatedUser.updatedAt.toISOString(),
         };
         
-        this.logOperationSuccess('update', { id, tenantId, email: updatedUser.email });
+        this.logOperationSuccess('update', { id, email: updatedUser.email });
         return userProfile;
       },
       'UsersService.update',
-      { id, tenantId, updateData: updateUserDto }
+      { id, updateData: updateUserDto }
     );
   }
 
@@ -268,26 +245,23 @@ export class UsersService extends BaseService {
    * Delete user
    */
   @HandleErrors('UsersService.remove')
-  async remove(id: string, tenantId: string): Promise<UserProfile> {
-    this.validateInput({ id, tenantId }, (data) => {
+  async remove(id: string): Promise<UserProfile> {
+    this.validateInput({ id }, (data) => {
       if (!data.id || data.id.trim().length === 0) {
         throw new ValidationError('id', 'User ID is required');
-      }
-      if (!data.tenantId || data.tenantId.trim().length === 0) {
-        throw new ValidationError('tenantId', 'Tenant ID is required');
       }
     });
 
     return this.handleOperation(
       async () => {
-        this.logOperationStart('remove', { id, tenantId });
+        this.logOperationStart('remove', { id });
         
-        const user = await this.usersRepository.findUnique({ where: { id, tenantId } });
+        const user = await this.usersRepository.findUnique({ where: { id } });
         if (!user) {
           throw new UserNotFoundError(id);
         }
 
-        const deletedUser = await this.usersRepository.delete({ where: { id, tenantId } });
+        const deletedUser = await this.usersRepository.delete({ where: { id } });
 
         // Map Prisma user to UserProfile
         const userProfile: UserProfile = {
@@ -298,18 +272,17 @@ export class UsersService extends BaseService {
           avatarUrl: deletedUser.avatarUrl || '',
           status: deletedUser.status as any,
           role: deletedUser.role as any,
-          tenantId: deletedUser.tenantId,
           preferences: deletedUser.preferences as Record<string, any> || {},
           lastLoginAt: deletedUser.lastLoginAt?.toISOString() || '',
           createdAt: deletedUser.createdAt.toISOString(),
           updatedAt: deletedUser.updatedAt.toISOString(),
         };
         
-        this.logOperationSuccess('remove', { id, tenantId, email: deletedUser.email });
+        this.logOperationSuccess('remove', { id, email: deletedUser.email });
         return userProfile;
       },
       'UsersService.remove',
-      { id, tenantId }
+      { id }
     );
   }
 
@@ -317,21 +290,18 @@ export class UsersService extends BaseService {
    * Get user profile
    */
   @HandleErrors('UsersService.getProfile')
-  async getProfile(id: string, tenantId: string): Promise<UserProfile> {
-    this.validateInput({ id, tenantId }, (data) => {
+  async getProfile(id: string): Promise<UserProfile> {
+    this.validateInput({ id }, (data) => {
       if (!data.id || data.id.trim().length === 0) {
         throw new ValidationError('id', 'User ID is required');
-      }
-      if (!data.tenantId || data.tenantId.trim().length === 0) {
-        throw new ValidationError('tenantId', 'Tenant ID is required');
       }
     });
 
     return this.handleOperation(
       async () => {
-        this.logOperationStart('getProfile', { id, tenantId });
+        this.logOperationStart('getProfile', { id });
         
-        const user = await this.usersRepository.findUnique({ where: { id, tenantId } });
+        const user = await this.usersRepository.findUnique({ where: { id } });
         if (!user) {
           throw new UserNotFoundError(id);
         }
@@ -345,18 +315,17 @@ export class UsersService extends BaseService {
           avatarUrl: user.avatarUrl || '',
           status: user.status as any,
           role: user.role as any,
-          tenantId: user.tenantId,
           preferences: user.preferences as Record<string, any> || {},
           lastLoginAt: user.lastLoginAt?.toISOString() || '',
           createdAt: user.createdAt.toISOString(),
           updatedAt: user.updatedAt.toISOString(),
         };
 
-        this.logOperationSuccess('getProfile', { id, tenantId, email: user.email });
+        this.logOperationSuccess('getProfile', { id, email: user.email });
         return userProfile;
       },
       'UsersService.getProfile',
-      { id, tenantId }
+      { id }
     );
   }
 

@@ -29,7 +29,7 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   create(@Body() createUserDto: CreateUserDto, @Request() req) {
-    return this.usersService.create(createUserDto, req.user.tenantId);
+    return this.usersService.create(createUserDto);
   }
 
   @Get()
@@ -43,7 +43,7 @@ export class UsersController {
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 20,
   ) {
-    return this.usersService.findAll(req.user.tenantId, page, limit);
+    return this.usersService.findAll(page, limit);
   }
 
   @Get('profile')
@@ -51,7 +51,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getProfile(@Request() req) {
-    return this.usersService.getProfile(req.user.id, req.user.tenantId);
+    return this.usersService.getProfile(req.user.id);
   }
 
   @Get('stats')
@@ -59,7 +59,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Statistics retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getStats(@Request() req) {
-    return this.usersService.getStats(req.user.id, req.user.tenantId);
+    return this.usersService.getStats(req.user.id);
   }
 
   @Get(':id')
@@ -68,7 +68,7 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findOne(@Param('id') id: string, @Request() req) {
-    return this.usersService.findOne(id, req.user.tenantId);
+    return this.usersService.findOne(id);
   }
 
   @Patch(':id')
@@ -77,7 +77,7 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Request() req) {
-    return this.usersService.update(id, updateUserDto, req.user.tenantId);
+    return this.usersService.update(id, updateUserDto);
   }
 
   @Patch('preferences')
@@ -85,7 +85,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Preferences updated successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   updatePreferences(@Body() preferences: any, @Request() req) {
-    return this.usersService.updatePreferences(req.user.id, preferences, req.user.tenantId);
+    return this.usersService.updatePreferences(req.user.id, preferences);
   }
 
   @Delete(':id')
@@ -94,6 +94,6 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   remove(@Param('id') id: string, @Request() req) {
-    return this.usersService.remove(id, req.user.tenantId);
+    return this.usersService.remove(id);
   }
 }
