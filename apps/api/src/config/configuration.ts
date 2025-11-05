@@ -8,7 +8,11 @@ export const configuration = registerAs('app', () => ({
 
   // Database
   database: {
-    url: process.env.DATABASE_URL || (process.env.NODE_ENV === 'production' ? undefined : 'postgresql://vulhub:vulhub123@localhost:5432/vulhub_dev'),
+    url: process.env.DATABASE_URL || (process.env.VERCEL 
+      ? 'file:/tmp/vulhub.db' 
+      : process.env.NODE_ENV === 'production' 
+        ? undefined 
+        : 'file:./prisma/dev.db'),
     maxConnections: parseInt(process.env.DATABASE_MAX_CONNECTIONS || '10', 10),
     connectionTimeout: parseInt(process.env.DATABASE_CONNECTION_TIMEOUT || '30000', 10),
   },
