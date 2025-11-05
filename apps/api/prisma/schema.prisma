@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -17,8 +17,8 @@ model User {
   lastName     String
   avatarUrl    String?
   password     String?
-  status       UserStatus @default(ACTIVE)
-  role         UserRole @default(STUDENT)
+  status       String   @default("ACTIVE")  // UserStatus: ACTIVE, INACTIVE, SUSPENDED
+  role         String   @default("STUDENT")  // UserRole: STUDENT, INSTRUCTOR, ADMIN
   lastLoginAt  DateTime?
   preferences  String? @default("{}")
   createdAt    DateTime @default(now())
@@ -43,7 +43,7 @@ model Project {
   points      Int @default(0)
   isActive    Boolean @default(true)
   isPublic    Boolean @default(true)
-  tags        String[]
+  tags        String   @default("[]")  // JSON array stored as string
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -57,10 +57,10 @@ model Submission {
   id           String           @id @default(cuid())
   projectId    String
   userId       String
-  status       SubmissionStatus @default(PENDING)
+  status       String           @default("PENDING")  // SubmissionStatus: PENDING, APPROVED, REJECTED
   score        Int?
   feedback     String?
-  evidenceUrls String[]
+  evidenceUrls String           @default("[]")  // JSON array stored as string
   submittedAt  DateTime @default(now())
   reviewedAt   DateTime?
   reviewedBy   String?
@@ -142,22 +142,4 @@ model AuditLog {
   @@index([timestamp])
   @@index([success])
   @@map("audit_logs")
-}
-
-enum UserStatus {
-  ACTIVE
-  INACTIVE
-  SUSPENDED
-}
-
-enum UserRole {
-  STUDENT
-  INSTRUCTOR
-  ADMIN
-}
-
-enum SubmissionStatus {
-  PENDING
-  APPROVED
-  REJECTED
 }

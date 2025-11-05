@@ -45,14 +45,17 @@ export class SubmissionsService extends BaseService {
       // Upload evidence files
       const evidenceUrls: string[] = [];
       if (createSubmissionDto.evidenceUrls) {
-        evidenceUrls.push(...createSubmissionDto.evidenceUrls);
+        const parsed = typeof createSubmissionDto.evidenceUrls === 'string' 
+          ? JSON.parse(createSubmissionDto.evidenceUrls) 
+          : createSubmissionDto.evidenceUrls;
+        evidenceUrls.push(...parsed);
       }
 
       return await this.submissionsRepository.create({
         ...createSubmissionDto,
         user: { connect: { id: userId } },
         project: { connect: { id: createSubmissionDto.projectId } },
-        evidenceUrls,
+        evidenceUrls: JSON.stringify(evidenceUrls),  // Store as JSON string
         status: 'PENDING',
       });
     } catch (error) {

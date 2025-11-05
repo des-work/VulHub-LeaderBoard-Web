@@ -4,12 +4,12 @@ import { SubmissionStatus } from './common';
 // Submission schemas
 export const CreateSubmissionSchema = z.object({
   projectId: z.string().cuid(),
-  evidenceUrls: z.array(z.string().url()).default([]),
+  evidenceUrls: z.string().default("[]"),  // JSON array stored as string
   notes: z.string().max(1000).optional(),
 });
 
 export const UpdateSubmissionSchema = z.object({
-  evidenceUrls: z.array(z.string().url()).optional(),
+  evidenceUrls: z.string().optional(),  // JSON array stored as string
   notes: z.string().max(1000).optional(),
 });
 
@@ -23,11 +23,10 @@ export const SubmissionResponseSchema = z.object({
   id: z.string().cuid(),
   projectId: z.string().cuid(),
   userId: z.string().cuid(),
-  tenantId: z.string().cuid(),
   status: z.nativeEnum(SubmissionStatus),
   score: z.number().int().nullable(),
   feedback: z.string().nullable(),
-  evidenceUrls: z.array(z.string()),
+  evidenceUrls: z.string(),  // JSON array stored as string
   submittedAt: z.string().datetime(),
   reviewedAt: z.string().datetime().nullable(),
   reviewedBy: z.string().cuid().nullable(),

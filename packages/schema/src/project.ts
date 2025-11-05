@@ -11,7 +11,7 @@ export const CreateProjectSchema = z.object({
   points: z.number().int().min(0).default(0),
   isActive: z.boolean().default(true),
   isPublic: z.boolean().default(true),
-  tags: z.array(z.string()).default([]),
+  tags: z.string().default("[]"),  // JSON array stored as string
 });
 
 export const UpdateProjectSchema = z.object({
@@ -22,7 +22,7 @@ export const UpdateProjectSchema = z.object({
   points: z.number().int().min(0).optional(),
   isActive: z.boolean().optional(),
   isPublic: z.boolean().optional(),
-  tags: z.array(z.string()).optional(),
+  tags: z.string().optional(),  // JSON array stored as string
 });
 
 export const ProjectSearchSchema = z.object({
@@ -43,8 +43,7 @@ export const ProjectResponseSchema = z.object({
   points: z.number().int(),
   isActive: z.boolean(),
   isPublic: z.boolean(),
-  tags: z.array(z.string()),
-  tenantId: z.string().cuid(),
+  tags: z.string(),  // JSON array stored as string
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   _count: z.object({
