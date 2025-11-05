@@ -15,11 +15,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(req: Request, email: string, password: string): Promise<any> {
-    // Extract tenantId from request (set by TenantGuard)
-    // TenantGuard runs before this strategy and attaches tenantId to request
-    const tenantId = req['tenantId'] || 'default-tenant';
-    
-    const user = await this.authService.validateUser(email, password, tenantId);
+    const user = await this.authService.validateUser(email, password);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }

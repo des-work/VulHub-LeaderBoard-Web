@@ -10,7 +10,6 @@ import { TerminusModule } from '@nestjs/terminus';
 // Configuration
 import { DatabaseModule } from './adapters/database/database.module';
 import { RedisModule } from './adapters/redis/redis.module';
-import { StorageModule } from './adapters/storage/storage.module';
 import { EmailModule } from './adapters/email/email.module';
 
 // Core modules
@@ -80,7 +79,6 @@ import { EnvironmentValidator } from './config/environment-validator';
     // Infrastructure adapters
     DatabaseModule,
     RedisModule,
-    StorageModule,
     EmailModule,
 
     // Core business modules

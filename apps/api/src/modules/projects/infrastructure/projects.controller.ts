@@ -29,7 +29,7 @@ export class ProjectsController {
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   create(@Body() createProjectDto: CreateProjectDto, @Request() req) {
-    return this.projectsService.create(createProjectDto, req.user.tenantId);
+    return this.projectsService.create(createProjectDto);
   }
 
   @Get()
@@ -60,7 +60,7 @@ export class ProjectsController {
       isActive,
       isPublic,
     };
-    return this.projectsService.findAll(req.user.tenantId, searchDto, page, limit);
+    return this.projectsService.findAll(searchDto, page, limit);
   }
 
   @Get('category/:category')
@@ -68,7 +68,7 @@ export class ProjectsController {
   @ApiResponse({ status: 200, description: 'Projects retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findByCategory(@Param('category') category: string, @Request() req) {
-    return this.projectsService.findByCategory(category, req.user.tenantId);
+    return this.projectsService.findByCategory(category);
   }
 
   @Get('difficulty/:difficulty')
@@ -76,7 +76,7 @@ export class ProjectsController {
   @ApiResponse({ status: 200, description: 'Projects retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findByDifficulty(@Param('difficulty') difficulty: string, @Request() req) {
-    return this.projectsService.findByDifficulty(difficulty, req.user.tenantId);
+    return this.projectsService.findByDifficulty(difficulty);
   }
 
   @Get(':id')
@@ -85,7 +85,7 @@ export class ProjectsController {
   @ApiResponse({ status: 404, description: 'Project not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findOne(@Param('id') id: string, @Request() req) {
-    return this.projectsService.findOne(id, req.user.tenantId);
+    return this.projectsService.findOne(id);
   }
 
   @Get(':id/stats')
@@ -94,7 +94,7 @@ export class ProjectsController {
   @ApiResponse({ status: 404, description: 'Project not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getStats(@Param('id') id: string, @Request() req) {
-    return this.projectsService.getStats(id, req.user.tenantId);
+    return this.projectsService.getStats(id);
   }
 
   @Patch(':id')
@@ -103,7 +103,7 @@ export class ProjectsController {
   @ApiResponse({ status: 404, description: 'Project not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto, @Request() req) {
-    return this.projectsService.update(id, updateProjectDto, req.user.tenantId);
+    return this.projectsService.update(id, updateProjectDto);
   }
 
   @Patch(':id/toggle-active')
@@ -112,7 +112,7 @@ export class ProjectsController {
   @ApiResponse({ status: 404, description: 'Project not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   toggleActive(@Param('id') id: string, @Request() req) {
-    return this.projectsService.toggleActive(id, req.user.tenantId);
+    return this.projectsService.toggleActive(id);
   }
 
   @Delete(':id')
@@ -121,6 +121,6 @@ export class ProjectsController {
   @ApiResponse({ status: 404, description: 'Project not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   remove(@Param('id') id: string, @Request() req) {
-    return this.projectsService.remove(id, req.user.tenantId);
+    return this.projectsService.remove(id);
   }
 }
