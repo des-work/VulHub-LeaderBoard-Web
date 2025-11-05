@@ -11,5 +11,6 @@
       "src": "/(.*)",
       "dest": "apps/web/$1"
     }
-  ]
+  ],
+  "buildCommand": "cd .. && npm run build:web"
 }
