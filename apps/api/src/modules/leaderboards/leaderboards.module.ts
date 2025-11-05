@@ -4,11 +4,11 @@ import { LeaderboardsService } from './application/leaderboards.service';
 import { LeaderboardsRepository } from './infrastructure/leaderboards.repository';
 import { CacheService } from '../../common/services/cache.service';
 import { QueryOptimizerService } from '../../common/services/query-optimizer.service';
-import { RedisModule } from '../../adapters/redis/redis.module';
+import { MemoryCacheModule } from '../../adapters/cache/cache.module';
 import { WebSocketModule } from '../../ws/websocket.module';
 
 @Module({
-  imports: [RedisModule, WebSocketModule],
+  imports: [MemoryCacheModule, WebSocketModule],
   controllers: [LeaderboardsController],
   providers: [
     LeaderboardsService, 

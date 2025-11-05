@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { RedisService } from '../../adapters/redis/redis.service';
+import { MemoryCacheService } from '../../adapters/cache/memory-cache.service';
 
 export interface CacheOptions {
   ttl?: number; // Time to live in seconds
@@ -12,7 +12,7 @@ export class CacheService {
   private readonly logger = new Logger(CacheService.name);
   private readonly defaultTTL = 3600; // 1 hour
 
-  constructor(private redisService: RedisService) {}
+  constructor(private cacheService: MemoryCacheService) {}
 
   /**
    * Get value from cache
@@ -20,7 +20,7 @@ export class CacheService {
   async get<T>(key: string, options: CacheOptions = {}): Promise<T | null> {
     try {
       const fullKey = this.buildKey(key, options.prefix);
-      const value = await this.redisService.get(fullKey);
+      const value = await this.cacheService.get(fullKey);
       
       if (!value) {
         return null;
@@ -56,7 +56,7 @@ export class CacheService {
         serializedValue = value as string;
       }
 
-      await this.redisService.setex(fullKey, ttl, serializedValue);
+      await this.cacheService.setex(fullKey, ttl, serializedValue);
       return true;
     } catch (error) {
       this.logger.error(`Cache set error for key ${key}:`, error);
@@ -70,7 +70,7 @@ export class CacheService {
   async del(key: string, options: CacheOptions = {}): Promise<boolean> {
     try {
       const fullKey = this.buildKey(key, options.prefix);
-      await this.redisService.del(fullKey);
+      await this.cacheService.del(fullKey);
       return true;
     } catch (error) {
       this.logger.error(`Cache delete error for key ${key}:`, error);
@@ -84,13 +84,13 @@ export class CacheService {
   async delPattern(pattern: string, options: CacheOptions = {}): Promise<number> {
     try {
       const fullPattern = this.buildKey(pattern, options.prefix);
-      const keys = await this.redisService.keys(fullPattern);
+      const keys = await this.cacheService.keys(fullPattern);
       
       if (keys.length === 0) {
         return 0;
       }
 
-      await this.redisService.delMultiple(...keys);
+      await this.cacheService.delMultiple(...keys);
       return keys.length;
     } catch (error) {
       this.logger.error(`Cache delete pattern error for ${pattern}:`, error);
@@ -104,7 +104,7 @@ export class CacheService {
   async exists(key: string, options: CacheOptions = {}): Promise<boolean> {
     try {
       const fullKey = this.buildKey(key, options.prefix);
-      const result = await this.redisService.exists(fullKey);
+      const result = await this.cacheService.exists(fullKey);
       return result;
     } catch (error) {
       this.logger.error(`Cache exists error for key ${key}:`, error);
@@ -147,10 +147,10 @@ export class CacheService {
   async invalidatePattern(pattern: string, options: CacheOptions = {}): Promise<void> {
     try {
       const fullPattern = this.buildKey(pattern, options.prefix);
-      const keys = await this.redisService.keys(fullPattern);
+      const keys = await this.cacheService.keys(fullPattern);
       
       if (keys.length > 0) {
-        await this.redisService.delMultiple(...keys);
+        await this.cacheService.delMultiple(...keys);
         this.logger.log(`Invalidated ${keys.length} cache keys matching pattern: ${pattern}`);
       }
     } catch (error) {
@@ -167,10 +167,10 @@ export class CacheService {
     hitRate?: number;
   }> {
     try {
-      const info = await this.redisService.info('memory');
-      const keyspace = await this.redisService.info('keyspace');
+      const info = await this.cacheService.info('memory');
+      const keyspace = await this.cacheService.info('keyspace');
       
-      // Parse Redis info
+      // Parse cache info
       const memoryMatch = info.match(/used_memory_human:([^\r\n]+)/);
       const keyspaceMatch = keyspace.match(/keys=(\d+)/);
       
@@ -201,15 +201,15 @@ export class CacheService {
    * Cache key generators for common patterns
    */
   static generateKeys = {
-    user: (userId: string, tenantId: string) => `user:${tenantId}:${userId}`,
-    userStats: (userId: string, tenantId: string) => `user:stats:${tenantId}:${userId}`,
-    leaderboard: (tenantId: string, type: string = 'overall') => `leaderboard:${tenantId}:${type}`,
-    leaderboardStats: (tenantId: string) => `leaderboard:stats:${tenantId}`,
-    project: (projectId: string, tenantId: string) => `project:${tenantId}:${projectId}`,
-    projectStats: (projectId: string, tenantId: string) => `project:stats:${tenantId}:${projectId}`,
-    badge: (badgeId: string, tenantId: string) => `badge:${tenantId}:${badgeId}`,
-    userBadges: (userId: string, tenantId: string) => `user:badges:${tenantId}:${userId}`,
-    submission: (submissionId: string, tenantId: string) => `submission:${tenantId}:${submissionId}`,
-    userSubmissions: (userId: string, tenantId: string) => `user:submissions:${tenantId}:${userId}`,
+    user: (userId: string) => `user:${userId}`,
+    userStats: (userId: string) => `user:stats:${userId}`,
+    leaderboard: (type: string = 'overall') => `leaderboard:${type}`,
+    leaderboardStats: () => `leaderboard:stats`,
+    project: (projectId: string) => `project:${projectId}`,
+    projectStats: (projectId: string) => `project:stats:${projectId}`,
+    badge: (badgeId: string) => `badge:${badgeId}`,
+    userBadges: (userId: string) => `user:badges:${userId}`,
+    submission: (submissionId: string) => `submission:${submissionId}`,
+    userSubmissions: (userId: string) => `user:submissions:${userId}`,
   };
 }

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { RedisService } from '../../adapters/redis/redis.service';
+import { MemoryCacheService } from '../../adapters/cache/memory-cache.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -7,7 +7,7 @@ export class TokenBlacklistService {
   private readonly logger = new Logger(TokenBlacklistService.name);
 
   constructor(
-    private redisService: RedisService,
+    private cacheService: MemoryCacheService,
     private jwtService: JwtService,
   ) {}
 
@@ -19,7 +19,7 @@ export class TokenBlacklistService {
       const key = `blacklist:${token}`;
       const ttl = Math.max(expiresIn, 3600); // Minimum 1 hour TTL
       
-      await this.redisService.set(key, userId, ttl);
+      await this.cacheService.setex(key, ttl, userId);
       this.logger.log(`Token blacklisted for user ${userId}`);
     } catch (error) {
       this.logger.error('Failed to blacklist token:', error);
@@ -33,7 +33,7 @@ export class TokenBlacklistService {
   async isTokenBlacklisted(token: string): Promise<boolean> {
     try {
       const key = `blacklist:${token}`;
-      const result = await this.redisService.get(key);
+      const result = await this.cacheService.get(key);
       return !!result;
     } catch (error) {
       this.logger.error('Failed to check token blacklist:', error);
@@ -47,18 +47,18 @@ export class TokenBlacklistService {
   async blacklistAllUserTokens(userId: string): Promise<void> {
     try {
       const pattern = `blacklist:*`;
-      const keys = await this.redisService.keys(pattern);
+      const keys = await this.cacheService.keys(pattern);
       
       const userTokens = [];
       for (const key of keys) {
-        const tokenUserId = await this.redisService.get(key);
+        const tokenUserId = await this.cacheService.get(key);
         if (tokenUserId === userId) {
           userTokens.push(key);
         }
       }
       
       if (userTokens.length > 0) {
-        await this.redisService.delMultiple(...userTokens);
+        await this.cacheService.delMultiple(...userTokens);
         this.logger.log(`Blacklisted ${userTokens.length} tokens for user ${userId}`);
       }
     } catch (error) {

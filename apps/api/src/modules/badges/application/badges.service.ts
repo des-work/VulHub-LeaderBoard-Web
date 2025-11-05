@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { BadgesRepository } from '../infrastructure/badges.repository';
-import { RedisService } from '../../../adapters/redis/redis.service';
+import { MemoryCacheService } from '../../../adapters/cache/memory-cache.service';
 import { WebSocketGateway } from '../../../ws/websocket.gateway';
 import { CreateBadgeDto, UpdateBadgeDto, AssignBadgeDto } from '@vulhub/schema';
 
@@ -27,7 +27,7 @@ export class BadgesService {
 
   constructor(
     private badgesRepository: BadgesRepository,
-    private redisService: RedisService,
+    private cacheService: MemoryCacheService,
     private webSocketGateway: WebSocketGateway,
   ) {}
 
@@ -193,7 +193,7 @@ export class BadgesService {
   async getUserBadgeProgress(userId: string): Promise<BadgeProgress[]> {
     try {
       const cacheKey = `user:badge-progress:${userId}`;
-      const cached = await this.redisService.get(cacheKey);
+      const cached = await this.cacheService.get(cacheKey);
       
       if (cached) {
         return JSON.parse(cached);
@@ -202,7 +202,7 @@ export class BadgesService {
       const progress = await this.badgesRepository.getUserBadgeProgress(userId);
       
       // Cache for 5 minutes
-      await this.redisService.set(cacheKey, JSON.stringify(progress), 300);
+      await this.cacheService.setex(cacheKey, 300, JSON.stringify(progress));
 
       return progress;
     } catch (error) {
@@ -235,7 +235,7 @@ export class BadgesService {
       });
 
       // Clear user badge progress cache
-      await this.redisService.del(`user:badge-progress:${assignBadgeDto.userId}`);
+      await this.cacheService.del(`user:badge-progress:${assignBadgeDto.userId}`);
 
       // Broadcast badge earned event
       this.webSocketGateway.server.to(`user:${assignBadgeDto.userId}`).emit('badge:earned', {
@@ -295,7 +295,7 @@ export class BadgesService {
   async getBadgeStats() {
     try {
       const cacheKey = `badge:stats`;
-      const cached = await this.redisService.get(cacheKey);
+      const cached = await this.cacheService.get(cacheKey);
       
       if (cached) {
         return JSON.parse(cached);
@@ -304,7 +304,7 @@ export class BadgesService {
       const stats = await this.badgesRepository.getBadgeStats();
       
       // Cache for 10 minutes
-      await this.redisService.set(cacheKey, JSON.stringify(stats), 600);
+      await this.cacheService.setex(cacheKey, 600, JSON.stringify(stats));
 
       return stats;
     } catch (error) {

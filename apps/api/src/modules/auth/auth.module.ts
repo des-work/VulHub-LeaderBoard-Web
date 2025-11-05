@@ -10,7 +10,7 @@ import { LocalStrategy } from './infrastructure/local.strategy';
 import { TokenBlacklistService } from '../../common/services/token-blacklist.service';
 import { RateLimitGuard } from '../../common/guards/rate-limit.guard';
 import { UsersModule } from '../users/users.module';
-import { RedisModule } from '../../adapters/redis/redis.module';
+import { MemoryCacheModule } from '../../adapters/cache/cache.module';
 
 @Module({
   imports: [
@@ -26,7 +26,7 @@ import { RedisModule } from '../../adapters/redis/redis.module';
       inject: [ConfigService],
     }),
     UsersModule,
-    RedisModule,
+    MemoryCacheModule,
   ],
   controllers: [AuthController],
   providers: [

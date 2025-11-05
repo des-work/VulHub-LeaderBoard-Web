@@ -1,11 +1,11 @@
 import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus, Logger } from '@nestjs/common';
-import { RedisService } from '../../adapters/redis/redis.service';
+import { MemoryCacheService } from '../../adapters/cache/memory-cache.service';
 
 @Injectable()
 export class RateLimitGuard implements CanActivate {
   private readonly logger = new Logger(RateLimitGuard.name);
 
-  constructor(private redisService: RedisService) {}
+  constructor(private cacheService: MemoryCacheService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -23,7 +23,7 @@ export class RateLimitGuard implements CanActivate {
     const key = `rate_limit:${identifier}:${endpoint}`;
 
     try {
-      const current = await this.redisService.get(key);
+      const current = await this.cacheService.get(key);
       const count = current ? parseInt(current) : 0;
 
       // Set rate limit headers
@@ -60,9 +60,9 @@ export class RateLimitGuard implements CanActivate {
 
       // Increment counter (first request sets to 1)
       if (count === 0) {
-        await this.redisService.setex(key, limits.window, '1');
+        await this.cacheService.setex(key, limits.window, '1');
       } else {
-        await this.redisService.incr(key);
+        await this.cacheService.incr(key);
       }
 
       return true;
@@ -71,15 +71,15 @@ export class RateLimitGuard implements CanActivate {
         throw error;
       }
 
-      // Redis error - allow request but log
-      this.logger.error(`Redis error in rate limiting: ${error.message}`, {
+      // Cache error - allow request but log
+      this.logger.error(`Cache error in rate limiting: ${error.message}`, {
         ip,
         userId,
         endpoint,
         method,
       });
 
-      // Allow request on Redis failure (fail open)
+      // Allow request on cache failure (fail open)
       return true;
     }
   }
@@ -148,7 +148,7 @@ export class RateLimitGuard implements CanActivate {
 
   private async getTTL(key: string): Promise<number> {
     try {
-      const ttl = await this.redisService.ttl(key);
+      const ttl = await this.cacheService.ttl(key);
       return ttl > 0 ? ttl : 0;
     } catch (error) {
       this.logger.warn(`Failed to get TTL for rate limit key: ${error.message}`);
