@@ -13,9 +13,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from '../application/auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { TenantGuard } from '../../../common/guards/tenant.guard';
 import { RateLimitGuard } from '../../../common/guards/rate-limit.guard';
-import { Tenant } from '../../../common/decorators/tenant.decorator';
 import { ValidationPipe } from '../../../common/pipes/validation.pipe';
 import { SanitizeInterceptor } from '../../../common/interceptors/sanitize.interceptor';
 import { LoginDto, RegisterDto, RefreshTokenDto } from '@vulhub/schema';
