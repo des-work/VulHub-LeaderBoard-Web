@@ -4,7 +4,7 @@
   "description": "NestJS API for VulHub Leaderboard",
   "main": "dist/main.js",
   "scripts": {
-    "build": "nest build",
+    "build": "npx -y @nestjs/cli@latest build",
     "dev": "pnpm exec nest start --watch",
     "start": "node dist/main",
     "start:dev": "pnpm exec nest start --watch",
