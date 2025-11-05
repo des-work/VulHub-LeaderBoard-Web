@@ -16,11 +16,6 @@
       "destination": "/api"
     }
   ],
-  "env": {
-    "NEXT_PUBLIC_API_URL": "@next_public_api_url",
-    "DATABASE_URL": "file:/tmp/vulhub.db",
-    "NODE_ENV": "production"
-  },
   "git": {
     "deploymentEnabled": {
       "main": true
