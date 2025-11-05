@@ -10,16 +10,14 @@ export class QueryOptimizerService {
   /**
    * Get user with all related data in a single query
    */
-  async getUserWithStats(userId: string, tenantId: string) {
+  async getUserWithStats(userId: string) {
     try {
       const user = await this.prisma.user.findUnique({
         where: { 
           id: userId,
-          tenantId 
         },
         include: {
           submissions: {
-            where: { tenantId },
             select: {
               id: true,
               score: true,
@@ -36,7 +34,6 @@ export class QueryOptimizerService {
             },
           },
           userBadges: {
-            where: { tenantId },
             include: {
               badge: {
                 select: {
@@ -50,9 +47,7 @@ export class QueryOptimizerService {
           },
           _count: {
             select: {
-              submissions: {
-                where: { tenantId },
-              },
+              submissions: true,
             },
           },
         },
@@ -88,16 +83,14 @@ export class QueryOptimizerService {
   /**
    * Get project with all related data in a single query
    */
-  async getProjectWithStats(projectId: string, tenantId: string) {
+  async getProjectWithStats(projectId: string) {
     try {
       const project = await this.prisma.project.findUnique({
         where: { 
           id: projectId,
-          tenantId 
         },
         include: {
           submissions: {
-            where: { tenantId },
             select: {
               id: true,
               score: true,
@@ -116,9 +109,7 @@ export class QueryOptimizerService {
           },
           _count: {
             select: {
-              submissions: {
-                where: { tenantId },
-              },
+              submissions: true,
             },
           },
         },
@@ -156,7 +147,7 @@ export class QueryOptimizerService {
   /**
    * Get leaderboard with user details in a single query
    */
-  async getLeaderboardWithUsers(tenantId: string, limit: number = 50) {
+  async getLeaderboardWithUsers(limit: number = 50) {
     try {
       // Use a single complex query instead of multiple queries
       const results = await this.prisma.$queryRaw`
@@ -173,9 +164,9 @@ export class QueryOptimizerService {
             COALESCE(AVG(CASE WHEN s.status = 'APPROVED' THEN s.score END), 0) as "averageScore",
             COUNT(ub.id) as badges
           FROM "User" u
-          LEFT JOIN "Submission" s ON u.id = s."userId" AND s."tenantId" = $1
-          LEFT JOIN "UserBadge" ub ON u.id = ub."userId" AND ub."tenantId" = $1
-          WHERE u."tenantId" = $1 AND u.status = 'ACTIVE'
+          LEFT JOIN "Submission" s ON u.id = s."userId"
+          LEFT JOIN "UserBadge" ub ON u.id = ub."userId"
+          WHERE u.status = 'ACTIVE'
           GROUP BY u.id, u."firstName", u."lastName", u.email, u."avatarUrl"
         )
         SELECT 
@@ -188,7 +179,7 @@ export class QueryOptimizerService {
           ) as rank
         FROM user_stats
         ORDER BY "totalScore" DESC, "approvedSubmissions" DESC, "averageScore" DESC
-        LIMIT $2
+        LIMIT $1
       ` as any[];
 
       return results.map((row, index) => ({
@@ -205,7 +196,7 @@ export class QueryOptimizerService {
         rank: index + 1,
       }));
     } catch (error) {
-      this.logger.error(`Failed to get leaderboard with users for tenant ${tenantId}:`, error);
+      this.logger.error(`Failed to get leaderboard with users:`, error);
       throw error;
     }
   }
@@ -213,7 +204,7 @@ export class QueryOptimizerService {
   /**
    * Get submissions with user and project details in a single query
    */
-  async getSubmissionsWithDetails(tenantId: string, filters: {
+  async getSubmissionsWithDetails(filters: {
     userId?: string;
     projectId?: string;
     status?: string;
@@ -225,7 +216,6 @@ export class QueryOptimizerService {
 
       const submissions = await this.prisma.submission.findMany({
         where: {
-          tenantId,
           ...(userId && { userId }),
           ...(projectId && { projectId }),
           ...(status && { status: status as any }),
@@ -256,7 +246,7 @@ export class QueryOptimizerService {
 
       return submissions;
     } catch (error) {
-      this.logger.error(`Failed to get submissions with details for tenant ${tenantId}:`, error);
+      this.logger.error(`Failed to get submissions with details:`, error);
       throw error;
     }
   }
@@ -264,7 +254,7 @@ export class QueryOptimizerService {
   /**
    * Get badge progress for multiple users in a single query
    */
-  async getBadgeProgressForUsers(userIds: string[], tenantId: string) {
+  async getBadgeProgressForUsers(userIds: string[]) {
     try {
       const results = await this.prisma.$queryRaw`
         SELECT 
@@ -281,8 +271,7 @@ export class QueryOptimizerService {
         FROM "Badge" b
         LEFT JOIN "UserBadge" ub ON b.id = ub."badgeId" 
           AND ub."userId" = ANY($1::text[])
-          AND ub."tenantId" = $2
-        WHERE b."tenantId" = $2 AND b."isActive" = true
+        WHERE b."isActive" = true
         ORDER BY b."createdAt" DESC
       ` as any[];
 
@@ -315,7 +304,7 @@ export class QueryOptimizerService {
   /**
    * Get dashboard data for a user in a single query
    */
-  async getUserDashboard(userId: string, tenantId: string) {
+  async getUserDashboard(userId: string) {
     try {
       const dashboard = await this.prisma.$queryRaw`
         WITH user_stats AS (
@@ -332,9 +321,9 @@ export class QueryOptimizerService {
             COUNT(ub.id) as badges,
             MAX(s."createdAt") as "lastSubmissionAt"
           FROM "User" u
-          LEFT JOIN "Submission" s ON u.id = s."userId" AND s."tenantId" = $1
-          LEFT JOIN "UserBadge" ub ON u.id = ub."userId" AND ub."tenantId" = $1
-          WHERE u.id = $2 AND u."tenantId" = $1
+          LEFT JOIN "Submission" s ON u.id = s."userId"
+          LEFT JOIN "UserBadge" ub ON u.id = ub."userId"
+          WHERE u.id = $1
           GROUP BY u.id, u."firstName", u."lastName", u.email, u."avatarUrl"
         ),
         recent_submissions AS (
@@ -348,7 +337,7 @@ export class QueryOptimizerService {
             p.difficulty as "projectDifficulty"
           FROM "Submission" s
           JOIN "Project" p ON s."projectId" = p.id
-          WHERE s."userId" = $2 AND s."tenantId" = $1
+          WHERE s."userId" = $1
           ORDER BY s."createdAt" DESC
           LIMIT 5
         ),
@@ -361,7 +350,7 @@ export class QueryOptimizerService {
             b.icon as "badgeIcon"
           FROM "UserBadge" ub
           JOIN "Badge" b ON ub."badgeId" = b.id
-          WHERE ub."userId" = $2 AND ub."tenantId" = $1
+          WHERE ub."userId" = $1
           ORDER BY ub."earnedAt" DESC
           LIMIT 5
         )
