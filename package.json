@@ -8,7 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "cd apps/api && prisma generate",
+    "postinstall": "cd apps/api && prisma generate && cd ../.. && yarn workspace @vulhub/schema run build && yarn workspace @vulhub/config run build && yarn workspace @vulhub/utils run build",
     "dev": "turbo run dev",
     "build": "turbo run build",
     "test": "turbo run test",
