@@ -1,25 +1,34 @@
 # Dependencies
 node_modules/
 .pnpm-store/
-pnpm-lock.yaml
+npm-cache/
 
 # Build outputs
 dist/
 .next/
 out/
-coverage/
 build/
+coverage/
 
-# Environment files (handled by Vercel)
+# Environment files
 .env
-.env*.local
-.env.example
+.env.local
+.env.*.local
+.env.test
+.env.production
 
 # Development files
-*.log
-logs/
 .DS_Store
 Thumbs.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+# Version control
+.git/
+.gitignore
 
 # IDE
 .vscode/
@@ -28,45 +37,40 @@ Thumbs.db
 *.swo
 
 # Testing
-test-results/
-playwright-report/
-.jest-cache/
-jest-coverage/
+jest/
+__tests__/
+.jest/
+test/
+tests/
+*.test.ts
+*.spec.ts
 
-# Docker (not needed for Vercel)
-docker-compose*.yml
+# Database
+*.db
+*.db-journal
+prisma/dev.db
+
+# API (we're not deploying it here)
+apps/api/
+
+# Documentation
+*.md
+docs/
+
+# Docker
 Dockerfile*
+docker-compose*.yml
 .dockerignore
 
-# Documentation (optional - set to false if you want docs deployed)
-docs/
-*.md
-!README.md
+# Kubernetes
+k8s/
 
-# Force cache invalidation - trigger fresh build
-
-# Local scripts (not needed on Vercel)
+# Scripts
 scripts/
 
-# Local database files (will be created in /tmp on Vercel)
-*.db
-*.sqlite
-*.db-journal
-prisma/dev.db*
+# CI/CD
+.github/
 
-# Prisma artifacts
-prisma/migrations/.DS_Store
-.prisma/
-
-# K8s configs
-k8s/
-infra/
-
-# Build artifacts
-apps/api/dist/
-apps/web/.next/
-
-# Cache files
+# Misc
 .turbo/
-.eslintcache
-
+turbo.json
