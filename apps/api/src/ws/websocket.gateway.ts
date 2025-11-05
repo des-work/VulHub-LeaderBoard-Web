@@ -66,13 +66,11 @@ export class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnec
           });
           
           client.userId = payload.sub;
-          client.tenantId = payload.tenantId;
           
-          // Join tenant-specific room
-          client.join(`tenant:${client.tenantId}`);
+          // Join user-specific room for real-time updates
           client.join(`user:${client.userId}`);
           
-          this.logger.log(`Client ${client.id} authenticated as user ${client.userId} in tenant ${client.tenantId}`);
+          this.logger.log(`Client ${client.id} authenticated as user ${client.userId}`);
         } catch (error) {
           this.logger.warn(`Authentication failed for client ${client.id}:`, error.message);
           client.disconnect();

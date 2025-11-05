@@ -1,16 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { CacheModule } from '@nestjs/cache-manager';
-import { EventEmitterModule } from '@nestjs/event-emitter';
-import { ScheduleModule } from '@nestjs/schedule';
-import { BullModule } from '@nestjs/bull';
 import { TerminusModule } from '@nestjs/terminus';
 
 // Configuration
 import { DatabaseModule } from './adapters/database/database.module';
 import { MemoryCacheModule } from './adapters/cache/cache.module';
-import { EmailModule } from './adapters/email/email.module';
 import { StorageModule } from './adapters/storage/storage.module';
 
 // Core modules
@@ -50,37 +45,12 @@ import { EnvironmentValidator } from './config/environment-validator';
       },
     ]),
 
-    // Caching
-    CacheModule.register({
-      isGlobal: true,
-      ttl: 300, // 5 minutes
-    }),
-
-    // Event system
-    EventEmitterModule.forRoot(),
-
-    // Scheduling
-    ScheduleModule.forRoot(),
-
-    // Queue system
-    BullModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
-        redis: {
-          host: configService.get('app.redis.host', 'localhost'),
-          port: configService.get('app.redis.port', 6379),
-          password: configService.get('app.redis.password'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
-
     // Health checks
     TerminusModule,
 
     // Infrastructure adapters
     DatabaseModule,
     MemoryCacheModule,
-    EmailModule,
     StorageModule,
 
     // Core business modules

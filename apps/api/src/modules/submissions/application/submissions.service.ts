@@ -1,7 +1,6 @@
 import type { Express } from 'express';
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { SubmissionsRepository } from '../infrastructure/submissions.repository';
-import { EmailService } from '../../../adapters/email/email.service';
 import { FileStorageService } from '../../../adapters/storage/file-storage.service';
 import { CreateSubmissionDto, UpdateSubmissionDto, SubmissionReviewDto } from '../../../shared';
 import { BaseService } from '../../../common/services/base.service';
@@ -13,7 +12,6 @@ import { SubmissionNotFoundError, ValidationError, InvalidSubmissionStatusError 
 export class SubmissionsService extends BaseService {
   constructor(
     private submissionsRepository: SubmissionsRepository,
-    private emailService: EmailService,
     private fileStorageService: FileStorageService,
     errorHandler: ErrorHandlerService,
   ) {

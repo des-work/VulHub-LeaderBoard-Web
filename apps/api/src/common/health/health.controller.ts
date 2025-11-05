@@ -6,8 +6,6 @@ import {
   HealthCheckResult,
 } from '@nestjs/terminus';
 import { DatabaseHealthIndicator } from './database.health';
-import { RedisHealthIndicator } from './redis.health';
-import { ProductionHealthService } from './production-health.service';
 import { EnvironmentValidator } from '../../config/environment-validator';
 
 @ApiTags('health')
@@ -16,8 +14,6 @@ export class HealthController {
   constructor(
     private health: HealthCheckService,
     private dbHealth: DatabaseHealthIndicator,
-    private redisHealth: RedisHealthIndicator,
-    private productionHealth: ProductionHealthService,
     private envValidator: EnvironmentValidator,
   ) {}
 
@@ -55,18 +51,9 @@ export class HealthController {
   async check(): Promise<HealthCheckResult> {
     const isDevelopment = process.env.NODE_ENV === 'development';
 
-    if (isDevelopment) {
-      // Simple health check for development
-      return this.health.check([
-        () => this.dbHealth.isHealthy('database'),
-        () => this.redisHealth.isHealthy('redis'),
-      ]);
-    }
-
-    // Production health check with comprehensive checks
+    // Health check
     return this.health.check([
       () => this.dbHealth.isHealthy('database'),
-      () => this.redisHealth.isHealthy('redis'),
     ]);
   }
 
@@ -82,7 +69,6 @@ export class HealthController {
     // Readiness check - verify all critical dependencies
     return this.health.check([
       () => this.dbHealth.isHealthy('database'),
-      () => this.redisHealth.isHealthy('redis'),
     ]);
   }
 
@@ -159,7 +145,12 @@ export class HealthController {
   })
   @ApiResponse({ status: 503, description: 'Service has health issues' })
   async detailed() {
-    return this.productionHealth.getHealthStatus();
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development',
+    };
   }
 
   @Get('config')
