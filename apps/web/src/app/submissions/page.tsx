@@ -101,7 +101,7 @@ const VULHUB_CHALLENGES = [
 ];
 
 export default function SubmissionsPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { user: _user, isAuthenticated } = useAuth();
   const router = useRouter();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [showSubmissionForm, setShowSubmissionForm] = useState(false);

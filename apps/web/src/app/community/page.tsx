@@ -8,7 +8,7 @@ import {
   VULHUB_VULNERABILITIES,
   searchCategories,
   searchVulnerabilities,
-  getCategoryById,
+  getCategoryById as _getCategoryById,
   getVulnerabilitiesByCategory,
   type CategoryInfo,
   type VulnerabilityInfo
@@ -34,7 +34,9 @@ export default function CommunityPage() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [typedText, setTypedText] = useState('');
   const [currentView, setCurrentView] = useState<'welcome' | 'search' | 'category' | 'thread'>('welcome');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedCategory, setSelectedCategory] = useState<CategoryInfo | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedVuln, setSelectedVuln] = useState<VulnerabilityInfo | null>(null);
   const [onlineUsers] = useState(Math.floor(Math.random() * 50) + 10);
   const inputRef = useRef<HTMLInputElement>(null);

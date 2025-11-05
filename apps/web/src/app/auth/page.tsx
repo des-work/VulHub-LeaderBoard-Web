@@ -2,12 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../lib/auth/context';
-import { useRouter } from 'next/navigation';
 import { TEST_ACCOUNTS } from '../../lib/auth/testCredentials';
 
 export default function AuthPage() {
   const { isAuthenticated, isLoading, login } = useAuth();
-  const router = useRouter();
   const hasRedirected = React.useRef(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,11 +16,9 @@ export default function AuthPage() {
   useEffect(() => {
     if (isAuthenticated && !isLoading && !hasRedirected.current) {
       hasRedirected.current = true;
-      console.log('[AuthPage] Authenticated, scheduling redirect to home');
       
       // Use setTimeout to allow other effects to settle
       const timeoutId = setTimeout(() => {
-        console.log('[AuthPage] Executing redirect to home');
         // Use window.location to ensure we stay on the same port and avoid routing issues
         window.location.href = '/';
       }, 100);
@@ -35,15 +31,12 @@ export default function AuthPage() {
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
-    console.log('[AuthPage] handleSubmit called with:', { email });
 
     try {
-      console.log('[AuthPage] Calling login...');
       await login({ email, password });
-      console.log('[AuthPage] Login successful, isAuthenticated should be true now');
-    } catch (err: any) {
-      console.log('[AuthPage] Login failed:', err);
-      setError(err.message || 'Login failed');
+    } catch (err: unknown) {
+      const error = err as Error;
+      setError(error.message || 'Login failed');
     } finally {
       setIsSubmitting(false);
     }

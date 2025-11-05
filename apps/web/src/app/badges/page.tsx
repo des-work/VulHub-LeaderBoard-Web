@@ -17,7 +17,7 @@ import { initializeBadges, filterBadges, calculateBadgeStats, getRecentlyUnlocke
 import { BadgeCard, BadgeFilters, BadgeStats, BadgeModal } from '../../components/badges';
 
 export default function BadgesPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { user: _user, isAuthenticated } = useAuth();
   const router = useRouter();
 
   // State
