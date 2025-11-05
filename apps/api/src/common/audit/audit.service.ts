@@ -29,7 +29,6 @@ export class AuditService {
         orderBy: { timestamp: 'desc' },
         include: {
           user: true,
-          tenant: true,
         },
       }),
       this.prisma.auditLog.count({ where }),
@@ -53,11 +52,13 @@ export class AuditService {
       where: { id },
       include: {
         user: true,
-        tenant: true,
       },
     });
   }
 
+  /**
+   * Get audit statistics
+   */
   async getAuditStats(period: string): Promise<any> {
     const now = new Date();
     let startDate: Date;
@@ -96,6 +97,9 @@ export class AuditService {
     };
   }
 
+  /**
+   * Get available actions
+   */
   async getAvailableActions(): Promise<any> {
     const actions = await this.prisma.auditLog.findMany({
       select: { action: true },
@@ -105,6 +109,9 @@ export class AuditService {
     return actions.map(item => item.action);
   }
 
+  /**
+   * Get available resources
+   */
   async getAvailableResources(): Promise<any> {
     const resources = await this.prisma.auditLog.findMany({
       select: { resource: true },
@@ -114,6 +121,9 @@ export class AuditService {
     return resources.map(item => item.resource);
   }
 
+  /**
+   * Get users with activity
+   */
   async getUsersWithActivity(): Promise<any> {
     const users = await this.prisma.auditLog.findMany({
       select: { userId: true },
@@ -128,6 +138,9 @@ export class AuditService {
     return users.map(item => item.userId);
   }
 
+  /**
+   * Get compliance report
+   */
   async getComplianceReport(startDate?: Date, endDate?: Date): Promise<any> {
     const where: any = {};
     if (startDate || endDate) {
@@ -151,6 +164,9 @@ export class AuditService {
     };
   }
 
+  /**
+   * Export audit logs
+   */
   async exportAuditLogs(format: string, startDate?: Date, endDate?: Date): Promise<any> {
     const where: any = {};
     if (startDate || endDate) {
@@ -163,7 +179,6 @@ export class AuditService {
       where,
       include: {
         user: true,
-        tenant: true,
       },
     });
 
@@ -174,6 +189,9 @@ export class AuditService {
     };
   }
 
+  /**
+   * Set retention policy
+   */
   async setRetentionPolicy(policy: any): Promise<any> {
     return {
       message: 'Retention policy updated',
@@ -181,6 +199,9 @@ export class AuditService {
     };
   }
 
+  /**
+   * Clean up old logs
+   */
   async cleanupOldLogs(options: any): Promise<any> {
     const { olderThanDays, dryRun = false } = options;
     const cutoffDate = new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000);
@@ -216,6 +237,9 @@ export class AuditService {
     };
   }
 
+  /**
+   * Get audit health
+   */
   async getAuditHealth(): Promise<any> {
     return {
       status: 'healthy',

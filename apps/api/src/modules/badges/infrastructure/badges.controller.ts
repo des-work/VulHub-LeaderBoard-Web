@@ -29,7 +29,7 @@ export class BadgesController {
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   create(@Body() createBadgeDto: CreateBadgeDto, @Request() req) {
-    return this.badgesService.create(createBadgeDto, req.user.tenantId);
+    return this.badgesService.create(createBadgeDto);
   }
 
   @Get()
@@ -47,7 +47,7 @@ export class BadgesController {
     @Query('category') category?: string,
     @Query('difficulty') difficulty?: string,
   ) {
-    return this.badgesService.findAll(req.user.tenantId, page, limit, category, difficulty);
+    return this.badgesService.findAll(page, limit, category, difficulty);
   }
 
   @Get('my-badges')
@@ -55,7 +55,7 @@ export class BadgesController {
   @ApiResponse({ status: 200, description: 'User badges retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getMyBadges(@Request() req) {
-    return this.badgesService.getUserBadges(req.user.id, req.user.tenantId);
+    return this.badgesService.getUserBadges(req.user.id);
   }
 
   @Get('my-progress')
@@ -63,7 +63,7 @@ export class BadgesController {
   @ApiResponse({ status: 200, description: 'Badge progress retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getMyProgress(@Request() req) {
-    return this.badgesService.getUserBadgeProgress(req.user.id, req.user.tenantId);
+    return this.badgesService.getUserBadgeProgress(req.user.id);
   }
 
   @Get('stats')
@@ -71,7 +71,7 @@ export class BadgesController {
   @ApiResponse({ status: 200, description: 'Statistics retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getStats(@Request() req) {
-    return this.badgesService.getBadgeStats(req.user.tenantId);
+    return this.badgesService.getBadgeStats();
   }
 
   @Get('most-earned')
@@ -83,7 +83,7 @@ export class BadgesController {
     @Request() req,
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10,
   ) {
-    return this.badgesService.getMostEarnedBadges(req.user.tenantId, limit);
+    return this.badgesService.getMostEarnedBadges(limit);
   }
 
   @Get('recent-awards')
@@ -95,7 +95,7 @@ export class BadgesController {
     @Request() req,
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 20,
   ) {
-    return this.badgesService.getRecentBadgeAwards(req.user.tenantId, limit);
+    return this.badgesService.getRecentBadgeAwards(limit);
   }
 
   @Get(':id')
@@ -104,7 +104,7 @@ export class BadgesController {
   @ApiResponse({ status: 404, description: 'Badge not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findOne(@Param('id') id: string, @Request() req) {
-    return this.badgesService.findOne(id, req.user.tenantId);
+    return this.badgesService.findOne(id);
   }
 
   @Patch(':id')
@@ -113,7 +113,7 @@ export class BadgesController {
   @ApiResponse({ status: 404, description: 'Badge not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   update(@Param('id') id: string, @Body() updateBadgeDto: UpdateBadgeDto, @Request() req) {
-    return this.badgesService.update(id, updateBadgeDto, req.user.tenantId);
+    return this.badgesService.update(id, updateBadgeDto);
   }
 
   @Post('assign')
@@ -122,7 +122,7 @@ export class BadgesController {
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   assignBadge(@Body() assignBadgeDto: AssignBadgeDto, @Request() req) {
-    return this.badgesService.assignBadge(assignBadgeDto, req.user.tenantId);
+    return this.badgesService.assignBadge(assignBadgeDto);
   }
 
   @Post('check-badges')
@@ -130,7 +130,7 @@ export class BadgesController {
   @ApiResponse({ status: 200, description: 'Badge check completed successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   checkBadges(@Request() req) {
-    return this.badgesService.checkAndAwardBadges(req.user.id, req.user.tenantId);
+    return this.badgesService.checkAndAwardBadges(req.user.id);
   }
 
   @Delete(':id')
@@ -139,6 +139,6 @@ export class BadgesController {
   @ApiResponse({ status: 404, description: 'Badge not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   remove(@Param('id') id: string, @Request() req) {
-    return this.badgesService.remove(id, req.user.tenantId);
+    return this.badgesService.remove(id);
   }
 }

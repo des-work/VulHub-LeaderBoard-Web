@@ -146,7 +146,6 @@ export class AuthService {
 
       const user = await this.prisma.user.findUnique({
         where: { id: payload.sub },
-        include: { tenant: true },
       });
 
       if (!user || user.status !== 'ACTIVE') {
@@ -156,7 +155,6 @@ export class AuthService {
       const newPayload = {
         sub: user.id,
         email: user.email,
-        tenantId: user.tenantId,
         role: user.role,
       };
 
@@ -193,18 +191,10 @@ export class AuthService {
           lastName: true,
           role: true,
           status: true,
-          tenantId: true,
           avatarUrl: true,
           preferences: true,
           createdAt: true,
           lastLoginAt: true,
-          tenant: {
-            select: {
-              id: true,
-              name: true,
-              domain: true,
-            },
-          },
         },
       });
 
