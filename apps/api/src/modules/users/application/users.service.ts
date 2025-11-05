@@ -345,10 +345,10 @@ export class UsersService extends BaseService {
       return await this.usersRepository.update({
         where: { id },
         data: {
-          preferences: {
-            ...(user.preferences as Record<string, any> || {}),
+          preferences: JSON.stringify({
+            ...(typeof user.preferences === 'string' ? JSON.parse(user.preferences) : user.preferences || {}),
             ...preferences,
-          },
+          }),
         },
       });
     } catch (error) {
