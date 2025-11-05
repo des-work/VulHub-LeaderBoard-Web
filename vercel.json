@@ -1,3 +1,4 @@
 {
-  "version": 2
+  "version": 2,
+  "installCommand": "corepack enable && corepack prepare pnpm@8.10.0 --activate && pnpm install"
 }
