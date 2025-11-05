@@ -52,7 +52,7 @@ export class UsersService extends BaseService {
       async () => {
         this.logOperationStart('create', { email: createUserDto.email });
         
-         const user = await this.usersRepository.create(createUserDto);
+         const user = await this.usersRepository.create(createUserDto as any);
          
          // Map Prisma user to UserProfile
          const userProfile: UserProfile = {

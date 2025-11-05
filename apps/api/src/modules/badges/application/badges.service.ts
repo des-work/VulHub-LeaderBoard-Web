@@ -38,12 +38,19 @@ export class BadgesService {
     try {
       this.logger.log(`Creating badge: ${createBadgeDto.name}`);
 
-      return await this.badgesRepository.create({
-        ...createBadgeDto,
+      const badgeData = {
+        name: createBadgeDto.name,
+        category: createBadgeDto.category,
+        description: createBadgeDto.description,
+        icon: createBadgeDto.icon,
+        difficulty: createBadgeDto.difficulty,
+        isActive: createBadgeDto.isActive,
         criteria: typeof createBadgeDto.criteria === 'string' 
           ? createBadgeDto.criteria 
           : JSON.stringify(createBadgeDto.criteria),
-      });
+      };
+
+      return await this.badgesRepository.create(badgeData as any);
     } catch (error) {
       this.logger.error('Failed to create badge:', error);
       throw error;

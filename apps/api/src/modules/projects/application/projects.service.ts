@@ -26,7 +26,7 @@ export class ProjectsService {
         throw new Error('Project with this VulHub ID already exists');
       }
 
-      return await this.projectsRepository.create(createProjectDto);
+      return await this.projectsRepository.create(createProjectDto as any);
     } catch (error) {
       this.logger.error('Failed to create project:', error);
       throw error;
