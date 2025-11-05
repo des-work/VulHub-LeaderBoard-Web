@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { TerminusModule } from '@nestjs/terminus';
 
 // Configuration
 import { DatabaseModule } from './adapters/database/database.module';
@@ -19,8 +18,6 @@ import { BadgesModule } from './modules/badges/badges.module';
 // Common modules
 import { HealthModule } from './common/health/health.module';
 import { WebSocketModule } from './ws/websocket.module';
-// import { FlexibilityModule } from './common/modules/flexibility.module';
-// // import { EnterpriseModule } from './common/modules/enterprise.module';
 
 // Configuration
 import { configuration } from './config/configuration';
@@ -45,9 +42,6 @@ import { EnvironmentValidator } from './config/environment-validator';
       },
     ]),
 
-    // Health checks
-    TerminusModule,
-
     // Infrastructure adapters
     DatabaseModule,
     MemoryCacheModule,
@@ -64,8 +58,6 @@ import { EnvironmentValidator } from './config/environment-validator';
     // Common modules
     HealthModule,
     WebSocketModule,
-    // FlexibilityModule,
-    // EnterpriseModule,
   ],
   providers: [EnvironmentValidator],
 })
