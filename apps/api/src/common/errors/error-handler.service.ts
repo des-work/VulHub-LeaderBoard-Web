@@ -1,4 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { 
+  PrismaClientKnownRequestError,
+  PrismaClientUnknownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientInitializationError,
+  PrismaClientValidationError
+} from '@prisma/client/runtime/library';
 import { DomainError } from './domain-error.base';
 import { Prisma } from '@prisma/client';
 
@@ -172,7 +179,7 @@ export class ErrorHandlerService {
       return error.message;
     }
 
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error instanceof PrismaClientKnownRequestError) {
       switch (error.code) {
         case 'P2002':
           return 'A record with this information already exists';
@@ -187,11 +194,11 @@ export class ErrorHandlerService {
       }
     }
 
-    if (error instanceof Prisma.PrismaClientValidationError) {
+    if (error instanceof PrismaClientValidationError) {
       return 'Invalid data provided';
     }
 
-    if (error instanceof Prisma.PrismaClientInitializationError) {
+    if (error instanceof PrismaClientInitializationError) {
       return 'Database connection failed';
     }
 

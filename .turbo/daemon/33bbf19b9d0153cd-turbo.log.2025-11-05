@@ -545,3 +545,22 @@
 2025-11-05T10:33:55.528267Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
 2025-11-05T10:33:56.926973Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-05")}
 2025-11-05T10:33:56.926991Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-05T10:33:57.041026Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-05")}
+2025-11-05T10:33:57.041050Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-05T10:33:58.236452Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\errors\\error-handler.service.ts")}
+2025-11-05T10:33:58.236471Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-05T10:33:58.360281Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\errors\\error-handler.service.ts")}
+2025-11-05T10:33:58.360295Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-05T10:33:58.360335Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-11-05T10:34:04.234067Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\errors\\error-handler.service.ts")}
+2025-11-05T10:34:04.234084Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
+2025-11-05T10:34:05.130722Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-05")}
+2025-11-05T10:34:05.130746Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-05T10:34:06.336608Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-05")}
+2025-11-05T10:34:06.336631Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-05T10:34:11.033108Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-05")}
+2025-11-05T10:34:11.033152Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-05T10:34:11.137904Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\daemon\\33bbf19b9d0153cd-turbo.log.2025-11-05")}
+2025-11-05T10:34:11.137925Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-11-05T10:34:18.531082Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\api\\src\\common\\errors\\error-handler.service.ts")}
+2025-11-05T10:34:18.531105Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("@vulhub/api"), path: AnchoredSystemPathBuf("apps\\api") }}))
