@@ -5,7 +5,8 @@
   "main": "dist/main.js",
   "scripts": {
     "prisma:generate": "prisma generate",
-    "build": "prisma generate && npx -y @nestjs/cli@latest build",
+    "prebuild": "cd ../../packages/schema && npx tsc && cd ../../packages/config && npx tsc && cd ../../packages/utils && npx tsc && cd ../../apps/api && prisma generate",
+    "build": "npx -y @nestjs/cli@latest build",
     "dev": "pnpm exec nest start --watch",
     "start": "node dist/main",
     "start:dev": "pnpm exec nest start --watch",
