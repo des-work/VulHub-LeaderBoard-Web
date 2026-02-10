@@ -11,7 +11,6 @@ import { Prisma } from '@prisma/client';
 
 export interface ErrorContext {
   userId?: string;
-  tenantId?: string;
   operation?: string;
   resource?: string;
   metadata?: Record<string, any>;
@@ -209,7 +208,7 @@ export class ErrorHandlerService {
   /**
    * Get error statistics
    */
-  async getErrorStatistics(tenantId?: string, fromDate?: Date, toDate?: Date) {
+  async getErrorStatistics(fromDate?: Date, toDate?: Date) {
     // In a real application, this would query error logs from:
     // - Database error log table
     // - Log aggregation service (ELK, Splunk, etc.)

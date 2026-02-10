@@ -26,7 +26,6 @@ export class LoggingInterceptor implements NestInterceptor {
 
     const { method, url, ip } = request;
     const userAgent = request.get('User-Agent') || '';
-    const tenantId = request.headers['x-tenant-id'] as string;
     const userId = (request as any).user?.id;
     const contentLength = request.get('content-length') || '0';
 
@@ -35,8 +34,8 @@ export class LoggingInterceptor implements NestInterceptor {
     // Log incoming request
     this.logger.log(
       `→ ${method} ${url} [${requestId}] - ${this.getClientIP(request)} - ${userAgent} ${
-        tenantId ? `[tenant: ${tenantId}]` : ''
-      } ${userId ? `[user: ${userId}]` : ''} ${contentLength}B`,
+        userId ? `[user: ${userId}]` : ''
+      } ${contentLength}B`,
       {
         requestId,
         method,
@@ -95,7 +94,6 @@ export class LoggingInterceptor implements NestInterceptor {
             request: {
               ip: this.getClientIP(request),
               userAgent,
-              tenantId,
               userId,
               headers: this.sanitizeHeaders(request.headers),
               query: request.query,

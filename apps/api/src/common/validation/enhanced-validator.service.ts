@@ -298,14 +298,6 @@ export class EnhancedValidatorService {
       message: 'ID is required',
       required: true
     });
-
-    // Tenant ID validation
-    this.registerCommonRule({
-      field: 'tenantId',
-      validator: (value) => typeof value === 'string' && value.trim().length > 0,
-      message: 'Tenant ID is required',
-      required: true
-    });
   }
 }
 

@@ -1,0 +1,146 @@
+# =============================================================================
+# VulHub API - Environment Configuration
+# =============================================================================
+# Copy this file to .env and update the values for your environment
+#
+# For local development: Use SQLite database (file:./prisma/dev.db)
+# For production: Use PostgreSQL (postgresql://user:pass@host:port/db)
+#
+# Documentation: See src/config/CONFIGURATION_GUIDE.md for detailed info
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Core Application Settings
+# -----------------------------------------------------------------------------
+NODE_ENV=development
+PORT=4010
+HOST=0.0.0.0
+
+# CORS Origins (comma-separated for multiple origins)
+# Development: Allow localhost on different ports
+# Production: Set to your actual frontend domain
+CORS_ORIGIN=http://localhost:3000,http://localhost:3010
+
+# -----------------------------------------------------------------------------
+# Database Configuration
+# -----------------------------------------------------------------------------
+# SQLite (for local development):
+DATABASE_URL="file:./prisma/dev.db"
+
+# PostgreSQL (for production):
+# DATABASE_URL="postgresql://username:password@hostname:5432/database_name"
+# 
+# Examples:
+# - Supabase: postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres
+# - Heroku: Automatically provided via DATABASE_URL env var
+# - Local: postgresql://vulhub:password@localhost:5432/vulhub_dev
+
+# Database connection pool settings
+DATABASE_MAX_CONNECTIONS=10
+DATABASE_CONNECTION_TIMEOUT=30000
+
+# -----------------------------------------------------------------------------
+# JWT Authentication
+# -----------------------------------------------------------------------------
+# IMPORTANT: Change these secrets in production!
+# Generate secure secrets: openssl rand -base64 32
+JWT_SECRET=dev-jwt-secret-key-change-in-production-min-32-chars
+JWT_REFRESH_SECRET=dev-refresh-secret-key-change-in-production-min-32-chars
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+
+# -----------------------------------------------------------------------------
+# Security Settings
+# -----------------------------------------------------------------------------
+# Bcrypt rounds (10-12 recommended, higher = more secure but slower)
+BCRYPT_ROUNDS=12
+
+# Session and cookie settings (production only)
+# SESSION_SECRET=your-session-secret-min-32-chars
+# COOKIE_SECURE=true
+# COOKIE_SAME_SITE=strict
+
+# -----------------------------------------------------------------------------
+# Rate Limiting
+# -----------------------------------------------------------------------------
+# Time window in milliseconds (60000 = 1 minute)
+RATE_LIMIT_TTL=60000
+# Maximum requests per time window
+RATE_LIMIT_MAX=100
+
+# -----------------------------------------------------------------------------
+# File Upload Configuration
+# -----------------------------------------------------------------------------
+# Max file size in bytes (10485760 = 10MB)
+MAX_FILE_SIZE=10485760
+# Comma-separated allowed MIME types
+# ALLOWED_MIME_TYPES=image/jpeg,image/png,application/pdf,text/plain
+
+# Virus scanning (optional, requires ClamAV)
+# SCAN_FOR_VIRUSES=false
+
+# -----------------------------------------------------------------------------
+# Redis Configuration (Optional)
+# -----------------------------------------------------------------------------
+# Redis is optional - app works with in-memory fallback
+# Uncomment to enable Redis for caching and sessions
+# REDIS_HOST=localhost
+# REDIS_PORT=6379
+# REDIS_PASSWORD=
+# REDIS_DB=0
+
+# For Heroku Redis addon:
+# REDIS_URL=redis://h:password@hostname:port
+
+# -----------------------------------------------------------------------------
+# Email Configuration (Optional)
+# -----------------------------------------------------------------------------
+# SMTP settings for email notifications
+# SMTP_HOST=smtp.gmail.com
+# SMTP_PORT=587
+# SMTP_USER=your-email@gmail.com
+# SMTP_PASS=your-app-password
+# SMTP_FROM=noreply@vulhub.com
+
+# -----------------------------------------------------------------------------
+# External Services (Optional)
+# -----------------------------------------------------------------------------
+# File storage (Cloudinary, AWS S3, etc.)
+# CLOUDINARY_CLOUD_NAME=
+# CLOUDINARY_API_KEY=
+# CLOUDINARY_API_SECRET=
+
+# Monitoring and logging
+# SENTRY_DSN=
+# LOG_LEVEL=info
+
+# -----------------------------------------------------------------------------
+# Feature Flags (Optional)
+# -----------------------------------------------------------------------------
+# ENABLE_SWAGGER=true
+# ENABLE_METRICS=false
+# ENABLE_WEBSOCKETS=true
+
+# -----------------------------------------------------------------------------
+# Development Tools
+# -----------------------------------------------------------------------------
+# Prisma Studio (database GUI)
+# Uncomment to run: npx prisma studio
+# PRISMA_STUDIO_PORT=5555
+
+# -----------------------------------------------------------------------------
+# Production Notes
+# -----------------------------------------------------------------------------
+# For production deployment:
+# 1. Change NODE_ENV to "production"
+# 2. Use PostgreSQL instead of SQLite
+# 3. Generate secure JWT secrets (32+ characters)
+# 4. Set CORS_ORIGIN to your actual frontend URL
+# 5. Enable COOKIE_SECURE and set to true
+# 6. Consider enabling Redis for better performance
+# 7. Set up proper logging and monitoring
+# 8. Configure email service for notifications
+#
+# See DEPLOYMENT_GUIDE.md for detailed production setup
+# =============================================================================
+

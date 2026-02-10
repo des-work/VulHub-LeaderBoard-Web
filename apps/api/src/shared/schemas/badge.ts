@@ -44,7 +44,6 @@ export const BadgeResponseSchema = z.object({
   difficulty: z.nativeEnum(ProjectDifficulty).nullable(),
   criteria: z.record(z.any()),
   isActive: z.boolean(),
-  tenantId: z.string().cuid(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   _count: z.object({
@@ -56,7 +55,6 @@ export const UserBadgeResponseSchema = z.object({
   id: z.string().cuid(),
   userId: z.string().cuid(),
   badgeId: z.string().cuid(),
-  tenantId: z.string().cuid(),
   earnedAt: z.string().datetime(),
   badge: BadgeResponseSchema,
 });

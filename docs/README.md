@@ -1,196 +1,280 @@
-# 📚 Documentation Index - VulHub Leaderboard
+# 📚 VulHub Leaderboard Documentation
 
-## 🎯 **Project Overview**
-
-The VulHub Leaderboard is a comprehensive cybersecurity education platform featuring a **unified design system** that eliminates theme switching complexity while providing superior customization capabilities.
-
-## 📖 **Core Documentation**
-
-### **🏠 Main Documentation**
-- [📋 README.md](README.md) - Project overview, features, and quick start
-- [🎨 UI Package README](packages/ui/README.md) - Unified design system documentation
-- [📊 Project Status](docs/PROJECT_STATUS.md) - Detailed accomplishments and metrics
-
-### **🐳 Docker & Deployment**
-- [🐳 Docker Testing Guide](docs/DOCKER_TESTING_GUIDE.md) - Complete Docker setup instructions
-- [⚡ Docker Quick Start](docs/DOCKER_QUICK_START.md) - Quick reference commands
-- [🚀 Deployment Guide](docs/DEPLOYMENT_GUIDE.md) - Production deployment instructions
-
-### **🔧 Development**
-- [📝 Development Logs](docs/dev-logs/) - Implementation history and decisions
-- [🏗️ Architecture Decisions](docs/adr/) - Technical decision records
-- [📋 Development Plan](docs/DEVELOPMENT_PLAN.md) - Project roadmap
-
-## 🎨 **Unified Design System**
-
-### **Key Features**
-- ✅ **Single Default UI** - Beautiful combination of multiple aesthetics
-- ✅ **Live Customization** - Real-time editing without page refresh
-- ✅ **Intelligent Components** - Auto-adapting icons, terminology, and effects
-- ✅ **Persistent Settings** - User preferences saved across sessions
-- ✅ **Type-Safe Configuration** - Comprehensive TypeScript support
-
-### **Components**
-- `DesignProvider` - Context provider for design configuration
-- `DesignApplication` - DOM application hook for real-time updates
-- `UnifiedIcon` - Single component rendering multiple icon styles
-- `Terminology` - Automatic text transformation
-- `VisualEffect` - Dynamic visual effects (glow, neon, gradient, shadows)
-- `CustomizationPanel` - Live editing interface
-
-## 🚀 **Quick Start Options**
-
-### **Option 1: Docker (Recommended)**
-```bash
-git clone https://github.com/your-username/VulHub-LeaderBoard-Web.git
-cd VulHub-LeaderBoard-Web
-cp env.example .env
-docker-compose -f docker-compose.dev.yml up --build
-```
-**Access**: http://localhost:4010
-
-### **Option 2: Local Development**
-```bash
-git clone https://github.com/your-username/VulHub-LeaderBoard-Web.git
-cd VulHub-LeaderBoard-Web
-pnpm install
-pnpm dev:stack
-pnpm -r dev
-```
-**Access**: http://localhost:3000
-
-## 🎯 **Testing the Unified Design System**
-
-1. **Open** the website (http://localhost:4010 or http://localhost:3000)
-2. **Click** "Customize" button in header
-3. **Test** live color changes
-4. **Toggle** visual effects (glow, neon, gradient, shadows)
-5. **Switch** terminology styles (medieval, hacker, cyberpunk)
-6. **Change** icon styles (modern, medieval, cyberpunk, terminal)
-7. **Adjust** layout settings (spacing, border radius, density)
-8. **Verify** responsive design on mobile
-
-## 📊 **Project Accomplishments**
-
-### **✅ Major Achievements**
-1. **Unified Design System** - Eliminated theme switching complexity
-2. **Live Customization** - Real-time editing capabilities
-3. **Intelligent Components** - Auto-adapting UI elements
-4. **Technical Excellence** - Type-safe, accessible, performant
-5. **Production Readiness** - Clean builds, optimized deployment
-
-### **📈 Quality Metrics**
-- **Build Status**: ✅ 100% successful builds
-- **TypeScript**: ✅ 0 errors
-- **Linting**: ✅ Clean codebase
-- **Accessibility**: ✅ WCAG 2.1 AA compliant
-- **Performance**: ✅ Production optimized
-- **Documentation**: ✅ Comprehensive coverage
-
-## 🛠 **Development Workflow**
-
-### **Making Changes**
-1. **Edit** source code in your IDE
-2. **Changes auto-reload** in development mode
-3. **Test immediately** in browser
-4. **Commit changes** when satisfied
-
-### **Hot Reloading Features**
-- **API changes**: Automatically restart API service
-- **Web changes**: Instant browser refresh
-- **Package changes**: Rebuild affected services
-- **Database changes**: Persist across restarts
-
-## 🔧 **Troubleshooting**
-
-### **Common Issues**
-- **Port Conflicts**: Change ports in docker-compose files
-- **Build Failures**: Clean Docker cache, rebuild without cache
-- **Database Issues**: Reset database, check connection logs
-- **Permission Issues**: Fix file permissions (Linux/Mac)
-
-### **Debug Commands**
-```bash
-# Check container status
-docker-compose ps
-
-# View logs
-docker-compose logs -f
-
-# Enter container
-docker-compose exec web-dev sh
-
-# Clean everything
-docker-compose down -v --remove-orphans
-```
-
-## 📱 **Mobile Testing**
-
-### **Browser DevTools**
-1. Open website
-2. Press F12
-3. Click device toggle
-4. Test responsive design
-
-### **Physical Device**
-1. Find computer's IP address
-2. Access http://YOUR_IP:4010
-3. Test on mobile device
-
-## 🎉 **Success Indicators**
-
-You'll know everything is working when:
-- ✅ Website loads correctly
-- ✅ Customization panel opens and functions
-- ✅ Live updates work in real-time
-- ✅ Responsive design works on mobile
-- ✅ All components render correctly
-- ✅ No console errors in browser
-- ✅ Database connection successful
-
-## 🤝 **Contributing**
-
-### **Getting Started**
-1. **Fork** the repository
-2. **Clone** your fork
-3. **Create** feature branch
-4. **Make** changes
-5. **Test** thoroughly
-6. **Submit** pull request
-
-### **Development Guidelines**
-- Follow TypeScript best practices
-- Include comprehensive tests
-- Update documentation
-- Ensure accessibility compliance
-- Test on multiple devices
-
-## 📞 **Support**
-
-### **Documentation Issues**
-- Check existing documentation
-- Create GitHub issue with details
-- Include error messages and logs
-- Specify environment details
-
-### **Technical Issues**
-- Review troubleshooting guides
-- Check Docker logs
-- Verify environment setup
-- Test with clean Docker environment
-
-## 🔗 **External Resources**
-
-- **Docker Documentation**: https://docs.docker.com/
-- **Next.js Documentation**: https://nextjs.org/docs
-- **React Documentation**: https://react.dev/
-- **TypeScript Documentation**: https://www.typescriptlang.org/docs/
-- **Tailwind CSS Documentation**: https://tailwindcss.com/docs
+**Welcome to the VulHub Leaderboard documentation!** This is your complete guide to understanding, deploying, and contributing to the platform.
 
 ---
 
-**Last Updated**: January 2025  
-**Version**: 1.0.0  
-**Status**: ✅ Production Ready
+## 🎯 Choose Your Path
 
-The unified design system represents a **major architectural achievement** that transforms complex theme switching into an elegant, maintainable solution benefiting both users and developers.
+### 👋 New to VulHub?
+Start with the [Quick Start Guide](getting-started/quickstart.md) - get running in 5 minutes!
+
+### 🚀 Ready to Deploy?
+Check the [Project Status Dashboard](../PROJECT_STATUS_DASHBOARD.md) and follow the [Pre-Deployment Checklist](../PRE_DEPLOYMENT_CHECKLIST.md).
+
+### 💻 Want to Contribute?
+Read the [Contributing Guide](development/contributing.md) and [Code Style Guide](development/code-style.md).
+
+---
+
+## 📖 Documentation Sections
+
+### 🚀 Getting Started
+**Time: 5-30 minutes | Perfect for: New developers, first-time setup**
+
+| Guide | Time | Purpose |
+|-------|------|---------|
+| [Quick Start](getting-started/quickstart.md) | 5 min | Fastest way to get running |
+| [Local Development Setup](getting-started/local-development.md) | 15 min | Complete local environment |
+| [Environment Configuration](getting-started/environment-setup.md) | 10 min | Configure all settings |
+| [First Contribution](getting-started/first-contribution.md) | 30 min | Make your first change |
+
+**Start here →** [Quick Start Guide](getting-started/quickstart.md) ⭐
+
+---
+
+### 🌐 Deployment
+**Time: 1-2 hours | Perfect for: Production deployment, DevOps**
+
+| Guide | Platform | Difficulty |
+|-------|----------|------------|
+| [Deployment Overview](deployment/overview.md) | All | Beginner |
+| [Frontend Deployment](deployment/vercel-frontend.md) | Vercel | Easy |
+| [Backend Deployment](deployment/backend-options.md) | Railway/Render/Heroku | Medium |
+| [Database Setup](deployment/database-setup.md) | Supabase/Postgres | Easy |
+| [Pre-Deployment Checklist](deployment/pre-deployment.md) | All | Essential |
+| [Troubleshooting](deployment/troubleshooting.md) | All | Reference |
+
+**Ready to deploy →** [Deployment Overview](deployment/overview.md) ⭐
+
+---
+
+### 🏗️ Architecture & Design
+**Time: 30-60 minutes | Perfect for: Understanding the system, architecture decisions**
+
+| Guide | Focus | Audience |
+|-------|-------|----------|
+| [System Overview](architecture/overview.md) | High-level architecture | Everyone |
+| [Frontend Architecture](architecture/frontend.md) | Next.js 14, React, Tailwind | Frontend devs |
+| [Backend Architecture](architecture/backend.md) | NestJS, Prisma, PostgreSQL | Backend devs |
+| [Database Schema](architecture/database.md) | Data models, relationships | Full-stack devs |
+| [Architecture Decisions](architecture/decisions/) | ADRs, design choices | Technical leads |
+
+**Understand the system →** [System Overview](architecture/overview.md)
+
+---
+
+### ✨ Features & Functionality
+**Time: 10-30 minutes per feature | Perfect for: Feature development, understanding capabilities**
+
+| Feature | Description | Status |
+|---------|-------------|--------|
+| [Authentication](features/authentication.md) | JWT auth, login/register | ✅ Complete |
+| [Leaderboard](features/leaderboard.md) | Rankings, scoring, real-time updates | ✅ Complete |
+| [Community Forum](features/community.md) | Terminal-style discussions | ✅ Complete |
+| [Badges System](features/badges.md) | Gamification, achievements | ✅ Complete |
+| [Submissions & Grading](features/submissions.md) | File upload, grading workflow | ✅ Complete |
+| [User Profiles](features/profiles.md) | Progress tracking, stats | ✅ Complete |
+
+**Explore features →** [Features Overview](features/README.md)
+
+---
+
+### 🔌 API Reference
+**Time: As needed | Perfect for: API integration, frontend development**
+
+| Resource | Endpoints | Authentication |
+|----------|-----------|----------------|
+| [API Overview](api/README.md) | All endpoints | Overview |
+| [Authentication API](api/authentication.md) | /auth/* | Public |
+| [Users API](api/users.md) | /users/* | Required |
+| [Projects API](api/projects.md) | /projects/* | Required |
+| [Submissions API](api/submissions.md) | /submissions/* | Required |
+| [Leaderboards API](api/leaderboards.md) | /leaderboards/* | Public/Required |
+
+**Live API Docs:** http://localhost:4010/api/docs (Swagger - when API is running)
+
+**Explore APIs →** [API Overview](api/README.md)
+
+---
+
+### 👩‍💻 Development
+**Time: Variable | Perfect for: Contributors, developers**
+
+| Guide | Purpose | Importance |
+|-------|---------|------------|
+| [Contributing Guide](development/contributing.md) | How to contribute | Essential |
+| [Code Style & Standards](development/code-style.md) | Coding conventions | Essential |
+| [Testing Guide](development/testing.md) | How to test | Important |
+| [Debugging Tips](development/debugging.md) | Troubleshooting | Helpful |
+| [Development Workflow](development/workflow.md) | Git, PRs, reviews | Important |
+
+**Start contributing →** [Contributing Guide](development/contributing.md)
+
+---
+
+### 🔒 Operations & Security
+**Time: Variable | Perfect for: Production operations, security review**
+
+| Guide | Focus | Criticality |
+|-------|-------|-------------|
+| [Security Policies](operations/security.md) | Security best practices | Critical |
+| [Monitoring & Logging](operations/monitoring.md) | Observability | Important |
+| [Backup & Recovery](operations/backup-recovery.md) | Data protection | Critical |
+| [Runbooks](operations/runbooks/) | Operational procedures | Important |
+| [Incident Response](operations/incident-response.md) | Emergency procedures | Critical |
+
+**Security first →** [Security Policies](operations/security.md)
+
+---
+
+## 🎯 Quick Links
+
+### Most Popular Guides
+1. [Quick Start](getting-started/quickstart.md) - 5-minute setup
+2. [Project Status Dashboard](../PROJECT_STATUS_DASHBOARD.md) - Current readiness (90%)
+3. [Pre-Deployment Checklist](../PRE_DEPLOYMENT_CHECKLIST.md) - Before going live
+4. [Environment Setup](getting-started/environment-setup.md) - Configuration guide
+5. [Deployment Overview](deployment/overview.md) - How to deploy
+
+### Essential Root Documents
+- [Main README](../README.md) - Project overview
+- [Project Readiness Assessment](../PROJECT_READINESS_ASSESSMENT.md) - Full readiness report
+- [Executive Summary](../READINESS_EXECUTIVE_SUMMARY.md) - Quick status overview
+- [Code of Conduct](../CODE_OF_CONDUCT.md) - Community guidelines
+- [Security Policy](../SECURITY.md) - Report vulnerabilities
+
+### By Role
+
+**I'm a... New Developer**
+1. [Quick Start](getting-started/quickstart.md)
+2. [Local Development](getting-started/local-development.md)
+3. [Contributing Guide](development/contributing.md)
+
+**I'm a... DevOps Engineer**
+1. [Project Status](../PROJECT_STATUS_DASHBOARD.md)
+2. [Deployment Overview](deployment/overview.md)
+3. [Operations Runbooks](operations/runbooks/)
+
+**I'm a... Frontend Developer**
+1. [Frontend Architecture](architecture/frontend.md)
+2. [API Reference](api/README.md)
+3. [Features Documentation](features/README.md)
+
+**I'm a... Backend Developer**
+1. [Backend Architecture](architecture/backend.md)
+2. [Database Schema](architecture/database.md)
+3. [API Development](development/api-development.md)
+
+**I'm a... Product Manager**
+1. [System Overview](architecture/overview.md)
+2. [Features Overview](features/README.md)
+3. [Project Status](../PROJECT_STATUS_DASHBOARD.md)
+
+---
+
+## 📊 Project Status
+
+**Current Version:** 1.0.0  
+**Readiness:** 90% - Production Ready ✅  
+**Last Updated:** February 10, 2026
+
+### Key Metrics
+- ✅ **Code Quality:** Zero linter errors
+- ✅ **Features:** 100% complete
+- ✅ **Security:** Production-grade
+- ✅ **Documentation:** Comprehensive
+- ⚠️ **Testing:** Manual testing only
+- ✅ **Deployment:** Ready for all platforms
+
+**Full Status:** [Project Status Dashboard](../PROJECT_STATUS_DASHBOARD.md)
+
+---
+
+## 🔍 Search & Navigation Tips
+
+### Find Information Fast
+
+**Looking for...** → **Check here:**
+- Setup instructions → [Getting Started](getting-started/)
+- How to deploy → [Deployment](deployment/)
+- How it works → [Architecture](architecture/)
+- API endpoints → [API Reference](api/)
+- Feature details → [Features](features/)
+- Contributing → [Development](development/)
+- Security → [Operations](operations/)
+
+### Documentation Structure
+```
+/docs/
+├── getting-started/    # Setup & quickstart
+├── deployment/         # Production deployment
+├── architecture/       # System design
+├── features/          # Feature documentation
+├── development/       # Contributing & coding
+├── operations/        # DevOps & security
+├── api/              # API reference
+└── project-history/   # Archived docs & history
+```
+
+---
+
+## 🆘 Need Help?
+
+### Common Questions
+
+**Q: How do I get started quickly?**  
+A: Follow the [Quick Start Guide](getting-started/quickstart.md) - 5 minutes to running app!
+
+**Q: Is this ready for production?**  
+A: Yes! Check the [Project Status Dashboard](../PROJECT_STATUS_DASHBOARD.md) (90% ready).
+
+**Q: How do I deploy to production?**  
+A: Start with [Pre-Deployment Checklist](../PRE_DEPLOYMENT_CHECKLIST.md), then [Deployment Overview](deployment/overview.md).
+
+**Q: Where's the API documentation?**  
+A: Live: http://localhost:4010/api/docs (Swagger), Static: [API Reference](api/)
+
+**Q: How do I contribute?**  
+A: Read [Contributing Guide](development/contributing.md) and [Code Style](development/code-style.md).
+
+### Still Stuck?
+
+1. Check the [Troubleshooting Guide](deployment/troubleshooting.md)
+2. Search this documentation (Ctrl+F in your file explorer)
+3. Review [Project History](project-history/) for context
+4. Open an issue on GitHub
+5. Ask the development team
+
+---
+
+## 📚 Additional Resources
+
+### External Links
+- **Live App (Demo):** Coming soon
+- **GitHub Repository:** [VulHub-LeaderBoard-Web](https://github.com/your-org/vulhub-leaderboard-web)
+- **Issue Tracker:** GitHub Issues
+- **Discussions:** GitHub Discussions
+
+### Related Documentation
+- **VulHub Platform:** Main VulHub documentation
+- **Next.js Docs:** https://nextjs.org/docs
+- **NestJS Docs:** https://docs.nestjs.com
+- **Prisma Docs:** https://www.prisma.io/docs
+
+---
+
+## 🎉 Ready to Start?
+
+1. **New Developer?** → [Quick Start Guide](getting-started/quickstart.md)
+2. **Ready to Deploy?** → [Pre-Deployment Checklist](../PRE_DEPLOYMENT_CHECKLIST.md)
+3. **Want to Contribute?** → [Contributing Guide](development/contributing.md)
+4. **Need API Docs?** → [API Reference](api/README.md)
+
+---
+
+**Welcome to VulHub Leaderboard! Let's build something amazing together. 🚀**
+
+---
+
+<sub>Documentation Version: 2.0 | Last Updated: February 10, 2026 | [Edit this page](README.md)</sub>

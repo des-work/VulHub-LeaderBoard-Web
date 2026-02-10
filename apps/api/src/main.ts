@@ -40,7 +40,7 @@ async function bootstrap() {
     origin: corsOrigin.split(',').map(origin => origin.trim()),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   // Get services for dependency injection

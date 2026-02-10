@@ -11,7 +11,6 @@ export const RegisterSchema = z.object({
   password: z.string().min(8).max(100),
   firstName: z.string().min(1).max(50),
   lastName: z.string().min(1).max(50),
-  tenantId: z.string().cuid(),
 });
 
 export const RefreshTokenSchema = z.object({
@@ -28,7 +27,6 @@ export const AuthResponseSchema = z.object({
     lastName: z.string(),
     avatarUrl: z.string().url().nullable(),
     role: z.string(),
-    tenantId: z.string().cuid(),
   }),
 });
 

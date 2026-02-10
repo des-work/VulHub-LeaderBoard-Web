@@ -83,9 +83,8 @@ export class MetricsService {
   /**
    * Record business metric
    */
-  recordBusinessMetric(metricName: string, value: number, tenantId?: string, userId?: string): void {
+  recordBusinessMetric(metricName: string, value: number, userId?: string): void {
     const tags: Record<string, string> = {};
-    if (tenantId) tags.tenant_id = tenantId;
     if (userId) tags.user_id = userId;
 
     this.recordMetric(metricName, value, tags);

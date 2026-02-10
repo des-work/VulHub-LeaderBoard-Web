@@ -50,7 +50,6 @@ export default registerAs('security', () => ({
     allowedHeaders: [
       'Content-Type',
       'Authorization',
-      'X-Tenant-ID',
       'X-Requested-With',
     ],
   },

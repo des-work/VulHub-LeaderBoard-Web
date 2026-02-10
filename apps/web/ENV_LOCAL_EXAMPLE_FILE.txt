@@ -1,0 +1,115 @@
+# =============================================================================
+# VulHub Web Application - Environment Configuration
+# =============================================================================
+# Copy this file to .env.local and update the values for your environment
+#
+# Note: All variables prefixed with NEXT_PUBLIC_ are exposed to the browser
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Core Configuration
+# -----------------------------------------------------------------------------
+NODE_ENV=development
+
+# -----------------------------------------------------------------------------
+# API Configuration
+# -----------------------------------------------------------------------------
+# Backend API URL - This is where the frontend will make API calls
+# Development: Local NestJS API server
+NEXT_PUBLIC_API_URL=http://localhost:4010/api/v1
+
+# Production examples:
+# NEXT_PUBLIC_API_URL=https://your-api.herokuapp.com/api/v1
+# NEXT_PUBLIC_API_URL=https://api.yourdomain.com/api/v1
+
+# -----------------------------------------------------------------------------
+# Application Settings
+# -----------------------------------------------------------------------------
+# App name displayed in browser tab and UI
+NEXT_PUBLIC_APP_NAME=VulHub Leaderboard
+
+# Version displayed in UI (optional)
+# NEXT_PUBLIC_APP_VERSION=1.0.0
+
+# -----------------------------------------------------------------------------
+# Authentication
+# -----------------------------------------------------------------------------
+# Token storage key (leave as default unless you have a reason to change)
+NEXT_PUBLIC_AUTH_TOKEN_KEY=vulhub_auth_token
+
+# Session timeout in minutes (default: 15 minutes)
+# NEXT_PUBLIC_SESSION_TIMEOUT=15
+
+# -----------------------------------------------------------------------------
+# Feature Flags (Optional)
+# -----------------------------------------------------------------------------
+# Enable/disable features without code changes
+# NEXT_PUBLIC_ENABLE_COMMUNITY=true
+# NEXT_PUBLIC_ENABLE_BADGES=true
+# NEXT_PUBLIC_ENABLE_LEADERBOARD=true
+
+# -----------------------------------------------------------------------------
+# Analytics (Optional)
+# -----------------------------------------------------------------------------
+# Google Analytics
+# NEXT_PUBLIC_GA_TRACKING_ID=G-XXXXXXXXXX
+
+# Plausible Analytics
+# NEXT_PUBLIC_PLAUSIBLE_DOMAIN=yourdomain.com
+
+# Posthog
+# NEXT_PUBLIC_POSTHOG_KEY=
+# NEXT_PUBLIC_POSTHOG_HOST=
+
+# -----------------------------------------------------------------------------
+# External Services (Optional)
+# -----------------------------------------------------------------------------
+# Sentry for error tracking (browser-side)
+# NEXT_PUBLIC_SENTRY_DSN=
+
+# -----------------------------------------------------------------------------
+# UI Configuration (Optional)
+# -----------------------------------------------------------------------------
+# Default theme
+# NEXT_PUBLIC_DEFAULT_THEME=dark
+
+# Items per page for lists
+# NEXT_PUBLIC_ITEMS_PER_PAGE=10
+
+# Max file upload size display (in MB)
+# NEXT_PUBLIC_MAX_UPLOAD_SIZE_MB=10
+
+# -----------------------------------------------------------------------------
+# Social Links (Optional)
+# -----------------------------------------------------------------------------
+# Display social links in footer/header
+# NEXT_PUBLIC_GITHUB_URL=https://github.com/your-org/vulhub
+# NEXT_PUBLIC_TWITTER_URL=https://twitter.com/vulhub
+# NEXT_PUBLIC_DISCORD_URL=https://discord.gg/your-invite
+
+# -----------------------------------------------------------------------------
+# Development Settings
+# -----------------------------------------------------------------------------
+# Next.js development server port (optional, defaults to 3000)
+# PORT=3000
+
+# Enable React strict mode (recommended for development)
+# NEXT_PUBLIC_STRICT_MODE=true
+
+# -----------------------------------------------------------------------------
+# Production Notes
+# -----------------------------------------------------------------------------
+# For production deployment (Vercel, Netlify, etc.):
+# 1. Change NODE_ENV to "production"
+# 2. Update NEXT_PUBLIC_API_URL to your production API
+# 3. Add analytics tracking IDs
+# 4. Configure error tracking (Sentry)
+# 5. Remove or comment out development-only settings
+#
+# Vercel Deployment:
+# - These variables can be set in Vercel Dashboard → Settings → Environment Variables
+# - Vercel automatically sets NODE_ENV to "production"
+#
+# See DEPLOYMENT_GUIDE.md for detailed production setup
+# =============================================================================
+

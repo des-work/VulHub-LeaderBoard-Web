@@ -126,7 +126,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
         method: request.method,
         severity: errorReport.severity,
         userId: errorContext.userId,
-        tenantId: errorContext.tenantId,
         ...(isDevelopment && {
           stack: exception instanceof Error ? exception.stack : undefined,
         }),

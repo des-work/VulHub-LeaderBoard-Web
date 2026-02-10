@@ -50,7 +50,6 @@ export default registerAs('production', () => ({
     allowedHeaders: [
       'Content-Type',
       'Authorization',
-      'X-Tenant-ID',
       'X-Requested-With',
       'X-Forwarded-For',
       'X-Real-IP',
